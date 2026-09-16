@@ -11,10 +11,17 @@ import { buildApp } from "./app";
 async function main(): Promise<void> {
   await loadDotenv();
   const config = loadConfig();
+  // E2: the bridge secret is mandatory in production — fail fast, loudly,
+  // rather than booting an unauthenticated worker tier.
+  if (config.isProduction && config.forge.sharedSecret === undefined) {
+    throw new Error("forge: FORGE_SHARED_SECRET is required when NODE_ENV=production");
+  }
   const app = buildApp({
     logLevel: config.logLevel,
     databaseUrl: config.databaseUrl,
     rateLimitPerMinute: config.limits.rateLimitPerMinute,
+    sharedSecret: config.forge.sharedSecret,
+    maxConcurrentJobsPerUser: config.limits.maxConcurrentJobsPerUser,
   });
 
   const server = app.listen(config.port, () => {

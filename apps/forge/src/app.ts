@@ -15,6 +15,8 @@ import helmet from "helmet";
 import pino from "pino";
 import rateLimit from "express-rate-limit";
 import { createDb, type DbHandle } from "@inkforge/db";
+import { requireBridgeAuth } from "./auth";
+import { createJobsRouter } from "./jobs";
 
 export interface ForgeAppOptions {
   /** pino level; pass "silent" in tests. */
@@ -23,6 +25,10 @@ export interface ForgeAppOptions {
   readonly databaseUrl?: string | undefined;
   readonly rateLimitPerMinute?: number;
   readonly jsonBodyLimit?: string;
+  /** Bridge shared secret (G-04). Absent → every feature route 503s. */
+  readonly sharedSecret?: string | undefined;
+  /** Per-user in-flight job cap (G-04). */
+  readonly maxConcurrentJobsPerUser?: number;
 }
 
 const START = Date.now();
@@ -101,6 +107,19 @@ export function buildApp(options: ForgeAppOptions = {}): Express {
   });
 
   // Feature routes attach here as their modules land (jobs, drafts, covers, exports).
+  if (options.databaseUrl) {
+    const handle = createDb(options.databaseUrl, { max: 5, connectTimeoutSeconds: 3 });
+    const bridge = requireBridgeAuth({ sharedSecret: options.sharedSecret });
+    app.use(
+      "/jobs",
+      bridge,
+      createJobsRouter({
+        db: handle.db,
+        maxConcurrentJobsPerUser: options.maxConcurrentJobsPerUser ?? 5,
+      }),
+    );
+  }
+
   app.use((_req: Request, res: Response) => {
     res.status(404).json({ error: "not_found" });
   });
