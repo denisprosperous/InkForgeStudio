@@ -6,7 +6,7 @@ read this before your first commit.
 ## Setup
 
 ```bash
-nvm use                 # Node ≥ 24.9.0 (.nvmrc); npm ≥ 11.6.0
+nvm use                 # Node ≥ 22.12.0 (.nvmrc); npm ≥ 9.0.0
 npm install
 cp .env.example .env    # DATABASE_URL at minimum; provider keys optional
 npm run docker:up       # local Postgres 16

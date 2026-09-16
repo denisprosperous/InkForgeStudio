@@ -12,13 +12,19 @@ Ranked by **(Severity × Revenue Impact) ÷ Effort**. Legal/platform-risk items 
 
 ## 2. Clarification requests (blocked on user input)
 
-| #   | Question                                                                                          | Why it matters                                                                   |
-| --- | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| Q1  | Supply the "Master Directive" document cited in code (§2.2, §3.1, §3.3, §4.1, §6.3, §6.4)         | Guardrail rules reference it; it must live in-repo or the citations are dangling |
-| Q2  | Engines policy: relax to node ≥20 (matches current machine) or standardize on nvm node 24?        | Install warnings today; CI image choice                                          |
-| Q3  | AI-disclosure copy: exact wording + placement for KDP compliance (copyright page vs. back matter) | Unblocks G-06                                                                    |
-| Q4  | Target customer + pricing for v1 (self-pub authors? agencies?)                                    | Re-ranks C6–C13 deferrals                                                        |
-| Q5  | Which LLM keys are available for dev (OpenAI/Gemini/DeepSeek)?                                    | Worker integration tests need a provider; tests otherwise use injected fakes     |
+| #   | Question                                                                                   | Why it matters                                                                   |
+| --- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| Q1  | Supply the "Master Directive" document cited in code (§2.2, §3.1, §3.3, §4.1, §6.3, §6.4)  | Guardrail rules reference it; it must live in-repo or the citations are dangling |
+| Q2  | Engines policy: relax to node ≥20 (matches current machine) or standardize on nvm node 24? | Install warnings today; CI image choice                                          |
+
+> **RESOLVED 2026-09-16 (NEGENTROPY-3):** engines floor set to Node ≥ 22.12.0 /
+> npm ≥ 9.0.0 (matches the dev machine and both LTS lines); `.nvmrc` pins
+> 22.22.1; CI verifies on Node 22 **and** 24. Standardizing exclusively on 24
+> would have locked out every active LTS dev box for zero code benefit — no
+> Node-24-only API is used anywhere in the repo.
+> | Q3 | AI-disclosure copy: exact wording + placement for KDP compliance (copyright page vs. back matter) | Unblocks G-06 |
+> | Q4 | Target customer + pricing for v1 (self-pub authors? agencies?) | Re-ranks C6–C13 deferrals |
+> | Q5 | Which LLM keys are available for dev (OpenAI/Gemini/DeepSeek)? | Worker integration tests need a provider; tests otherwise use injected fakes |
 
 ## 3. Gap register (ranked)
 
@@ -51,7 +57,7 @@ Ranked by **(Severity × Revenue Impact) ÷ Effort**. Legal/platform-risk items 
 | 25   | G-25   | C2         | Reader simulation panel                                                                                                                              | Medium                        | Predictive QA before publish                                                   | L      | G-15       | 10    | —                | SPECULATIVE (med. confidence on LLM-judge reliability; deterministic scoring first) |
 | 26   | G-26   | C3         | Series bible / franchise architecture                                                                                                                | Medium                        | Retention for fiction authors                                                  | M      | G-15       | 10    | —                | Open                                                                                |
 | 27   | G-27   | C5         | AEO metadata optimizer                                                                                                                               | Medium                        | AI-driven discovery is growing                                                 | S      | G-13       | 6     | Y                | Open                                                                                |
-| 28   | G-29   | E10        | Node engines decision                                                                                                                                | Low                           | Reproducibility                                                                | S      | Q2         | 1     | Y                | Open                                                                                |
+| 28   | G-29   | E10        | Node engines decision                                                                                                                                | Low                           | Reproducibility                                                                | S      | Q2         | 1     | Y                | **Closed 09-16** — engines ≥22.12/npm ≥9, .nvmrc 22.22.1, CI matrix 22+24           |
 | 29   | G-30   | C4, C6–C13 | Cover A/B, backlist, bundles, D2C, marketplace, white-label, localization, arbitrage                                                                 | Low→Med                       | Edge plays; premature before core                                              | L each | G-21+      | DEFER | —                | Triggers in §5                                                                      |
 
 **PROHIBITED (will not be built, per protocol R4):** fake/incentivized reviews, impersonation, plagiarism tooling, TOS-violating automation. The compliance module (G-06) actively _detects and blocks_ the first three.

@@ -6,8 +6,8 @@
   "description": "Inkforge Studio — Forge books. Not prompts. The complete studio for authors publishing KDP-compliant ebooks.",
   "license": "UNLICENSED",
   "engines": {
-    "node": ">=24.9.0",
-    "npm": ">=11.6.0"
+    "node": ">=22.12.0",
+    "npm": ">=9.0.0"
   },
   "workspaces": [
     "apps/web",

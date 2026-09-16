@@ -7,7 +7,7 @@ ebooks: outline → draft → humanize → validate → export, with a multi-pro
 AI core, a tenancy-guarded Postgres backbone, and an export pipeline that
 refuses to ship an EPUB that EPUBCheck would reject.
 
-This repository is a private, npm-workspaces monorepo (Node ≥ 24.9, npm ≥ 11.6
+This repository is a private, npm-workspaces monorepo (Node ≥ 22.12, npm ≥ 9
 — see `.nvmrc` and `engines`).
 
 ---
@@ -54,8 +54,8 @@ This repository is a private, npm-workspaces monorepo (Node ≥ 24.9, npm ≥ 11
 
 ## Quickstart
 
-Prerequisites: **Node ≥ 24.9.0** (`.nvmrc`), **npm ≥ 11.6.0**, Docker (for the
-bundled Postgres) or any Postgres 16+ instance.
+Prerequisites: **Node ≥ 22.12.0** (`.nvmrc` pins the CI-verified 22.22.1),
+**npm ≥ 9.0.0**, Docker (for the bundled Postgres) or any Postgres 16+ instance.
 
 ```bash
 nvm use                     # pick up Node 24.9 from .nvmrc
@@ -135,7 +135,7 @@ suppress the rule.
   `@cloudflare/next-on-pages` output in `.vercel/output/static`, then
   `npm run deploy:web` publishes it as project `inkforge-studio`
   (`npm run preview:web` for a local preview).
-- **Forge** → any Node ≥ 24 host or container: `npm run build` then
+- **Forge** → any Node ≥ 22.12 host or container: `npm run build` then
   `npm run start`. Configure `DATABASE_URL`, `FORGE_SHARED_SECRET` (web ↔ forge
   bridge), and provider keys via environment; see `.env.example` for the full
   contract including feature flags and runtime limits.
