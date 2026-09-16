@@ -1,0 +1,22 @@
+# Local/self-hosted dependencies for Inkforge Studio.
+# Postgres is the only hard runtime dependency (see packages/db).
+#   usage: npm run docker:up
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: inkforge
+      POSTGRES_PASSWORD: inkforge
+      POSTGRES_DB: inkforge
+    ports:
+      - "5432:5432"
+    volumes:
+      - inkforge-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U inkforge -d inkforge"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  inkforge-pgdata:

@@ -1,0 +1,48 @@
+{
+  "name": "@inkforge/core",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./book": {
+      "types": "./dist/book/index.d.ts",
+      "default": "./dist/book/index.js"
+    },
+    "./humanize": {
+      "types": "./dist/humanize/index.d.ts",
+      "default": "./dist/humanize/index.js"
+    },
+    "./formatting": {
+      "types": "./dist/formatting/index.d.ts",
+      "default": "./dist/formatting/index.js"
+    },
+    "./export": {
+      "types": "./dist/export/index.d.ts",
+      "default": "./dist/export/index.js"
+    },
+    "./validate": {
+      "types": "./dist/validate/epubcheck.d.ts",
+      "default": "./dist/validate/epubcheck.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "epub-gen-memory": "1.1.2",
+    "markdown-it": "14.1.0",
+    "zod": "3.24.1"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "14.1.2",
+    "@types/node": "24.0.0",
+    "jszip": "3.10.2",
+    "typescript": "5.7.2",
+    "vitest": "2.1.8"
+  }
+}

@@ -1,0 +1,274 @@
+/**
+ * @inkforge/db — schema of record for the whole platform.
+ *
+ * Tenancy is enforced in two layers (Master Directive §6.3):
+ *  1. every user-scoped table carries `userId` and all repo queries filter on it
+ *     (guarded by the inkforge/no-unscoped-user-query eslint rule), and
+ *  2. foreign keys keep the graph consistent under concurrent workers.
+ */
+import { relations, sql } from "drizzle-orm";
+import {
+  customType,
+  index,
+  integer,
+  jsonb,
+  pgTable,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+} from "drizzle-orm/pg-core";
+
+/** Postgres bytea ↔ Node Buffer, used for assets, covers and exports. */
+const bytea = customType<{ data: Buffer; driverData: Buffer }>({
+  dataType() {
+    return "bytea";
+  },
+});
+
+const createdAt = () => timestamp("created_at", { withTimezone: true }).notNull().defaultNow();
+const updatedAt = () => timestamp("updated_at", { withTimezone: true }).notNull().defaultNow();
+
+export const users = pgTable("users", {
+  id: text("id").primaryKey(), // Stack Auth user id (or "preview-user")
+  email: text("email"),
+  displayName: text("display_name"),
+  createdAt: createdAt(),
+});
+
+export const books = pgTable(
+  "books",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id").notNull(),
+    title: text("title").notNull(),
+    subtitle: text("subtitle"),
+    author: text("author").notNull(),
+    description: text("description").notNull().default(""),
+    genre: text("genre").notNull().default("General"),
+    keywords: jsonb("keywords")
+      .notNull()
+      .default(sql`'[]'::jsonb`),
+    language: text("language").notNull().default("en"),
+    seriesLabel: text("series_label"),
+    publishTarget: text("publish_target").notNull().default("kdp"),
+    status: text("status").notNull().default("drafting"),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (table) => [index("books_user_idx").on(table.userId)],
+);
+
+export const outlines = pgTable(
+  "outlines",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    bookId: uuid("book_id").notNull(),
+    userId: text("user_id").notNull(),
+    payload: jsonb("payload").notNull(),
+    createdAt: createdAt(),
+  },
+  (table) => [index("outlines_book_idx").on(table.bookId, table.userId)],
+);
+
+export const chapters = pgTable(
+  "chapters",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    bookId: uuid("book_id").notNull(),
+    userId: text("user_id").notNull(),
+    idx: integer("idx").notNull(),
+    title: text("title").notNull(),
+    markdown: text("markdown").notNull().default(""),
+    status: text("status").notNull().default("draft"),
+    wordCount: integer("word_count").notNull().default(0),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (table) => [uniqueIndex("chapters_book_idx_unique").on(table.bookId, table.idx)],
+);
+
+export const assets = pgTable(
+  "assets",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id").notNull(),
+    bookId: uuid("book_id"),
+    kind: text("kind").notNull().default("manuscript"),
+    filename: text("filename").notNull(),
+    mimeType: text("mime_type").notNull(),
+    sizeBytes: integer("size_bytes").notNull(),
+    data: bytea("data").notNull(),
+    createdAt: createdAt(),
+  },
+  (table) => [index("assets_user_idx").on(table.userId)],
+);
+
+export const covers = pgTable(
+  "covers",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    bookId: uuid("book_id").notNull(),
+    userId: text("user_id").notNull(),
+    activeVersion: integer("active_version").notNull().default(0),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (table) => [uniqueIndex("covers_book_unique").on(table.bookId)],
+);
+
+export const coverVersions = pgTable(
+  "cover_versions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    coverId: uuid("cover_id").notNull(),
+    userId: text("user_id").notNull(),
+    version: integer("version").notNull(),
+    spec: jsonb("spec").notNull(),
+    mimeType: text("mime_type").notNull().default("image/png"),
+    image: bytea("image").notNull(),
+    widthPx: integer("width_px").notNull().default(1600),
+    heightPx: integer("height_px").notNull().default(2560),
+    createdAt: createdAt(),
+  },
+  (table) => [uniqueIndex("cover_versions_unique").on(table.coverId, table.version)],
+);
+
+export const jobs = pgTable(
+  "jobs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id").notNull(),
+    bookId: uuid("book_id"),
+    type: text("type").notNull(),
+    status: text("status").notNull().default("queued"),
+    payload: jsonb("payload").notNull(),
+    result: jsonb("result"),
+    error: text("error"),
+    attempts: integer("attempts").notNull().default(0),
+    maxAttempts: integer("max_attempts").notNull().default(3),
+    runAfter: timestamp("run_after", { withTimezone: true }).notNull().defaultNow(),
+    lockedAt: timestamp("locked_at", { withTimezone: true }),
+    lockedBy: text("locked_by"),
+    finishedAt: timestamp("finished_at", { withTimezone: true }),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (table) => [
+    index("jobs_status_runafter_idx").on(table.status, table.runAfter),
+    index("jobs_user_idx").on(table.userId),
+  ],
+);
+
+export const exports = pgTable(
+  "exports",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id").notNull(),
+    bookId: uuid("book_id").notNull(),
+    kind: text("kind").notNull().default("epub"),
+    filename: text("filename").notNull(),
+    sizeBytes: integer("size_bytes").notNull(),
+    data: bytea("data").notNull(),
+    validation: jsonb("validation"),
+    expiresAt: timestamp("expires_at", { withTimezone: true }),
+    createdAt: createdAt(),
+  },
+  (table) => [index("exports_user_idx").on(table.userId, table.bookId)],
+);
+
+export const userApiKeys = pgTable(
+  "user_api_keys",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id").notNull(),
+    label: text("label").notNull(),
+    provider: text("provider").notNull(),
+    keyCipher: text("key_cipher").notNull(),
+    keyIv: text("key_iv").notNull(),
+    keyTag: text("key_tag").notNull(),
+    lastUsedAt: timestamp("last_used_at", { withTimezone: true }),
+    revokedAt: timestamp("revoked_at", { withTimezone: true }),
+    createdAt: createdAt(),
+  },
+  (table) => [index("user_api_keys_user_idx").on(table.userId)],
+);
+
+export const humanizeRuns = pgTable(
+  "humanize_runs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id").notNull(),
+    bookId: uuid("book_id").notNull(),
+    chapterId: uuid("chapter_id").notNull(),
+    seed: integer("seed").notNull(),
+    passes: integer("passes").notNull().default(1),
+    llmRewrites: integer("llm_rewrites").notNull().default(0),
+    changedSentences: integer("changed_sentences").notNull().default(0),
+    scoreBefore: jsonb("score_before").notNull(),
+    scoreAfter: jsonb("score_after").notNull(),
+    createdAt: createdAt(),
+  },
+  (table) => [index("humanize_runs_user_idx").on(table.userId)],
+);
+
+export const auditLog = pgTable(
+  "audit_log",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id"),
+    action: text("action").notNull(),
+    targetType: text("target_type").notNull(),
+    targetId: text("target_id"),
+    meta: jsonb("meta"),
+    createdAt: createdAt(),
+  },
+  (table) => [index("audit_log_target_idx").on(table.targetType, table.targetId)],
+);
+
+/** Relational graph used by drizzle's relational query API. */
+export const booksRelations = relations(books, ({ many }) => ({
+  chapters: many(chapters),
+  exports: many(exports),
+  covers: many(covers),
+  jobs: many(jobs),
+}));
+
+export const chaptersRelations = relations(chapters, ({ one, many }) => ({
+  book: one(books, { fields: [chapters.bookId], references: [books.id] }),
+  humanizeRuns: many(humanizeRuns),
+}));
+
+export const coversRelations = relations(covers, ({ many }) => ({
+  versions: many(coverVersions),
+}));
+
+export const coverVersionsRelations = relations(coverVersions, ({ one }) => ({
+  cover: one(covers, { fields: [coverVersions.coverId], references: [covers.id] }),
+}));
+
+export const JOB_TYPES = [
+  "outline.generate",
+  "chapter.generate",
+  "chapter.humanize",
+  "cover.generate",
+  "book.export",
+] as const;
+export type JobType = (typeof JOB_TYPES)[number];
+
+export const JOB_STATUSES = ["queued", "running", "succeeded", "failed", "cancelled"] as const;
+export type JobStatus = (typeof JOB_STATUSES)[number];
+
+export const JOB_TERMINAL_STATUSES: readonly JobStatus[] = ["succeeded", "failed", "cancelled"];
+
+export const isTerminalJobStatus = (status: string): status is JobStatus =>
+  (JOB_TERMINAL_STATUSES as readonly string[]).includes(status);
+
+export const isRetryableJob = (job: {
+  attempts: number;
+  maxAttempts: number;
+  status: string;
+}): boolean => job.status === "failed" && job.attempts < job.maxAttempts;
+
+/** Used by the upload route: the boolean flag arrives from config, not env. */
+export const isFeatureEnabled = (flag: boolean | undefined): boolean => flag === true;

@@ -1,0 +1,24 @@
+{
+  "name": "@inkforge/covers",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "sharp": "0.33.5"
+  },
+  "devDependencies": {
+    "@types/node": "24.0.0",
+    "typescript": "5.7.2",
+    "vitest": "2.1.8"
+  }
+}

@@ -1,0 +1,12 @@
+node_modules
+dist
+.next
+.vercel
+.wrangler
+.next-on-pages
+coverage
+package-lock.json
+apps/web/public/fonts
+docker/epubcheck-5.2.1.zip
+playwright-report
+test-results

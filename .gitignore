@@ -1,24 +1,32 @@
-# Nestjs specific
-/dist
-/node_modules
-/build
-/tmp
+# Dependencies
+node_modules/
 
-# Logs
-logs
-*.log
-npm-debug.log*
-pnpm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
+# Build artifacts
+dist/
+.next/
+.next-standalone/
+.vercel/
+.wrangler/
+.next-on-pages/
+*.tsbuildinfo
 
-# dotenv environment variable files
+# Test artifacts
+coverage/
+playwright-report/
+test-results/
+e2e/.auth/
+
+# Environment
 .env
-.env.development
-.env.test
+.env.local
 .env.production
+!.env.example
 
-# temp directory
-.temp
-.tmp
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# Downloaded-at-build artifacts (fetched by scripts/fetch-assets.sh if absent)
+docker/epubcheck-5.2.1.zip
+apps/web/public/fonts/*.ttf
+apps/web/public/fonts/*.otf

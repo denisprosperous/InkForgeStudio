@@ -1,0 +1,16 @@
+node_modules
+.git
+.github
+dist
+.next
+.vercel
+.wrangler
+.next-on-pages
+coverage
+playwright-report
+test-results
+*.tsbuildinfo
+.env
+.env.local
+docs
+e2e/.auth

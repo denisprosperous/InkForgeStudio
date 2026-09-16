@@ -1,0 +1,59 @@
+{
+  "name": "@inkforge/forge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./app": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "epub-gen-memory": "1.1.2",
+    "@inkforge/ai": "1.0.0",
+    "@inkforge/config": "1.0.0",
+    "@inkforge/core": "1.0.0",
+    "@inkforge/covers": "1.0.0",
+    "@inkforge/db": "1.0.0",
+    "@stackframe/stack": "2.8.108",
+    "cors": "2.8.5",
+    "express": "5.0.1",
+    "express-rate-limit": "7.5.0",
+    "gray-matter": "4.0.3",
+    "helmet": "8.0.0",
+    "mammoth": "1.9.0",
+    "markdown-it": "14.1.0",
+    "multer": "2.0.0-rc.4",
+    "pino": "9.6.0",
+    "pino-http": "10.4.0",
+    "pino-pretty": "13.0.0",
+    "puppeteer": "23.11.0",
+    "sharp": "0.33.5",
+    "zod": "3.24.1"
+  },
+  "devDependencies": {
+    "@types/cors": "2.8.17",
+    "@types/express": "5.0.0",
+    "@types/markdown-it": "14.1.2",
+    "@types/multer": "1.4.12",
+    "@types/node": "24.0.0",
+    "@types/supertest": "6.0.2",
+    "supertest": "7.0.0",
+    "tsx": "4.19.2",
+    "typescript": "5.7.2",
+    "vitest": "2.1.8"
+  }
+}

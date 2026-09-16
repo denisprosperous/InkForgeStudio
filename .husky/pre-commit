@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# Inkforge Studio pre-commit gate (Master Directive §2.2)
+npx lint-staged
+npm run audit:stubs
