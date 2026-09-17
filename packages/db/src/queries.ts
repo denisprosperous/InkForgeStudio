@@ -224,7 +224,15 @@ export async function deleteChapter(
   return deleted.length > 0;
 }
 
-/** Persist a full drag-and-drop ordering in one transaction. */
+/**
+ * Persist a full drag-and-drop ordering in one transaction.
+ *
+ * `chapters_book_idx_unique` (book_id, idx) makes a naive sequential UPDATE
+ * fail the moment a swap is required, so the reorder is two-phase: park every
+ * chapter of the book in a negative band, then assign the requested order.
+ * Ids absent from `orderedIds` keep their relative order and are appended, so
+ * a partial payload can never strand a chapter at a negative index.
+ */
 export async function reorderChapters(
   db: Database,
   userId: string,
@@ -232,7 +240,23 @@ export async function reorderChapters(
   orderedIds: readonly string[],
 ): Promise<void> {
   await db.transaction(async (tx) => {
-    for (const [idx, id] of orderedIds.entries()) {
+    const existing = await tx
+      .select({ id: chapters.id })
+      .from(chapters)
+      .where(and(eq(chapters.bookId, bookId), eq(chapters.userId, userId)));
+    const known = new Set(existing.map((row) => row.id));
+    const requested = [...new Set(orderedIds)].filter((id) => known.has(id));
+    const requestedSet = new Set(requested);
+    const untouched = existing.map((row) => row.id).filter((id) => !requestedSet.has(id));
+
+    // Phase 1 — vacate the positive index band (distinct negatives, no clash).
+    await tx
+      .update(chapters)
+      .set({ idx: sql`-1 - ${chapters.idx}`, updatedAt: new Date() })
+      .where(and(eq(chapters.bookId, bookId), eq(chapters.userId, userId)));
+
+    // Phase 2 — write the final, collision-free ordering.
+    for (const [idx, id] of [...requested, ...untouched].entries()) {
       await tx
         .update(chapters)
         .set({ idx, updatedAt: new Date() })

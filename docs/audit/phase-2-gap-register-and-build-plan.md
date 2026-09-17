@@ -35,7 +35,7 @@ Ranked by **(Severity × Revenue Impact) ÷ Effort**. Legal/platform-risk items 
 | 3    | G-03   | E3         | covers/ui empty; solution graph broken                                                                                                               | Critical                      | `tsc -b` fails                                                                 | S      | —          | 0     | Y                | **Fixed 09-16**                                                                                                                                                             |
 | 4    | G-06   | B8         | No AI-disclosure layer in exports                                                                                                                    | **Critical (legal/platform)** | KDP requires disclosure of AI-generated content; omission risks account action | S      | Q3         | 1     | Y                | Open                                                                                                                                                                        |
 | 5    | G-07   | E8         | Migrations absent; DB schema undeployable                                                                                                            | Critical                      | Nothing can run against a real DB                                              | S      | —          | 1     | Y                | **Closed 09-16** — `packages/db/drizzle/0000_*.sql` + meta committed; applies clean to fresh PG16 (12 tables); seed idempotent; test: `packages/db/test/migrations.test.ts` |
-| 6    | G-04   | E4         | Forge: auth bridge + job API + worker loop                                                                                                           | Critical                      | No execution path from UI to generation                                        | M      | G-02, G-07 | 2     | —                | Shell done; routes/worker open                                                                                                                                              |
+| 6    | G-04   | E4         | Forge: auth bridge + job API + worker loop                                                                                                           | Critical                      | No execution path from UI to generation                                        | M      | G-02, G-07 | 2     | —                | **G-04a/b/c closed 09-16** — auth bridge + job API + library & manuscript routes; worker loop (G-04d) open                                                                  |
 | 7    | G-14   | B4         | Outline generator (prompts + handler + UI flow)                                                                                                      | High                          | Structure-before-prose is the product's spine                                  | M      | G-04       | 3     | —                | Open                                                                                                                                                                        |
 | 8    | G-17   | B7         | Studio UI (books, chapters, diff approve/reject)                                                                                                     | High                          | The entire author-facing surface                                               | L      | G-04, G-07 | 3     | —                | Shell only                                                                                                                                                                  |
 | 9    | G-05   | E5         | Web app shell                                                                                                                                        | Critical (was)                | —                                                                              | S      | —          | 0     | Y                | **Fixed 09-16**                                                                                                                                                             |
@@ -140,3 +140,24 @@ Ranked by **(Severity × Revenue Impact) ÷ Effort**. Legal/platform-risk items 
 ## 11. Open questions
 
 Q1–Q5 above, plus: (a) multi-currency royalty ingestion at launch? (b) is white-label (C13) a 2027 commitment? (c) localization (C10) target languages? (d) acceptable unit cost per 50k-word book — sets G-9 budget defaults.
+
+## 12. NEGENTROPY-3 progress log (autonomic closure)
+
+Append-only ledger. Each entry: gap → commit SHA → test path that proves it. The
+Status column above stays authoritative for the _whole_ gap; entries below record
+which sub-slice landed and which gate moved.
+
+| Gap (slice) | Status | Commit  | Test path                                    | Metric moved                                        |
+| ----------- | ------ | ------- | -------------------------------------------- | --------------------------------------------------- |
+| G-29        | Closed | 792238d | `npm install` on Node 22.22.1 (warning-free) | install warnings → 0                                |
+| G-07        | Closed | 6506e8f | `packages/db/test/migrations.test.ts`        | fresh-DB schema materializes; exports table exists  |
+| G-04a       | Closed | 6365262 | `apps/forge/test/auth-jobs.test.ts` (11)     | job API + bridge auth covered                       |
+| G-04b       | Closed | 081e2d2 | `apps/forge/test/library.test.ts` (6)        | books CRUD tenant-scoped                            |
+| G-04c       | Closed | pending | `apps/forge/test/manuscript.test.ts` (14)    | chapters/outline/exports covered; reorder bug fixed |
+| G-04d       | Open   | —       | —                                            | worker loop + retention + graceful drain            |
+
+Also landed in the G-04c commit: root `pretest` → `tsc -b`. Without it, `npm test`
+on a clean checkout imports `packages/*/dist` that has never been built (the
+workspace `exports` maps point at `dist`), so the suite failed for a reason that
+had nothing to do with the code under test. Gate moved: clean-checkout `npm test`
+goes from "Cannot find module" to green.

@@ -22,10 +22,12 @@
   "scripts": {
     "dev": "node scripts/dev.js",
     "build": "node scripts/build-all.js",
+    "build:libs": "tsc -b",
     "build:web": "npm run build -w @inkforge/web",
     "start": "node scripts/start.js",
     "lint": "eslint .",
     "typecheck": "tsc -b && tsc --noEmit -p apps/web",
+    "pretest": "npm run build:libs",
     "test": "vitest run --coverage",
     "test:e2e": "playwright test",
     "audit:stubs": "tsx scripts/audit-stubs.ts",
