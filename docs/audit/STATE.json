@@ -1,0 +1,295 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-09-17T09:00:00Z",
+  "campaign": "NEGENTROPY",
+  "baselineSha": "789bdc4",
+  "currentSha": "69dba4c",
+  "branch": "main",
+  "weights": { "critical": 10, "high": 5, "medium": 2, "low": 1 },
+  "gaps": {
+    "G-01": {
+      "title": "Fabricated dependency pins blocked all installs",
+      "severity": "critical",
+      "status": "closed",
+      "sha": "pre-NEG3",
+      "test": "npm install clean; lockfile pins"
+    },
+    "G-02": {
+      "title": "@inkforge/ai unbuildable (no barrel/tsconfig)",
+      "severity": "critical",
+      "status": "closed",
+      "sha": "pre-NEG3",
+      "test": "packages/ai/test + tsc -b"
+    },
+    "G-03": {
+      "title": "covers/ui empty; solution graph broken",
+      "severity": "critical",
+      "status": "closed",
+      "sha": "8dac189",
+      "test": "packages/covers/test, packages/ui/test"
+    },
+    "G-04": {
+      "title": "Forge auth bridge + job API + worker loop",
+      "severity": "critical",
+      "status": "closed",
+      "sha": "789bdc4",
+      "test": "apps/forge/test/auth-jobs.test.ts; apps/forge/test/worker.test.ts"
+    },
+    "G-05": {
+      "title": "Web app shell",
+      "severity": "medium",
+      "status": "closed",
+      "sha": "pre-NEG3",
+      "test": "apps/web/test"
+    },
+    "G-06": {
+      "title": "AI-disclosure layer for KDP exports",
+      "severity": "critical",
+      "status": "closed",
+      "sha": "69dba4c",
+      "test": "packages/core/test/disclosure.test.ts"
+    },
+    "G-07": {
+      "title": "Generated migrations; DB schema deployable",
+      "severity": "critical",
+      "status": "closed",
+      "sha": "6506e8f",
+      "test": "packages/db/test/migrations.test.ts"
+    },
+    "G-08": {
+      "title": "Provider selection + cost capture",
+      "severity": "high",
+      "status": "open",
+      "sha": null,
+      "test": null,
+      "reasonIfOpen": "Adapters exist; selection helper + cost capture open"
+    },
+    "G-09": {
+      "title": "Chapter revision history",
+      "severity": "high",
+      "status": "open",
+      "sha": null,
+      "test": null,
+      "reasonIfOpen": "Not started"
+    },
+    "G-09b": {
+      "title": "Rights & licensing tracker; corpus RAG",
+      "severity": "medium",
+      "status": "open",
+      "sha": null,
+      "test": null,
+      "reasonIfOpen": "Not started"
+    },
+    "G-10": {
+      "title": "Print PDF pipeline (trim/bleed/spine)",
+      "severity": "medium",
+      "status": "open",
+      "sha": null,
+      "test": null,
+      "reasonIfOpen": "Not started"
+    },
+    "G-11": {
+      "title": "Audiobook + DOCX + KPF export adapters",
+      "severity": "high",
+      "status": "open",
+      "sha": null,
+      "test": null,
+      "reasonIfOpen": "Not started"
+    },
+    "G-12": {
+      "title": "Token/cost accounting per job",
+      "severity": "medium",
+      "status": "open",
+      "sha": null,
+      "test": null,
+      "reasonIfOpen": "Not started"
+    },
+    "G-13": {
+      "title": "Metadata extension (extra jsonb + product schema)",
+      "severity": "medium",
+      "status": "open",
+      "sha": null,
+      "test": null,
+      "reasonIfOpen": "Not started"
+    },
+    "G-14": {
+      "title": "Outline generator",
+      "severity": "high",
+      "status": "closed",
+      "sha": "626ddc1",
+      "test": "packages/core/test/outline.test.ts; apps/forge/test/worker.test.ts"
+    },
+    "G-15": {
+      "title": "Consistency & memory engine",
+      "severity": "high",
+      "status": "open",
+      "sha": null,
+      "test": null,
+      "reasonIfOpen": "Not started"
+    },
+    "G-16": {
+      "title": "Voiceprint (target-author matching)",
+      "severity": "medium",
+      "status": "open",
+      "sha": null,
+      "test": null,
+      "reasonIfOpen": "Not started"
+    },
+    "G-17": {
+      "title": "Studio UI flows",
+      "severity": "high",
+      "status": "open",
+      "sha": null,
+      "test": null,
+      "reasonIfOpen": "Shell + primitives only (8dac189); flows not wired"
+    },
+    "G-18": {
+      "title": "ISBN/ONIX/BISAC + ONIX 3.0 export",
+      "severity": "medium",
+      "status": "open",
+      "sha": null,
+      "test": null,
+      "reasonIfOpen": "Not started"
+    },
+    "G-19": {
+      "title": "Accessibility editions",
+      "severity": "medium",
+      "status": "open",
+      "sha": null,
+      "test": null,
+      "reasonIfOpen": "Not started"
+    },
+    "G-21": {
+      "title": "Niche & revenue intelligence (pre-gen gate)",
+      "severity": "high",
+      "status": "open",
+      "sha": null,
+      "test": null,
+      "reasonIfOpen": "Trigger-gated per register §4"
+    },
+    "G-22": {
+      "title": "Sales/royalty ingestion + feedback loop",
+      "severity": "medium",
+      "status": "open",
+      "sha": null,
+      "test": null,
+      "reasonIfOpen": "Not started"
+    },
+    "G-24": {
+      "title": "Bulk portability export (zip)",
+      "severity": "medium",
+      "status": "open",
+      "sha": null,
+      "test": null,
+      "reasonIfOpen": "Not started"
+    },
+    "G-25": {
+      "title": "Reader simulation panel",
+      "severity": "medium",
+      "status": "open",
+      "sha": null,
+      "test": null,
+      "reasonIfOpen": "Not started"
+    },
+    "G-26": {
+      "title": "Series bible / franchise architecture",
+      "severity": "medium",
+      "status": "open",
+      "sha": null,
+      "test": null,
+      "reasonIfOpen": "Not started"
+    },
+    "G-27": {
+      "title": "AEO metadata optimizer",
+      "severity": "medium",
+      "status": "open",
+      "sha": null,
+      "test": null,
+      "reasonIfOpen": "Not started"
+    },
+    "G-28": {
+      "title": "CI + e2e smoke",
+      "severity": "medium",
+      "status": "open",
+      "sha": null,
+      "test": null,
+      "reasonIfOpen": "Not started"
+    },
+    "G-29": {
+      "title": "Node engines decision",
+      "severity": "low",
+      "status": "closed",
+      "sha": "792238d",
+      "test": ".nvmrc + engines + CI matrix"
+    },
+    "G-30": {
+      "title": "Cover A/B, backlist, bundles, D2C, marketplace, white-label, localization, arbitrage",
+      "severity": "low",
+      "status": "open",
+      "sha": null,
+      "test": null,
+      "reasonIfOpen": "Edge plays; trigger-gated per register §4"
+    }
+  },
+  "totals": {
+    "gapsTotal": 29,
+    "gapsClosed": 9,
+    "percentByCount": 31.0,
+    "percentByWeight": 54.4,
+    "criticalOpen": 0,
+    "highOpen": 6,
+    "mediumOpen": 13,
+    "lowOpen": 1
+  },
+  "nextPriority": [
+    "G-17",
+    "G-28",
+    "G-08",
+    "G-12",
+    "G-11",
+    "G-13",
+    "G-09",
+    "G-15",
+    "G-16",
+    "G-27",
+    "G-24",
+    "G-10",
+    "G-18",
+    "G-19"
+  ],
+  "sessions": [
+    {
+      "run": "NEG-3",
+      "startedAt": "2026-09-16T00:00:00Z",
+      "endedAt": "2026-09-17T08:45:00Z",
+      "shaBefore": "3ee05f6",
+      "shaAfter": "69dba4c",
+      "closed": ["G-29", "G-07", "G-04a", "G-04b", "G-04c", "G-14a", "G-04d", "G-06"],
+      "stillOpen": [
+        "G-17",
+        "G-28",
+        "G-08",
+        "G-12",
+        "G-11",
+        "G-13",
+        "G-09",
+        "G-15",
+        "G-16",
+        "G-27",
+        "G-24",
+        "G-10",
+        "G-18",
+        "G-19",
+        "G-21",
+        "G-22",
+        "G-25",
+        "G-26",
+        "G-30"
+      ],
+      "verification": "partial: gates green (lint/typecheck/test/stubs/dod); full battery V1-V14 and EPUBCheck not yet run",
+      "percentBefore": 0.0,
+      "percentAfter": 54.4,
+      "notes": "Auth bridge, job API, library+manuscript routes, worker loop, outline planner, AI-disclosure layer landed. tmp-g06-inspect.ts debug file accidentally committed in 69dba4c — remove on next commit."
+    }
+  ]
+}
