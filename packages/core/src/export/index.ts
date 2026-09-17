@@ -51,6 +51,9 @@ export function exportFilename(meta: BookMeta): string {
   return `${slugify(meta.title, 10) || "untitled"}-${slugify(meta.author, 4) || "author"}.epub`;
 }
 
+/** G-06 (additive): AI-disclosure layer for KDP exports. */
+export * from "./disclosure";
+
 /** Build the ordered content documents for a manuscript (exposed for tests). */
 export function buildContentDocuments(
   meta: BookMeta,
