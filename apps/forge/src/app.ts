@@ -17,6 +17,7 @@ import rateLimit from "express-rate-limit";
 import { createDb, type DbHandle } from "@inkforge/db";
 import { requireBridgeAuth } from "./auth";
 import { createJobsRouter } from "./jobs";
+import { createLibraryRouter } from "./library";
 
 export interface ForgeAppOptions {
   /** pino level; pass "silent" in tests. */
@@ -118,6 +119,7 @@ export function buildApp(options: ForgeAppOptions = {}): Express {
         maxConcurrentJobsPerUser: options.maxConcurrentJobsPerUser ?? 5,
       }),
     );
+    app.use("/", bridge, createLibraryRouter({ db: handle.db }));
   }
 
   app.use((_req: Request, res: Response) => {
