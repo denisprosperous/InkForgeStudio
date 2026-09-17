@@ -9,6 +9,8 @@
  */
 import type { LlmClient } from "@inkforge/ai";
 import { JOB_TYPES, type Database, type JobType } from "@inkforge/db";
+import { createChapterHandler } from "./handlers/chapter";
+import { createExportHandler } from "./handlers/export";
 import { createOutlineHandler } from "./handlers/outline";
 import { createWorker, type Worker } from "./loop";
 import {
@@ -18,7 +20,7 @@ import {
   type WorkerLogger,
 } from "./registry";
 
-export { createWorker, type Worker, type TickResult } from "./loop";
+export { createWorker, type Worker } from "./loop";
 export type { WorkerOptions } from "./loop";
 export {
   createHandlerRegistry,
@@ -31,12 +33,16 @@ export {
   type WorkerLogger,
 } from "./registry";
 export { createOutlineHandler, planOutline, outlineRequestFromJob } from "./handlers/outline";
+export { createChapterHandler } from "./handlers/chapter";
+export { createExportHandler } from "./handlers/export";
 
 export interface ForgeWorkerOptions {
   readonly db: Database;
   readonly logger: WorkerLogger;
   /** Resolved LLM client, or undefined to run fully deterministic. */
   readonly llm?: LlmClient | undefined;
+  /** G-06 disclosure toggle for exports; ON by default (KDP target). */
+  readonly disclosure?: boolean | undefined;
   readonly workerId?: string;
   readonly pollIntervalMs?: number;
   readonly batchSize?: number;
@@ -56,17 +62,19 @@ export interface ForgeWorkerOptions {
  * become "shipped".
  */
 const PENDING_HANDLERS: Partial<Record<JobType, string>> = {
-  "chapter.generate": "chapter.generate handler not yet registered",
   "chapter.humanize": "chapter.humanize handler not yet registered",
   "cover.generate": "cover.generate handler not yet registered",
-  "book.export": "book.export handler not yet registered",
 };
 
 /** Build the registry for a worker, honouring `overrides` last. */
 export function createForgeHandlers(options: ForgeWorkerOptions) {
   const registry = createHandlerRegistry();
   const outline = createOutlineHandler({ llm: options.llm });
+  const chapter = createChapterHandler({ llm: options.llm });
+  const bookExport = createExportHandler({ disclosure: options.disclosure });
   registry.register("outline.generate", outline);
+  registry.register("chapter.generate", chapter);
+  registry.register("book.export", bookExport);
   for (const type of JOB_TYPES) {
     const pending = PENDING_HANDLERS[type];
     if (pending !== undefined) registry.register(type, unavailableHandler(pending));

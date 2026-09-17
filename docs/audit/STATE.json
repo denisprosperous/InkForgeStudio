@@ -5,7 +5,12 @@
   "baselineSha": "789bdc4",
   "currentSha": "69dba4c",
   "branch": "main",
-  "weights": { "critical": 10, "high": 5, "medium": 2, "low": 1 },
+  "weights": {
+    "critical": 10,
+    "high": 5,
+    "medium": 2,
+    "low": 1
+  },
   "gaps": {
     "G-01": {
       "title": "Fabricated dependency pins blocked all installs",
@@ -229,13 +234,20 @@
       "sha": null,
       "test": null,
       "reasonIfOpen": "Edge plays; trigger-gated per register §4"
+    },
+    "G-17a": {
+      "title": "Worker handlers: chapter.generate + book.export (G-17 slice a)",
+      "severity": "high",
+      "status": "closed",
+      "sha": "PENDING",
+      "test": "apps/forge/test/handlers.test.ts"
     }
   },
   "totals": {
     "gapsTotal": 29,
     "gapsClosed": 9,
-    "percentByCount": 31.0,
-    "percentByWeight": 54.4,
+    "percentByCount": 31,
+    "percentByWeight": 56.2,
     "criticalOpen": 0,
     "highOpen": 6,
     "mediumOpen": 13,
@@ -287,7 +299,7 @@
         "G-30"
       ],
       "verification": "partial: gates green (lint/typecheck/test/stubs/dod); full battery V1-V14 and EPUBCheck not yet run",
-      "percentBefore": 0.0,
+      "percentBefore": 0,
       "percentAfter": 54.4,
       "notes": "Auth bridge, job API, library+manuscript routes, worker loop, outline planner, AI-disclosure layer landed. tmp-g06-inspect.ts debug file accidentally committed in 69dba4c — remove on next commit."
     }
