@@ -7,7 +7,7 @@
  * the genuinely system-scoped worker queries below carry explicit,
  * justified eslint-disable lines.
  */
-import { and, asc, count, desc, eq, isNull, lte, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, inArray, isNull, lte, or, sql } from "drizzle-orm";
 import type { Database } from "./client";
 import {
   assets,
@@ -344,12 +344,28 @@ export function runningJobCount(db: Database, userId: string): Promise<number> {
  * competes for work across ALL users — per-user concurrency caps are applied
  * by the scheduler before enqueue, not by this claim — so no userId filter
  * applies here. (Master Directive §6.4)
+ *
+ * Two details make this safe for a fleet:
+ *  - the outer UPDATE re-asserts `status = 'queued'`, so when a second worker's
+ *    statement re-reads rows after the first worker commits (READ COMMITTED),
+ *    the already-claimed rows are skipped instead of double-processed;
+ *  - everything is composed from typed builders (`lte`, `inArray`) rather than
+ *    raw `sql`, so `run_after` is bound as a timestamptz.
  */
 export async function claimDueJobs(
   db: Database,
   input: { workerId: string; limit: number; now?: Date },
 ): Promise<JobRow[]> {
   const now = input.now ?? new Date();
+  // System scope by design — the candidate scan is worker-queue internals; the
+  // fleet competes for due jobs across ALL users (§6.4, JSDoc above).
+  // eslint-disable-next-line inkforge/no-unscoped-user-query
+  const due = db
+    .select({ id: jobs.id })
+    .from(jobs)
+    .where(and(eq(jobs.status, "queued"), lte(jobs.runAfter, now)))
+    .orderBy(asc(jobs.runAfter))
+    .limit(input.limit);
   // System scope by design — the fleet worker competes for due jobs across
   // ALL users; per-user caps are applied before enqueue (JSDoc above, §6.4).
   // eslint-disable-next-line inkforge/no-unscoped-user-query
@@ -362,14 +378,7 @@ export async function claimDueJobs(
       attempts: sql`${jobs.attempts} + 1`,
       updatedAt: now,
     })
-    .where(
-      sql`${jobs.id} in (
-        select ${jobs.id} from ${jobs}
-        where ${jobs.status} = 'queued' and ${jobs.runAfter} <= ${now}
-        order by ${jobs.runAfter} asc
-        limit ${input.limit}
-      )`,
-    )
+    .where(and(eq(jobs.status, "queued"), inArray(jobs.id, due)))
     .returning();
   return claimed;
 }
@@ -394,6 +403,23 @@ export async function reclaimStaleJobs(db: Database, staleBefore: Date): Promise
   return reclaimed.length;
 }
 
+/**
+ * Count leases still held in `running` by one worker id.
+ *
+ * System-scope query (worker internals): the drain check inspects only leases
+ * held by THIS worker id, which has no tenancy dimension to filter on.
+ * (Master Directive §6.4)
+ */
+export async function countRunningLeases(db: Database, workerId: string): Promise<number> {
+  // System scope by design — a worker's own leases span all tenants it claimed.
+  // eslint-disable-next-line inkforge/no-unscoped-user-query
+  const rows = await db
+    .select({ id: jobs.id })
+    .from(jobs)
+    .where(and(eq(jobs.status, "running"), eq(jobs.lockedBy, workerId)));
+  return rows.length;
+}
+
 /** Mark a claimed job succeeded, scoped to its owner. */
 export async function finishJob(
   db: Database,
@@ -415,14 +441,20 @@ export async function finishJob(
   return finished[0];
 }
 
-/** Fail a job; requeue with backoff while attempts remain. */
+/**
+ * Fail a job; requeue with backoff while attempts remain.
+ *
+ * `terminal: true` forces `failed` even when attempts remain — used when a
+ * retry cannot possibly help (no handler registered, malformed payload).
+ */
 export async function failJob(
   db: Database,
   userId: string,
   jobId: string,
   error: string,
-  options: { retryInMs: number } = { retryInMs: 60_000 },
+  options: { retryInMs?: number; terminal?: boolean } = {},
 ): Promise<JobRow | undefined> {
+  const retryInMs = options.retryInMs ?? 60_000;
   const current = await db
     .select()
     .from(jobs)
@@ -430,8 +462,8 @@ export async function failJob(
     .limit(1)
     .then((rows) => rows[0]);
   if (!current) return undefined;
-  const canRetry = current.attempts < current.maxAttempts;
-  const retryAt = new Date(Date.now() + options.retryInMs);
+  const canRetry = options.terminal !== true && current.attempts < current.maxAttempts;
+  const retryAt = new Date(Date.now() + retryInMs);
   const updated = await db
     .update(jobs)
     .set(

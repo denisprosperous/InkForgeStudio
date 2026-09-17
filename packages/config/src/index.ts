@@ -58,6 +58,10 @@ export const envSchema = z.object({
   FORGE_BASE_URL: z.string().default("http://localhost:4000"),
   FORGE_SHARED_SECRET: optionalSecret,
   FORGE_PORT: intFrom(4000, 1, 65535),
+  /** Worker poll interval; the floor keeps a busy loop off a 1-vCPU box. */
+  WORKER_POLL_MS: intFrom(1_000, 100, 60_000),
+  /** Optional pin; falls back to provider config order when unset/unknown. */
+  DEFAULT_AI_PROVIDER: z.string().default(""),
 
   // ── Encryption for stored user keys ──────────────────────────────
   KEY_ENCRYPTION_SECRET: optionalSecret,
@@ -76,6 +80,14 @@ export const envSchema = z.object({
   MAX_CONCURRENT_JOBS_PER_USER: intFrom(5, 1, 100),
   MAX_UPLOAD_MB: intFrom(20, 1, 512),
   EXPORT_URL_TTL_SECONDS: intFrom(900, 30, 86_400),
+
+  // ── Worker (G-04d) — safe defaults; leave unset in local dev ─────
+  WORKER_ENABLED: booleanish(true),
+  WORKER_POLL_INTERVAL_MS: intFrom(1_000, 100, 600_000),
+  WORKER_BATCH_SIZE: intFrom(4, 1, 64),
+  WORKER_LEASE_MS: intFrom(300_000, 30_000, 3_600_000),
+  WORKER_RETENTION_INTERVAL_MS: intFrom(3_600_000, 60_000, 86_400_000),
+  WORKER_RETRY_BACKOFF_MS: intFrom(60_000, 1_000, 3_600_000),
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -122,6 +134,15 @@ export interface AppConfig {
     readonly maxConcurrentJobsPerUser: number;
     readonly maxUploadMb: number;
     readonly exportUrlTtlSeconds: number;
+  };
+  /** Job worker loop (G-04d). Defaults are production-safe. */
+  readonly worker: {
+    readonly enabled: boolean;
+    readonly pollIntervalMs: number;
+    readonly batchSize: number;
+    readonly leaseMs: number;
+    readonly retentionIntervalMs: number;
+    readonly retryBackoffMs: number;
   };
 }
 
@@ -204,6 +225,14 @@ export function loadConfig(source: Record<string, string | undefined> = process.
       maxConcurrentJobsPerUser: env.MAX_CONCURRENT_JOBS_PER_USER,
       maxUploadMb: env.MAX_UPLOAD_MB,
       exportUrlTtlSeconds: env.EXPORT_URL_TTL_SECONDS,
+    }),
+    worker: Object.freeze({
+      enabled: env.WORKER_ENABLED,
+      pollIntervalMs: env.WORKER_POLL_INTERVAL_MS,
+      batchSize: env.WORKER_BATCH_SIZE,
+      leaseMs: env.WORKER_LEASE_MS,
+      retentionIntervalMs: env.WORKER_RETENTION_INTERVAL_MS,
+      retryBackoffMs: env.WORKER_RETRY_BACKOFF_MS,
     }),
   });
 }

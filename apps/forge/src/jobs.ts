@@ -170,3 +170,48 @@ export function serializeJob(job: {
     finishedAt: job.finishedAt ? job.finishedAt.toISOString() : null,
   };
 }
+// ── worker control routes (G-04d) ────────────────────────────────────
+
+export interface WorkerControlOptions {
+  /** Called on POST /worker/tick for cron-style deployments. */
+  readonly onTick?: () => Promise<unknown>;
+  /** Cheap liveness probe; must not touch the database. */
+  readonly startedAt: Date;
+}
+
+/**
+ * Worker control surface, mounted behind the same bridge auth as /jobs.
+ *
+ * `/worker/health` is intentionally config-only (no DB round trip) so an
+ * orchestrator can tell "process alive" from "database reachable" — the latter
+ * is what the readiness probe answers. `/worker/tick` lets a cron scheduler
+ * drive the queue when the in-process loop is disabled, which is also how the
+ * drain test advances the queue deterministically.
+ */
+export function createWorkerControlRouter(options: WorkerControlOptions): Router {
+  const router = Router();
+
+  router.get("/health", (_req: Request, res: Response) => {
+    res.status(200).json({
+      status: "ok",
+      uptimeSeconds: Math.round((Date.now() - options.startedAt.getTime()) / 1000),
+      tick: typeof options.onTick === "function",
+    });
+  });
+
+  router.post("/tick", async (_req: Request, res: Response) => {
+    if (typeof options.onTick !== "function") {
+      res.status(409).json({ error: "worker_loop_disabled" });
+      return;
+    }
+    try {
+      res.status(200).json({ tick: (await options.onTick()) ?? null });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ error: "tick_failed", detail: error instanceof Error ? error.message : "unknown" });
+    }
+  });
+
+  return router;
+}

@@ -16,7 +16,7 @@ import pino from "pino";
 import rateLimit from "express-rate-limit";
 import { createDb, type DbHandle } from "@inkforge/db";
 import { requireBridgeAuth } from "./auth";
-import { createJobsRouter } from "./jobs";
+import { createJobsRouter, createWorkerControlRouter } from "./jobs";
 import { createLibraryRouter } from "./library";
 import { createChapterRouter, createExportsRouter, createOutlineRouter } from "./manuscript";
 
@@ -31,6 +31,8 @@ export interface ForgeAppOptions {
   readonly sharedSecret?: string | undefined;
   /** Per-user in-flight job cap (G-04). */
   readonly maxConcurrentJobsPerUser?: number;
+  /** Cron-style worker control (G-04d); absent → /worker/tick reports disabled. */
+  readonly workerTick?: (() => Promise<unknown>) | undefined;
 }
 
 const START = Date.now();
@@ -124,6 +126,14 @@ export function buildApp(options: ForgeAppOptions = {}): Express {
     app.use("/books/:bookId/chapters", bridge, createChapterRouter({ db: handle.db }));
     app.use("/books/:bookId/outline", bridge, createOutlineRouter({ db: handle.db }));
     app.use("/", bridge, createExportsRouter({ db: handle.db }));
+    app.use(
+      "/worker",
+      bridge,
+      createWorkerControlRouter({
+        startedAt: new Date(START),
+        ...(options.workerTick !== undefined ? { onTick: options.workerTick } : {}),
+      }),
+    );
   }
 
   app.use((_req: Request, res: Response) => {
