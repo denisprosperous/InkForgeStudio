@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-18T09:05:00Z",
+  "updatedAt": "2026-09-18T09:35:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
   "currentSha": "69dba4c",
@@ -65,7 +65,7 @@
       "title": "Provider selection + cost capture",
       "severity": "high",
       "status": "closed",
-      "sha": "THIS_COMMIT",
+      "sha": "6c94f35",
       "test": "packages/ai/test/selection.test.ts; apps/forge/test/llm-selection.test.ts (PG16)"
     },
     "G-09": {
