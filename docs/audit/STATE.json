@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-18T06:40:00Z",
+  "updatedAt": "2026-09-18T08:35:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
   "currentSha": "69dba4c",
@@ -144,7 +144,7 @@
       "title": "Studio UI flows",
       "severity": "high",
       "status": "closed",
-      "sha": "THIS_COMMIT",
+      "sha": "14aa2c1",
       "test": "apps/web/test/flows.test.ts; apps/forge/test/humanize-handler.test.ts (PG16)"
     },
     "G-18": {
@@ -243,17 +243,16 @@
     }
   },
   "totals": {
-    "gapsTotal": 29,
-    "gapsClosed": 9,
-    "percentByCount": 31,
-    "percentByWeight": 56.2,
+    "gapsTotal": 30,
+    "gapsClosed": 11,
+    "percentByCount": 36.7,
+    "percentByWeight": 62.4,
     "criticalOpen": 0,
-    "highOpen": 6,
+    "highOpen": 5,
     "mediumOpen": 13,
     "lowOpen": 1
   },
   "nextPriority": [
-    "G-17",
     "G-28",
     "G-08",
     "G-12",
