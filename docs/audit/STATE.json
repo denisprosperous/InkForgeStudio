@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-18T08:35:00Z",
+  "updatedAt": "2026-09-18T09:05:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
   "currentSha": "69dba4c",
@@ -215,7 +215,7 @@
       "title": "CI + e2e smoke",
       "severity": "medium",
       "status": "closed",
-      "sha": "THIS_COMMIT",
+      "sha": "f2072ea",
       "test": "e2e/smoke.spec.ts (2 passed on WEB_PORT=3100); .github/workflows/ci.yml"
     },
     "G-29": {
