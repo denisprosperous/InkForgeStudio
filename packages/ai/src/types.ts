@@ -9,6 +9,12 @@
 
 export type ProviderId = "openai" | "gemini" | "deepseek" | "local";
 
+/** Token usage reported by a provider, normalised across vendors (G-08). */
+export interface TokenUsage {
+  readonly promptTokens: number;
+  readonly completionTokens: number;
+}
+
 export interface CompletionOptions {
   readonly temperature?: number;
   readonly maxTokens?: number;
@@ -20,6 +26,8 @@ export interface ChatCompletionResult {
   readonly text: string;
   readonly provider: ProviderId;
   readonly model: string;
+  /** Present when the vendor reported it (G-08 cost capture). */
+  readonly usage?: TokenUsage;
 }
 
 export interface ChatTransport {
@@ -30,7 +38,10 @@ export interface ChatTransport {
     max_tokens?: number;
     response_format?: { type: "json_object" };
     signal?: AbortSignal;
-  }): Promise<{ choices?: ReadonlyArray<{ message?: { content?: string | null } }> }>;
+  }): Promise<{
+    choices?: ReadonlyArray<{ message?: { content?: string | null } }>;
+    usage?: { prompt_tokens?: number; completion_tokens?: number };
+  }>;
 }
 
 export interface GeminiTransport {
@@ -41,7 +52,10 @@ export interface GeminiTransport {
     maxOutputTokens?: number;
     json: boolean;
     signal?: AbortSignal;
-  }): Promise<{ text?: string }>;
+  }): Promise<{
+    text?: string;
+    usageMetadata?: { promptTokenCount?: number; candidatesTokenCount?: number };
+  }>;
 }
 
 export interface LlmClient {

@@ -15,7 +15,21 @@ export {
   type GeminiTransport,
   type LlmClient,
   type ProviderId,
+  type TokenUsage,
 } from "./types";
+export {
+  addUsage,
+  clientForPlan,
+  estimateCostMicros,
+  makeLocalClient,
+  selectProviderPlan,
+  PROVIDER_PRICING,
+  type ProviderCandidate,
+  type ProviderPrice,
+  type SelectionPlan,
+  type SelectionRequest,
+  type SelectionSource,
+} from "./selection";
 export {
   makeDeepseekClient,
   makeGeminiClient,

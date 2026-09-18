@@ -64,10 +64,9 @@
     "G-08": {
       "title": "Provider selection + cost capture",
       "severity": "high",
-      "status": "open",
-      "sha": null,
-      "test": null,
-      "reasonIfOpen": "Adapters exist; selection helper + cost capture open"
+      "status": "closed",
+      "sha": "THIS_COMMIT",
+      "test": "packages/ai/test/selection.test.ts; apps/forge/test/llm-selection.test.ts (PG16)"
     },
     "G-09": {
       "title": "Chapter revision history",
@@ -243,16 +242,15 @@
   },
   "totals": {
     "gapsTotal": 30,
-    "gapsClosed": 12,
-    "percentByCount": 40,
-    "percentByWeight": 64,
+    "gapsClosed": 13,
+    "percentByCount": 43.3,
+    "percentByWeight": 68,
     "criticalOpen": 0,
-    "highOpen": 5,
+    "highOpen": 4,
     "mediumOpen": 12,
     "lowOpen": 1
   },
   "nextPriority": [
-    "G-08",
     "G-12",
     "G-11",
     "G-13",

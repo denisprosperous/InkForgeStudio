@@ -10,6 +10,7 @@
 import { loadConfig, loadDotenv } from "@inkforge/config";
 import { createDb } from "@inkforge/db";
 import { buildApp } from "./app";
+import { resolveLlm } from "./worker/llm";
 import { createForgeWorker, type Worker } from "./worker/index";
 
 const SHUTDOWN_DEADLINE_MS = 30_000;
@@ -55,9 +56,19 @@ async function main(): Promise<void> {
   if (config.worker.enabled) {
     const handle = createDb(config.databaseUrl, { max: 5 });
     pool = handle;
+    // G-08: resolve the provider chain once at boot (platform keys in config
+    // order, then the flag-gated local fallback). Undefined is a valid state:
+    // handlers run deterministically without a model.
+    const llm = resolveLlm(config);
+    console.info(
+      llm
+        ? `forge: worker llm provider=${llm.provider} model=${llm.model} source=${llm.source}`
+        : "forge: worker llm=none (deterministic planners only)",
+    );
     worker = createForgeWorker({
       db: handle.db,
       logger: bootstrapLogger("info"),
+      ...(llm !== undefined ? { llm: llm.client } : {}),
       pollIntervalMs: config.worker.pollIntervalMs,
       batchSize: config.worker.batchSize,
       leaseMs: config.worker.leaseMs,

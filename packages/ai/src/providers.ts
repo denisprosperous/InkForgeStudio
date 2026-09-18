@@ -57,7 +57,18 @@ function openAiCompatible(provider: ProviderId, options: OpenAiClientOptions): L
         if (text.trim() === "") {
           throw new ProviderError(provider, "Empty completion");
         }
-        return { text, provider, model };
+        const usage = response.usage
+          ? {
+              promptTokens: response.usage.prompt_tokens ?? 0,
+              completionTokens: response.usage.completion_tokens ?? 0,
+            }
+          : undefined;
+        return {
+          text,
+          provider,
+          model,
+          ...(usage !== undefined ? { usage } : {}),
+        };
       } catch (error) {
         if (error instanceof ProviderError) throw error;
         throw new ProviderError(
@@ -146,7 +157,18 @@ export function makeGeminiClient(options: GeminiClientOptions): LlmClient {
         if (text.trim() === "") {
           throw new ProviderError("gemini", "Empty completion");
         }
-        return { text, provider: "gemini", model: options.model };
+        const usage = response.usageMetadata
+          ? {
+              promptTokens: response.usageMetadata.promptTokenCount ?? 0,
+              completionTokens: response.usageMetadata.candidatesTokenCount ?? 0,
+            }
+          : undefined;
+        return {
+          text,
+          provider: "gemini",
+          model: options.model,
+          ...(usage !== undefined ? { usage } : {}),
+        };
       } catch (error) {
         if (error instanceof ProviderError) throw error;
         throw new ProviderError(
