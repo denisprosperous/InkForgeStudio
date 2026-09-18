@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-17T09:00:00Z",
+  "updatedAt": "2026-09-18T06:40:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
   "currentSha": "69dba4c",
@@ -239,8 +239,8 @@
       "title": "Worker handlers: chapter.generate + book.export (G-17 slice a)",
       "severity": "high",
       "status": "closed",
-      "sha": "PENDING",
-      "test": "apps/forge/test/handlers.test.ts"
+      "sha": "960de1f",
+      "test": "apps/forge/test/handlers.test.ts; apps/forge/test/worker.test.ts (PG16: 18/18 green)"
     }
   },
   "totals": {

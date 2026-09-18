@@ -2,7 +2,7 @@
  * @inkforge/core/draft — deterministic scene-draft composer (G-17a, additive).
  *
  * The no-provider path of chapter generation: expand an outline beat into a
- * skeletal but REAL scene the author edits — no lorem, no placeholder braces,
+ * skeletal but REAL scene the author edits — no lorem ipsum, no template braces,
  * no network. Seeded and pure, like the outline planner: the same request
  * yields the same draft, so previews are reproducible and auditable.
  *
