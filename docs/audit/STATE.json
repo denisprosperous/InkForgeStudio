@@ -143,10 +143,9 @@
     "G-17": {
       "title": "Studio UI flows",
       "severity": "high",
-      "status": "open",
-      "sha": null,
-      "test": null,
-      "reasonIfOpen": "Shell + primitives only (8dac189); flows not wired"
+      "status": "closed",
+      "sha": "THIS_COMMIT",
+      "test": "apps/web/test/flows.test.ts; apps/forge/test/humanize-handler.test.ts (PG16)"
     },
     "G-18": {
       "title": "ISBN/ONIX/BISAC + ONIX 3.0 export",

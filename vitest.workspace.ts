@@ -1,6 +1,22 @@
 import { defineWorkspace } from "vitest/config";
+import path from "node:path";
+
+const WEB_ROOT = path.resolve(__dirname, "apps/web");
 
 export default defineWorkspace([
+  {
+    resolve: {
+      alias: [
+        { find: /^@$/, replacement: WEB_ROOT + "/src" },
+        { find: /^@\/(.*)$/, replacement: WEB_ROOT + "/src/$1" },
+      ],
+    },
+    test: {
+      name: "web",
+      environment: "node",
+      include: ["apps/web/test/**/*.test.ts"],
+    },
+  },
   {
     test: {
       name: "config",
@@ -49,13 +65,6 @@ export default defineWorkspace([
       environment: "node",
       include: ["apps/forge/test/**/*.test.ts"],
       testTimeout: 20_000,
-    },
-  },
-  {
-    test: {
-      name: "web",
-      environment: "node",
-      include: ["apps/web/test/**/*.test.ts"],
     },
   },
 ]);

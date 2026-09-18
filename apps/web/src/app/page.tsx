@@ -53,6 +53,14 @@ export default async function StudioHome() {
         {health.detail}
       </div>
 
+      <a
+        href="/studio"
+        data-testid="open-studio"
+        className="bg-ink-600 hover:bg-ink-700 rounded-lg px-5 py-2.5 text-sm font-semibold text-white"
+      >
+        Open the studio →
+      </a>
+
       <ol className="grid w-full gap-3 text-left">
         {PIPELINE.map((item) => (
           <li

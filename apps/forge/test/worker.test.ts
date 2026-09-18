@@ -107,11 +107,12 @@ d("worker loop", () => {
   });
 
   it("fails an unregistered job type immediately, without burning retries", async () => {
-    // `chapter.humanize` is registered as unavailable, not missing — the queue
-    // must say so rather than look like an unhandled type. (chapter.generate
-    // and book.export grew real handlers in G-17a.)
+    // `cover.generate` is the last handler registered as *unavailable* — the
+    // queue must say so rather than look like an unhandled type.
+    // (chapter.humanize grew a real handler in G-17; chapter.generate and
+    // book.export grew theirs in G-17a.)
     const worker = workerFor();
-    const job = await enqueueJob(db, user, { bookId, type: "chapter.humanize", payload: {} });
+    const job = await enqueueJob(db, user, { bookId, type: "cover.generate", payload: {} });
 
     const tick = await worker.tick();
     expect(tick.failed).toBeGreaterThanOrEqual(1);
