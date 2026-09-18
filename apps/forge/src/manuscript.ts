@@ -220,7 +220,11 @@ export function createExportsRouter(options: LibraryRouterOptions): Router {
     const mime =
       row.kind === "docx"
         ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-        : "application/epub+zip";
+        : row.kind === "audio-script"
+          ? "text/plain; charset=utf-8"
+          : row.kind === "kpf"
+            ? "application/x-kpf"
+            : "application/epub+zip";
     res.status(200);
     res.setHeader("Content-Type", mime);
     res.setHeader("Content-Disposition", `attachment; filename="${row.filename}"`);

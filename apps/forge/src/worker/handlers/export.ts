@@ -8,7 +8,10 @@
  * terminal step of idea → validated EPUB.
  */
 import {
+  buildAudioScript,
   buildDisclosedEpub,
+  buildDocx,
+  buildKpf,
   chapterSchema,
   parseBookMeta,
   validateEpub,
@@ -19,7 +22,7 @@ import { z } from "zod";
 import { HandlerError, type JobContext } from "../registry";
 
 const exportRequestSchema = z.object({
-  format: z.literal("epub").default("epub"),
+  format: z.enum(["epub", "docx", "audio-script", "kpf"]).default("epub"),
   validate: z.boolean().default(true),
 });
 
@@ -46,9 +49,13 @@ export function createExportHandler(options: ExportHandlerOptions = {}) {
       throw new HandlerError("book.export: job has no bookId", { retryable: false });
     }
     const parsed = exportRequestSchema.safeParse(job.payload ?? {});
-    if (!parsed.success || parsed.data.format !== "epub") {
-      throw new HandlerError("book.export: unsupported format", { retryable: false });
+    if (!parsed.success) {
+      throw new HandlerError(
+        `book.export: invalid payload (${parsed.error.issues[0]?.message ?? "invalid"})`,
+        { retryable: false },
+      );
     }
+    const format = parsed.data.format;
     const bookRows = await getBook(db, job.userId, job.bookId);
     const book = bookRows[0];
     if (!book) {
@@ -73,24 +80,90 @@ export function createExportHandler(options: ExportHandlerOptions = {}) {
       publishTarget: book.publishTarget,
     });
 
-    const { buffer, manifest } = await buildDisclosedEpub(
-      { meta, chapters: toCoreChapters(chapterRows) },
-      { enabled: options.disclosure ?? true },
-    );
+    const chapters = toCoreChapters(chapterRows);
+    const disclosureOptions = { enabled: options.disclosure ?? true };
 
-    const validation = parsed.data.validate
-      ? await validateEpub(buffer)
-      : {
-          status: "skipped" as const,
-          reason: "validation disabled by request",
-          durationMs: 0,
-          messages: [],
-        };
+    // The EPUB is the only validated path (EPUBCheck); the other formats are
+    // deterministic builds from the same rows — no network, no side effects.
+    let buffer: Buffer;
+    let manifest: {
+      filename: string;
+      bytes: number;
+      words: number;
+      chapters: number;
+      aiDisclosure: boolean;
+      documentIds: readonly string[];
+    };
+    if (format === "epub") {
+      const epub = await buildDisclosedEpub({ meta, chapters }, disclosureOptions);
+      buffer = epub.buffer;
+      manifest = {
+        filename: epub.manifest.filename,
+        bytes: epub.manifest.bytes,
+        words: epub.manifest.words,
+        chapters: epub.manifest.chapters,
+        aiDisclosure: epub.manifest.aiDisclosure,
+        documentIds: epub.manifest.documentIds,
+      };
+    } else if (format === "docx") {
+      const docx = buildDocx({ meta, chapters }, disclosureOptions);
+      buffer = docx.buffer;
+      manifest = {
+        filename: docx.manifest.filename,
+        bytes: docx.manifest.bytes,
+        words: docx.manifest.words,
+        chapters: docx.manifest.chapters,
+        aiDisclosure: docx.manifest.aiDisclosure,
+        documentIds: (docx.manifest.detail.parts as string[]) ?? [],
+      };
+    } else if (format === "audio-script") {
+      const script = buildAudioScript({ meta, chapters });
+      buffer = Buffer.from(script.text, "utf8");
+      manifest = {
+        filename: script.manifest.filename,
+        bytes: Buffer.byteLength(script.text),
+        words: script.manifest.words,
+        chapters: script.manifest.chapters,
+        aiDisclosure: false,
+        documentIds: [],
+      };
+    } else {
+      const kpf = buildKpf({ meta, chapters }, disclosureOptions);
+      buffer = kpf.buffer;
+      manifest = {
+        filename: kpf.manifest.filename,
+        bytes: kpf.manifest.bytes,
+        words: kpf.manifest.words,
+        chapters: kpf.manifest.chapters,
+        aiDisclosure: kpf.manifest.aiDisclosure,
+        documentIds: (kpf.manifest.detail.entries as string[]) ?? [],
+      };
+    }
+
+    // Only the EPUB carries the EPUBCheck gate; the other formats record
+    // why validation was skipped so the row never looks silently unvalidated.
+    const validation =
+      format === "epub"
+        ? parsed.data.validate
+          ? await validateEpub(buffer)
+          : {
+              status: "skipped" as const,
+              reason: "validation disabled by request",
+              durationMs: 0,
+              messages: [],
+            }
+        : {
+            status: "skipped" as const,
+            reason: `${format} has no epubcheck gate`,
+            durationMs: 0,
+            messages: [],
+          };
 
     const row = await saveExport(db, job.userId, {
       bookId: job.bookId,
       filename: manifest.filename,
       data: buffer,
+      kind: format,
       validation: { epubcheck: validation.status },
       expiresAt: null,
     });

@@ -266,10 +266,21 @@ export default async function BookPage({
             ))}
           </ul>
         )}
-        <form action={exportBookAction} className="mt-4">
+        <form action={exportBookAction} className="mt-4 flex flex-wrap items-center gap-2">
           <input type="hidden" name="bookId" value={book.id} />
+          <select
+            name="format"
+            className="rounded-lg border border-neutral-300 px-3 py-2 text-sm"
+            defaultValue="epub"
+            aria-label="Export format"
+          >
+            <option value="epub">EPUB (KDP gate)</option>
+            <option value="docx">DOCX (editors)</option>
+            <option value="audio-script">Audio script</option>
+            <option value="kpf">KPF container</option>
+          </select>
           <button type="submit" className={buttonClass} disabled={chapters.length === 0}>
-            Export EPUB
+            Export
           </button>
         </form>
       </Panel>

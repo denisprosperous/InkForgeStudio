@@ -259,6 +259,24 @@ d("worker handlers: chapter.generate + book.export", () => {
     expect(spend).toBeGreaterThanOrEqual(job.costMicros);
   });
 
+  it("stores a DOCX artifact when book.export asks for that format (G-11)", async () => {
+    const enqueued = await enqueueJob(handle.db, user, {
+      bookId,
+      type: "book.export",
+      payload: { format: "docx" },
+    });
+    const tick = await workerFor().tick();
+    expect(tick.succeeded).toBeGreaterThanOrEqual(1);
+    const job = await jobAfter(enqueued.id);
+    expect(job.status).toBe("succeeded");
+    const list = await listExports(handle.db, user, bookId);
+    const docx = list.find((row) => row.kind === "docx");
+    expect(docx).toBeDefined();
+    expect(docx!.filename).toBe("quiet-machines-mara-vane.docx");
+    expect(docx!.data.subarray(0, 2).toString("binary")).toBe("PK");
+    expect((docx!.validation as { epubcheck?: string }).epubcheck).toBe("skipped");
+  });
+
   it("no rows leak across tenants after the whole run", async () => {
     const rows = await handle.db.select().from(chapterRows).where(eq(chapterRows.userId, other));
     const exportRowsForOther = await handle.db

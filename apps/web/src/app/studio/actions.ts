@@ -124,8 +124,12 @@ export async function approveHumanizeAction(form: FormData): Promise<void> {
 
 export async function exportBookAction(form: FormData): Promise<void> {
   const bookId = field(form, "bookId");
+  const format = field(form, "format") || "epub";
   if (bookId === "") redirect("/studio?error=missing_fields");
-  await enqueueJob({ bookId, type: "book.export", payload: { format: "epub" } });
+  if (!["epub", "docx", "audio-script", "kpf"].includes(format)) {
+    redirect(`/studio/books/${bookId}?error=unsupported_format`);
+  }
+  await enqueueJob({ bookId, type: "book.export", payload: { format } });
   revalidatePath(`/studio/books/${bookId}`);
   redirect(`/studio/books/${bookId}`);
 }

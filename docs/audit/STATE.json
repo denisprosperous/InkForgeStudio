@@ -95,10 +95,9 @@
     "G-11": {
       "title": "Audiobook + DOCX + KPF export adapters",
       "severity": "high",
-      "status": "open",
-      "sha": null,
-      "test": null,
-      "reasonIfOpen": "Not started"
+      "status": "closed",
+      "sha": "THIS_COMMIT",
+      "test": "packages/core/test/adapters.test.ts; docx.test.ts; kpf.test.ts; apps/forge/test/handlers.test.ts (PG16 docx kind)"
     },
     "G-12": {
       "title": "Token/cost accounting per job",
@@ -241,16 +240,16 @@
   },
   "totals": {
     "gapsTotal": 30,
-    "gapsClosed": 14,
-    "percentByCount": 46.7,
-    "percentByWeight": 69.6,
+    "gapsClosed": 15,
+    "percentByCount": 50,
+    "percentByWeight": 73.6,
     "criticalOpen": 0,
-    "highOpen": 4,
+    "highOpen": 3,
     "mediumOpen": 11,
     "lowOpen": 1
   },
   "nextPriority": [
-    "G-11",
+    "G-13",
     "G-11",
     "G-13",
     "G-09",

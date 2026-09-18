@@ -684,6 +684,8 @@ export async function saveExport(
     bookId: string;
     filename: string;
     data: Buffer;
+    /** epub | docx | audio-script | kpf (G-11); defaults to epub. */
+    kind?: string;
     validation?: unknown;
     expiresAt?: Date | null;
   },
@@ -693,6 +695,7 @@ export async function saveExport(
     .values({
       userId,
       bookId: input.bookId,
+      kind: input.kind ?? "epub",
       filename: input.filename,
       sizeBytes: input.data.byteLength,
       data: input.data,
