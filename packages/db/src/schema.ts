@@ -183,8 +183,7 @@ export const exports = pgTable(
 );
 
 export const userApiKeys = pgTable(
-  "user_api_keys",
-  {
+  "user_api_keys", {
     id: uuid("id").primaryKey().defaultRandom(),
     userId: text("user_id").notNull(),
     label: text("label").notNull(),
@@ -197,6 +196,27 @@ export const userApiKeys = pgTable(
     createdAt: createdAt(),
   },
   (table) => [index("user_api_keys_user_idx").on(table.userId)],
+);
+
+export const chapterRevisions = pgTable(
+  "chapter_revisions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id").notNull(),
+    bookId: uuid("book_id").notNull(),
+    chapterId: uuid("chapter_id").notNull(),
+    revision: integer("revision").notNull(),
+    title: text("title").notNull(),
+    markdown: text("markdown").notNull(),
+    wordCount: integer("word_count").notNull().default(0),
+    /** Who produced the snapshot: author | worker | humanize | restore. */
+    origin: text("origin").notNull().default("author"),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    uniqueIndex("chapter_revisions_chapter_rev_unique").on(table.chapterId, table.revision),
+    index("chapter_revisions_chapter_idx").on(table.chapterId, table.userId),
+  ],
 );
 
 export const humanizeRuns = pgTable(

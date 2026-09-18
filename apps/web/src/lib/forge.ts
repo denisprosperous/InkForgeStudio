@@ -174,5 +174,27 @@ export const enqueueJob = (input: { bookId?: string; type: string; payload?: unk
 export const listJobs = (bookId?: string) =>
   forgeFetch<{ jobs: ForgeJob[] }>(bookId ? `/jobs?bookId=${bookId}` : "/jobs").then((d) => d.jobs);
 
+export interface ForgeRevision {
+  readonly id: string;
+  readonly chapterId: string;
+  readonly revision: number;
+  readonly title: string;
+  readonly markdown: string;
+  readonly wordCount: number;
+  readonly origin: string;
+  readonly createdAt: string;
+}
+
+export const listRevisions = (bookId: string, chapterId: string) =>
+  forgeFetch<{ revisions: ForgeRevision[] }>(
+    `/books/${bookId}/chapters/${chapterId}/revisions`,
+  ).then((d) => d.revisions);
+
+export const restoreRevision = (bookId: string, chapterId: string, revisionId: string) =>
+  forgeFetch<{ chapter: ForgeChapter }>(
+    `/books/${bookId}/chapters/${chapterId}/revisions/${revisionId}/restore`,
+    { method: "POST" },
+  );
+
 export const listExports = (bookId: string) =>
   forgeFetch<{ exports: ForgeExport[] }>(`/books/${bookId}/exports`).then((d) => d.exports);

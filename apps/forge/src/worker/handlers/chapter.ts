@@ -121,11 +121,18 @@ export function createChapterHandler(options: ChapterHandlerOptions = {}) {
       source = "planner";
     }
 
-    const updated = await updateChapter(db, job.userId, job.bookId, chapterId, {
-      markdown,
-      wordCount: countWords(markdown),
-      status: "draft",
-    });
+    const updated = await updateChapter(
+      db,
+      job.userId,
+      job.bookId,
+      chapterId,
+      {
+        markdown,
+        wordCount: countWords(markdown),
+        status: "draft",
+      },
+      { origin: "worker" },
+    );
     if (!updated) {
       throw new HandlerError("chapter.generate: chapter vanished mid-run", { retryable: false });
     }

@@ -71,10 +71,9 @@
     "G-09": {
       "title": "Chapter revision history",
       "severity": "high",
-      "status": "open",
-      "sha": null,
-      "test": null,
-      "reasonIfOpen": "Not started"
+      "status": "closed",
+      "sha": "THIS_COMMIT",
+      "test": "apps/forge/test/revisions.test.ts (PG16); packages/db/test/migrations.test.ts (chapter_revisions)"
     },
     "G-09b": {
       "title": "Rights & licensing tracker; corpus RAG",
@@ -240,20 +239,17 @@
   },
   "totals": {
     "gapsTotal": 30,
-    "gapsClosed": 15,
-    "percentByCount": 50,
-    "percentByWeight": 73.6,
+    "gapsClosed": 16,
+    "percentByCount": 53.3,
+    "percentByWeight": 72,
     "criticalOpen": 0,
-    "highOpen": 3,
+    "highOpen": 2,
     "mediumOpen": 11,
     "lowOpen": 1
   },
   "nextPriority": [
-    "G-13",
-    "G-11",
-    "G-13",
-    "G-09",
     "G-15",
+    "G-13",
     "G-16",
     "G-27",
     "G-24",

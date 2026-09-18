@@ -13,6 +13,7 @@ import {
   assets,
   auditLog,
   books,
+  chapterRevisions,
   chapters,
   coverVersions,
   covers,
@@ -133,6 +134,7 @@ export async function deleteBook(db: Database, userId: string, bookId: string): 
 // ── Chapters ─────────────────────────────────────────────────────────
 
 export type ChapterRow = typeof chapters.$inferSelect;
+export type ChapterRevisionRow = typeof chapterRevisions.$inferSelect;
 
 export function listChapters(
   db: Database,
@@ -198,7 +200,23 @@ export async function updateChapter(
   bookId: string,
   chapterId: string,
   values: { title?: string; markdown?: string; status?: string; wordCount?: number; idx?: number },
+  options: { origin?: string } = {},
 ): Promise<ChapterRow | undefined> {
+  // G-09: snapshot the previous content before an overwrite so every change —
+  // author edit, worker redraft, humanize run — is reversible.
+  if (values.markdown !== undefined) {
+    const current = (await getChapter(db, userId, bookId, chapterId))[0];
+    if (current && current.markdown !== values.markdown) {
+      await saveRevision(db, userId, {
+        bookId,
+        chapterId,
+        title: current.title,
+        markdown: current.markdown,
+        wordCount: current.wordCount,
+        origin: options.origin ?? "author",
+      });
+    }
+  }
   const updated = await db
     .update(chapters)
     .set({ ...values, updatedAt: new Date() })
@@ -510,6 +528,116 @@ export async function failJob(
     .where(and(eq(jobs.id, jobId), eq(jobs.userId, userId)))
     .returning();
   return updated[0];
+}
+
+/**
+ * Persist a revision snapshot for a chapter before its content changes (G-09).
+ * `revision` is derived as max+1 per chapter inside one INSERT..SELECT, so
+ * concurrent writers cannot collide on the (chapter_id, revision) unique key.
+ * `origin` names the agent whose change superseded this text ("author",
+ * "worker", "humanize", "restore"), so the list reads as an undo trail:
+ * "revision N was replaced by <origin>".
+ * Returns undefined when the snapshot row was already stored (idempotent by
+ * revision) — callers must not treat that as an error.
+ */
+export async function saveRevision(
+  db: Database,
+  userId: string,
+  input: {
+    bookId: string;
+    chapterId: string;
+    title: string;
+    markdown: string;
+    wordCount: number;
+    origin: string;
+  },
+): Promise<ChapterRevisionRow | undefined> {
+  const inserted = await db
+    .insert(chapterRevisions)
+    .values({
+      userId,
+      bookId: input.bookId,
+      chapterId: input.chapterId,
+      revision: sql`(select coalesce(max(${chapterRevisions.revision}), 0) + 1 from ${chapterRevisions} where ${chapterRevisions.chapterId} = ${input.chapterId})`.mapWith(
+        Number,
+      ) as never,
+      title: input.title,
+      markdown: input.markdown,
+      wordCount: input.wordCount,
+      origin: input.origin,
+    })
+    .onConflictDoNothing()
+    .returning();
+  return inserted[0];
+}
+
+export function listRevisions(
+  db: Database,
+  userId: string,
+  bookId: string,
+  chapterId: string,
+): Queryable<ChapterRevisionRow[]> {
+  return db
+    .select()
+    .from(chapterRevisions)
+    .where(
+      and(
+        eq(chapterRevisions.userId, userId),
+        eq(chapterRevisions.bookId, bookId),
+        eq(chapterRevisions.chapterId, chapterId),
+      ),
+    )
+    .orderBy(desc(chapterRevisions.revision))
+    .limit(100);
+}
+
+export function getRevision(
+  db: Database,
+  userId: string,
+  bookId: string,
+  chapterId: string,
+  revisionId: string,
+): Queryable<ChapterRevisionRow[]> {
+  return db
+    .select()
+    .from(chapterRevisions)
+    .where(
+      and(
+        eq(chapterRevisions.userId, userId),
+        eq(chapterRevisions.bookId, bookId),
+        eq(chapterRevisions.chapterId, chapterId),
+        eq(chapterRevisions.id, revisionId),
+      ),
+    )
+    .limit(1);
+}
+
+/**
+ * Restore a snapshot: the ordinary chapter update snapshots the text that was
+ * live (tagged origin "restore", so the undo chain stays complete), then the
+ * revision's markdown is written back. Returns the restored chapter row.
+ */
+export async function restoreRevision(
+  db: Database,
+  userId: string,
+  bookId: string,
+  chapterId: string,
+  revisionId: string,
+): Promise<ChapterRow | undefined> {
+  const revision = (await getRevision(db, userId, bookId, chapterId, revisionId))[0];
+  if (!revision) return undefined;
+  return updateChapter(
+    db,
+    userId,
+    bookId,
+    chapterId,
+    {
+      markdown: revision.markdown,
+      wordCount: revision.wordCount,
+      status: "draft",
+    },
+    { origin: "restore" },
+  );
 }
 
 // ── Outlines ─────────────────────────────────────────────────────────

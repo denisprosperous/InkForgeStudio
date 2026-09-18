@@ -74,11 +74,18 @@ export function createHumanizeHandler(options: HumanizeHandlerOptions = {}) {
       : undefined;
     const run = polisher ? await humanizeWithLlm(before, polisher, opts) : humanizeMarkdown(before, opts);
 
-    const updated = await updateChapter(db, job.userId, job.bookId, chapterId, {
-      markdown: run.markdown,
-      status: "humanized",
-      wordCount: run.markdown.split(/\s+/u).filter(Boolean).length,
-    });
+    const updated = await updateChapter(
+      db,
+      job.userId,
+      job.bookId,
+      chapterId,
+      {
+        markdown: run.markdown,
+        status: "humanized",
+        wordCount: run.markdown.split(/\s+/u).filter(Boolean).length,
+      },
+      { origin: "humanize" },
+    );
     if (!updated) {
       throw new HandlerError("chapter.humanize: chapter vanished mid-run", { retryable: false });
     }

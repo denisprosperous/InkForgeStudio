@@ -21,6 +21,7 @@ const EXPECTED_TABLES = [
   "assets",
   "audit_log",
   "books",
+  "chapter_revisions",
   "chapters",
   "cover_versions",
   "covers",

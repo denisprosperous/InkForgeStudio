@@ -15,6 +15,13 @@
       "when": 1789717600063,
       "tag": "0001_dizzy_felicia_hardy",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789728300937,
+      "tag": "0002_superb_vindicator",
+      "breakpoints": true
     }
   ]
 }

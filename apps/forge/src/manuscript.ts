@@ -14,7 +14,9 @@ import {
   latestOutline,
   listChapters,
   listExports,
+  listRevisions,
   reorderChapters,
+  restoreRevision,
   saveOutline,
   updateChapter,
 } from "@inkforge/db";
@@ -129,6 +131,35 @@ export function createChapterRouter(options: LibraryRouterOptions): Router {
       return;
     }
     res.status(200).json({ deleted: true });
+  });
+
+  router.get("/:chapterId/revisions", async (req: Request, res: Response) => {
+    const bookId = await requireBook(req, res);
+    if (bookId === undefined) return;
+    const chapterId = String(req.params.chapterId);
+    if (!isBookId(chapterId)) {
+      res.status(400).json({ error: "invalid_chapter_id" });
+      return;
+    }
+    const rows = await listRevisions(db, bridgeUser(req), bookId, chapterId);
+    res.status(200).json({ revisions: rows });
+  });
+
+  router.post("/:chapterId/revisions/:revisionId/restore", async (req: Request, res: Response) => {
+    const bookId = await requireBook(req, res);
+    if (bookId === undefined) return;
+    const chapterId = String(req.params.chapterId);
+    const revisionId = String(req.params.revisionId);
+    if (!isBookId(chapterId) || !isBookId(revisionId)) {
+      res.status(400).json({ error: "invalid_revision_id" });
+      return;
+    }
+    const restored = await restoreRevision(db, bridgeUser(req), bookId, chapterId, revisionId);
+    if (!restored) {
+      res.status(404).json({ error: "revision_not_found" });
+      return;
+    }
+    res.status(200).json({ chapter: restored });
   });
 
   router.post("/reorder", async (req: Request, res: Response) => {

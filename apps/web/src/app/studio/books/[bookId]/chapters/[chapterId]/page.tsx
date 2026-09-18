@@ -1,11 +1,19 @@
 import Link from "next/link";
 import { Panel, StatusBadge } from "@inkforge/ui";
-import { ForgeError, getBook, listChapters, listJobs } from "@/lib/forge";
+import {
+  ForgeError,
+  getBook,
+  listChapters,
+  listJobs,
+  listRevisions,
+  type ForgeRevision,
+} from "@/lib/forge";
 import {
   approveHumanizeAction,
   draftChapterAction,
   humanizeChapterAction,
   rejectHumanizeAction,
+  restoreRevisionAction,
   saveChapterAction,
 } from "@/app/studio/actions";
 
@@ -39,7 +47,10 @@ export default async function ChapterPage({
         </main>
       );
     }
-    const jobs = await listJobs(bookId);
+    const [jobs, revisions] = await Promise.all([
+      listJobs(bookId),
+      listRevisions(bookId, chapterId).catch((): ForgeRevision[] => []),
+    ]);
     const lastHumanize = jobs.find(
       (job) =>
         job.type === "chapter.humanize" &&
@@ -121,6 +132,32 @@ export default async function ChapterPage({
             </form>
           </div>
         </Panel>
+
+        {revisions.length > 0 && (
+          <Panel title="Revision history" className="mb-6">
+            <ul className="grid gap-2">
+              {revisions.slice(0, 8).map((revision) => (
+                <li
+                  key={revision.id}
+                  className="flex items-center justify-between gap-3 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm"
+                >
+                  <span className="text-neutral-700">
+                    r{revision.revision} · {revision.wordCount} words · superseded by{" "}
+                    {revision.origin}
+                  </span>
+                  <form action={restoreRevisionAction}>
+                    <input type="hidden" name="bookId" value={bookId} />
+                    <input type="hidden" name="chapterId" value={chapter.id} />
+                    <input type="hidden" name="revisionId" value={revision.id} />
+                    <button type="submit" className={ghostButtonClass}>
+                      Restore
+                    </button>
+                  </form>
+                </li>
+              ))}
+            </ul>
+          </Panel>
+        )}
 
         {pendingApproval && humanizeResult?.before !== undefined && (
           <>

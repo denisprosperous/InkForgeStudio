@@ -9,7 +9,13 @@
  */
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { createBook, createChapter, enqueueJob, updateChapter } from "../../lib/forge";
+import {
+  createBook,
+  createChapter,
+  enqueueJob,
+  restoreRevision,
+  updateChapter,
+} from "@/lib/forge";
 
 function field(form: FormData, name: string): string {
   const value = form.get(name);
@@ -118,6 +124,18 @@ export async function approveHumanizeAction(form: FormData): Promise<void> {
   const chapterId = field(form, "chapterId");
   if (bookId === "" || chapterId === "") redirect("/studio?error=missing_fields");
   await updateChapter(bookId, chapterId, { status: "humanized" });
+  revalidatePath(`/studio/books/${bookId}/chapters/${chapterId}`);
+  redirect(`/studio/books/${bookId}/chapters/${chapterId}`);
+}
+
+export async function restoreRevisionAction(form: FormData): Promise<void> {
+  const bookId = field(form, "bookId");
+  const chapterId = field(form, "chapterId");
+  const revisionId = field(form, "revisionId");
+  if (bookId === "" || chapterId === "" || revisionId === "") {
+    redirect("/studio?error=missing_fields");
+  }
+  await restoreRevision(bookId, chapterId, revisionId);
   revalidatePath(`/studio/books/${bookId}/chapters/${chapterId}`);
   redirect(`/studio/books/${bookId}/chapters/${chapterId}`);
 }
