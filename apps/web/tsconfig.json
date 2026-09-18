@@ -9,11 +9,30 @@
     "tsBuildInfoFile": ".next/tsbuildinfo",
     "jsx": "preserve",
     "allowJs": true,
-    "plugins": [{ "name": "next" }],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "paths": {
-      "@/*": ["./src/*"]
-    }
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "module": "esnext"
   },
-  "include": ["next-env.d.ts", "src/**/*.ts", "src/**/*.tsx", "test/**/*.ts", "*.mjs"],
-  "exclude": ["node_modules", ".next", ".next-on-pages", ".vercel"]
+  "include": [
+    "*.mjs",
+    "next-env.d.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "test/**/*.ts",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    ".next-on-pages",
+    ".vercel"
+  ]
 }

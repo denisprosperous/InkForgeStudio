@@ -214,10 +214,9 @@
     "G-28": {
       "title": "CI + e2e smoke",
       "severity": "medium",
-      "status": "open",
-      "sha": null,
-      "test": null,
-      "reasonIfOpen": "Not started"
+      "status": "closed",
+      "sha": "THIS_COMMIT",
+      "test": "e2e/smoke.spec.ts (2 passed on WEB_PORT=3100); .github/workflows/ci.yml"
     },
     "G-29": {
       "title": "Node engines decision",
@@ -244,16 +243,15 @@
   },
   "totals": {
     "gapsTotal": 30,
-    "gapsClosed": 11,
-    "percentByCount": 36.7,
-    "percentByWeight": 62.4,
+    "gapsClosed": 12,
+    "percentByCount": 40,
+    "percentByWeight": 64,
     "criticalOpen": 0,
     "highOpen": 5,
-    "mediumOpen": 13,
+    "mediumOpen": 12,
     "lowOpen": 1
   },
   "nextPriority": [
-    "G-28",
     "G-08",
     "G-12",
     "G-11",
