@@ -10,6 +10,7 @@ import { randomUUID } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { beforeAll, afterAll, describe, expect, it } from "vitest";
 import { countWords } from "@inkforge/core";
+import { estimateCostMicros } from "@inkforge/ai";
 import {
   chapters as chapterRows,
   createBook,
@@ -19,6 +20,7 @@ import {
   insertChapter,
   jobs,
   listExports,
+  totalCostMicros,
   type JobRow,
 } from "@inkforge/db";
 import type { LlmClient } from "@inkforge/ai";
@@ -36,7 +38,12 @@ function fakeLlm(response: string | Error): LlmClient & { calls: number } {
     async complete() {
       this.calls += 1;
       if (response instanceof Error) throw response;
-      return { text: response, provider: "openai", model: "gpt-test" };
+      return {
+        text: response,
+        provider: "openai",
+        model: "gpt-test",
+        usage: { promptTokens: 100, completionTokens: 250 },
+      };
     },
   };
 }
@@ -227,6 +234,29 @@ d("worker handlers: chapter.generate + book.export", () => {
       expect(["succeeded", "queued", "failed"]).toContain(job.status);
       expect(job.error ?? "").not.toMatch(/not yet registered/);
     }
+  });
+
+  it("records token usage and estimated cost on the job row (G-12)", async () => {
+    const draft = `# Accounted\n\n${"The lamp turned, and the room kept its small noises. ".repeat(12)}`;
+    const enqueued = await enqueueJob(handle.db, user, {
+      bookId,
+      type: "chapter.generate",
+      payload: { chapterId, brief: "Accounting the spend", targetWords: 300 },
+    });
+    const tick = await workerFor({ llm: fakeLlm(draft) }).tick();
+    expect(tick.succeeded).toBeGreaterThanOrEqual(1);
+    const job = await jobAfter(enqueued.id);
+    expect(job.status).toBe("succeeded");
+    const result = job.result as { source?: string; usage?: unknown; costMicros?: unknown };
+    expect(result.source).toBe("model");
+    expect(job.promptTokens).toBe(100);
+    expect(job.completionTokens).toBe(250);
+    expect(job.costMicros).toBe(
+      estimateCostMicros("openai", { promptTokens: 100, completionTokens: 250 }),
+    );
+    expect(result.costMicros).toBe(job.costMicros);
+    const spend = await totalCostMicros(handle.db, user);
+    expect(spend).toBeGreaterThanOrEqual(job.costMicros);
   });
 
   it("no rows leak across tenants after the whole run", async () => {

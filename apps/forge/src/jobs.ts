@@ -165,6 +165,10 @@ export function serializeJob(job: {
     error: job.error,
     attempts: job.attempts,
     maxAttempts: job.maxAttempts,
+    // G-12: accounting travels with every job the API returns.
+    promptTokens: (job as { promptTokens?: number }).promptTokens ?? 0,
+    completionTokens: (job as { completionTokens?: number }).completionTokens ?? 0,
+    costMicros: (job as { costMicros?: number }).costMicros ?? 0,
     createdAt: job.createdAt.toISOString(),
     updatedAt: job.updatedAt.toISOString(),
     finishedAt: job.finishedAt ? job.finishedAt.toISOString() : null,

@@ -29,6 +29,9 @@ export default defineWorkspace([
       name: "db",
       environment: "node",
       include: ["packages/db/test/**/*.test.ts"],
+      // Migration integration suites create + migrate a throwaway Postgres
+      // database; 5s is not enough under parallel load.
+      testTimeout: 30_000,
     },
   },
   {

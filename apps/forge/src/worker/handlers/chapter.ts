@@ -10,7 +10,7 @@
  */
 import { composeDraft, countWords } from "@inkforge/core";
 import { getBook, getChapter, updateChapter, type JobRow } from "@inkforge/db";
-import type { LlmClient } from "@inkforge/ai";
+import { estimateCostMicros, type LlmClient, type TokenUsage } from "@inkforge/ai";
 import { z } from "zod";
 import { HandlerError, type JobContext } from "../registry";
 
@@ -85,6 +85,7 @@ export function createChapterHandler(options: ChapterHandlerOptions = {}) {
     let markdown: string | null = null;
     let source: "model" | "planner" = "planner";
     let fallbackDetail: string | undefined;
+    let usage: TokenUsage | undefined;
 
     if (options.llm) {
       try {
@@ -100,7 +101,10 @@ export function createChapterHandler(options: ChapterHandlerOptions = {}) {
           maxTokens: 3_000,
         });
         markdown = sanitizeModelMarkdown(completion.text);
-        if (markdown !== null) source = "model";
+        if (markdown !== null) {
+          source = "model";
+          usage = completion.usage;
+        }
       } catch (error) {
         fallbackDetail = error instanceof Error ? error.message : String(error);
       }
@@ -134,6 +138,11 @@ export function createChapterHandler(options: ChapterHandlerOptions = {}) {
       bookId: job.bookId,
       source,
       words: updated.wordCount,
+      ...(options.llm !== undefined ? { provider: options.llm.provider } : {}),
+      ...(usage !== undefined ? { usage } : {}),
+      ...(usage !== undefined && options.llm !== undefined
+        ? { costMicros: estimateCostMicros(options.llm.provider, usage) }
+        : {}),
       ...(fallbackDetail !== undefined ? { fallbackDetail } : {}),
     };
   };

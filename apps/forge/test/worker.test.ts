@@ -235,7 +235,13 @@ d("worker loop", () => {
     const job = await enqueueJob(db, user, { bookId, type: "outline.generate", payload: {} });
 
     worker.start();
-    await new Promise((resolve) => setTimeout(resolve, 150));
+    // Poll for the handler to actually start rather than sleeping a fixed
+    // window: under parallel suite load the first scheduled tick can land late,
+    // and a fixed 150ms wait was the flake (not a drain-semantics failure).
+    const deadline = Date.now() + 5_000;
+    while (!started && Date.now() < deadline) {
+      await new Promise((resolve) => setTimeout(resolve, 25));
+    }
     expect(started).toBe(true);
     expect(worker.busy).toBe(true);
 

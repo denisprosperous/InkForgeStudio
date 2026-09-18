@@ -19,9 +19,35 @@ import {
   purgeExpiredExports,
   reclaimStaleJobs,
   type Database,
+  type JobAccounting,
   type JobRow,
 } from "@inkforge/db";
 import { HandlerError, type JobHandlerRegistry, type WorkerLogger } from "./registry";
+
+/**
+ * G-12: handlers report accounting inside their result (`usage` + `costMicros`)
+ * so the loop can lift it onto the job row without each handler knowing about
+ * the queue's storage shape.
+ */
+export function accountingFromResult(result: unknown): JobAccounting | undefined {
+  if (result === null || typeof result !== "object") return undefined;
+  const record = result as {
+    usage?: { promptTokens?: unknown; completionTokens?: unknown };
+    costMicros?: unknown;
+  };
+  const promptTokens = Number(record.usage?.promptTokens ?? 0);
+  const completionTokens = Number(record.usage?.completionTokens ?? 0);
+  const costMicros = Number(record.costMicros ?? 0);
+  if (!Number.isFinite(promptTokens) && !Number.isFinite(completionTokens)) return undefined;
+  if (promptTokens === 0 && completionTokens === 0 && costMicros === 0) return undefined;
+  return {
+    promptTokens: Number.isFinite(promptTokens) ? Math.max(0, Math.trunc(promptTokens)) : 0,
+    completionTokens: Number.isFinite(completionTokens)
+      ? Math.max(0, Math.trunc(completionTokens))
+      : 0,
+    costMicros: Number.isFinite(costMicros) ? Math.max(0, Math.trunc(costMicros)) : 0,
+  };
+}
 
 export interface WorkerOptions {
   readonly db: Database;
@@ -103,8 +129,29 @@ export function createWorker(options: WorkerOptions): Worker {
     }
     try {
       const result = await handler({ job, db, logger, now });
-      const finished = await finishJob(db, job.userId, job.id, result ?? {});
-      if (finished) return "succeeded";
+      const accounting = accountingFromResult(result);
+      const finished = await finishJob(
+        db,
+        job.userId,
+        job.id,
+        result ?? {},
+        accounting,
+      );
+      if (finished) {
+        if (accounting !== undefined) {
+          logger.info(
+            {
+              jobId: job.id,
+              type: job.type,
+              promptTokens: accounting.promptTokens,
+              completionTokens: accounting.completionTokens,
+              costMicros: accounting.costMicros,
+            },
+            "worker: job accounted",
+          );
+        }
+        return "succeeded";
+      }
       // The row left `running` underneath us (cancelled): do not resurrect it.
       logger.warn({ jobId: job.id }, "worker: job was not running at completion");
       return "failed";

@@ -103,10 +103,9 @@
     "G-12": {
       "title": "Token/cost accounting per job",
       "severity": "medium",
-      "status": "open",
-      "sha": null,
-      "test": null,
-      "reasonIfOpen": "Not started"
+      "status": "closed",
+      "sha": "THIS_COMMIT",
+      "test": "apps/forge/test/handlers.test.ts (PG16 accounting); packages/db/test/migrations.test.ts"
     },
     "G-13": {
       "title": "Metadata extension (extra jsonb + product schema)",
@@ -242,16 +241,16 @@
   },
   "totals": {
     "gapsTotal": 30,
-    "gapsClosed": 13,
-    "percentByCount": 43.3,
-    "percentByWeight": 68,
+    "gapsClosed": 14,
+    "percentByCount": 46.7,
+    "percentByWeight": 69.6,
     "criticalOpen": 0,
     "highOpen": 4,
-    "mediumOpen": 12,
+    "mediumOpen": 11,
     "lowOpen": 1
   },
   "nextPriority": [
-    "G-12",
+    "G-11",
     "G-11",
     "G-13",
     "G-09",

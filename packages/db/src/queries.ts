@@ -421,11 +421,24 @@ export async function countRunningLeases(db: Database, workerId: string): Promis
 }
 
 /** Mark a claimed job succeeded, scoped to its owner. */
+/** Token/cost accounting attached to a finished job (G-12). */
+export interface JobAccounting {
+  readonly promptTokens: number;
+  readonly completionTokens: number;
+  readonly costMicros: number;
+}
+
+/**
+ * Mark a job succeeded and store its result. When the handler reported token
+ * usage (G-12), the accounting rides on dedicated columns so spend is
+ * queryable without parsing jsonb.
+ */
 export async function finishJob(
   db: Database,
   userId: string,
   jobId: string,
   result: unknown,
+  accounting?: JobAccounting,
 ): Promise<JobRow | undefined> {
   const finished = await db
     .update(jobs)
@@ -435,10 +448,26 @@ export async function finishJob(
       error: null,
       finishedAt: new Date(),
       updatedAt: new Date(),
+      ...(accounting !== undefined
+        ? {
+            promptTokens: accounting.promptTokens,
+            completionTokens: accounting.completionTokens,
+            costMicros: accounting.costMicros,
+          }
+        : {}),
     })
     .where(and(eq(jobs.id, jobId), eq(jobs.userId, userId), eq(jobs.status, "running")))
     .returning();
   return finished[0];
+}
+
+/** Total estimated spend (micro-USD) for a principal's queue. */
+export async function totalCostMicros(db: Database, userId: string): Promise<number> {
+  const rows = await db
+    .select({ total: sql<string>`coalesce(sum(${jobs.costMicros}), 0)` })
+    .from(jobs)
+    .where(eq(jobs.userId, userId));
+  return Number(rows[0]?.total ?? 0);
 }
 
 /**

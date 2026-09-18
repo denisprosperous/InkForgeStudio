@@ -9,7 +9,12 @@
  * (reject = restore `before`).
  */
 import { humanizeMarkdown, humanizeWithLlm, scoreText, type HumanizeOptions } from "@inkforge/core";
-import type { LlmClient } from "@inkforge/ai";
+import {
+  addUsage,
+  estimateCostMicros,
+  type LlmClient,
+  type TokenUsage,
+} from "@inkforge/ai";
 import { getChapter, recordHumanizeRun, updateChapter } from "@inkforge/db";
 import { z } from "zod";
 import { HandlerError, type JobContext } from "../registry";
@@ -57,13 +62,17 @@ export function createHumanizeHandler(options: HumanizeHandlerOptions = {}) {
       ...(parsed.data.seed !== undefined ? { seed: parsed.data.seed } : {}),
     };
     const before = chapter.markdown;
-    const run = options.llm
-      ? await humanizeWithLlm(
-          before,
-          { complete: (prompt) => options.llm!.complete(prompt).then((r) => r.text) },
-          opts,
-        )
-      : humanizeMarkdown(before, opts);
+    let usage: TokenUsage | undefined;
+    const polisher = options.llm
+      ? {
+          complete: async (prompt: string): Promise<string> => {
+            const completion = await options.llm!.complete(prompt);
+            usage = addUsage(usage, completion.usage);
+            return completion.text;
+          },
+        }
+      : undefined;
+    const run = polisher ? await humanizeWithLlm(before, polisher, opts) : humanizeMarkdown(before, opts);
 
     const updated = await updateChapter(db, job.userId, job.bookId, chapterId, {
       markdown: run.markdown,
@@ -103,6 +112,11 @@ export function createHumanizeHandler(options: HumanizeHandlerOptions = {}) {
       seed: run.seed,
       scoreBefore: run.scoreBefore,
       scoreAfter: run.scoreAfter,
+      ...(options.llm !== undefined ? { provider: options.llm.provider } : {}),
+      ...(usage !== undefined ? { usage } : {}),
+      ...(usage !== undefined && options.llm !== undefined
+        ? { costMicros: estimateCostMicros(options.llm.provider, usage) }
+        : {}),
     };
   };
 }

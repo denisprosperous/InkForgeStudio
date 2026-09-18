@@ -147,6 +147,11 @@ export const jobs = pgTable(
     error: text("error"),
     attempts: integer("attempts").notNull().default(0),
     maxAttempts: integer("max_attempts").notNull().default(3),
+    /** G-12 accounting: tokens the provider reported for this job. */
+    promptTokens: integer("prompt_tokens").notNull().default(0),
+    completionTokens: integer("completion_tokens").notNull().default(0),
+    /** Estimated spend in micro-USD (1e-6 USD) — metering, not billing. */
+    costMicros: integer("cost_micros").notNull().default(0),
     runAfter: timestamp("run_after", { withTimezone: true }).notNull().defaultNow(),
     lockedAt: timestamp("locked_at", { withTimezone: true }),
     lockedBy: text("locked_by"),

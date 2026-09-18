@@ -16,8 +16,12 @@ import {
   type OutlineRequest,
 } from "@inkforge/core";
 import { getBook, saveOutline, type JobRow } from "@inkforge/db";
-import type { LlmClient } from "@inkforge/ai";
-import { parseJsonResponse } from "@inkforge/ai";
+import {
+  estimateCostMicros,
+  parseJsonResponse,
+  type LlmClient,
+  type TokenUsage,
+} from "@inkforge/ai";
 import { z } from "zod";
 import { HandlerError, type JobContext } from "../registry";
 
@@ -72,7 +76,12 @@ export function outlineRequestFromJob(job: JobRow, fallbackWords = 40_000): Outl
 export async function planOutline(
   request: OutlineRequest,
   llm: LlmClient | undefined,
-): Promise<{ outline: Outline; source: "model" | "planner"; detail?: string }> {
+): Promise<{
+  outline: Outline;
+  source: "model" | "planner";
+  detail?: string;
+  usage?: TokenUsage;
+}> {
   if (llm) {
     try {
       const prompt = `${SYSTEM_PROMPT}\n\nPremise: ${request.premise}\nGenre: ${
@@ -82,7 +91,11 @@ export async function planOutline(
       }`;
       const completion = await llm.complete(prompt, { temperature: 0.7, maxTokens: 4_000 });
       const outline = parseJsonResponse(llm.provider, completion.text, outlineSchema);
-      return { outline: parseOutline(outline), source: "model" };
+      return {
+        outline: parseOutline(outline),
+        source: "model",
+        ...(completion.usage !== undefined ? { usage: completion.usage } : {}),
+      };
     } catch (error) {
       return {
         outline: generateOutline(request),
@@ -108,7 +121,7 @@ export function createOutlineHandler(options: OutlineHandlerOptions = {}) {
       });
     }
     const request = outlineRequestFromJob(job, options.defaultTargetWords ?? 40_000);
-    const { outline, source, detail } = await planOutline(request, options.llm);
+    const { outline, source, detail, usage } = await planOutline(request, options.llm);
     const row = await saveOutline(db, job.userId, job.bookId, outline);
     logger.info(
       { jobId: job.id, outlineId: row.id, source, chapters: outline.chapters.length },
@@ -120,6 +133,11 @@ export function createOutlineHandler(options: OutlineHandlerOptions = {}) {
       source,
       chapters: outline.chapters.length,
       plannedWords: outline.chapters.reduce((total, beat) => total + beat.targetWords, 0),
+      ...(options.llm !== undefined ? { provider: options.llm.provider } : {}),
+      ...(usage !== undefined ? { usage } : {}),
+      ...(usage !== undefined && options.llm !== undefined
+        ? { costMicros: estimateCostMicros(options.llm.provider, usage) }
+        : {}),
       ...(detail !== undefined ? { fallbackDetail: detail } : {}),
     };
   };

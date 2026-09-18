@@ -82,6 +82,22 @@ describe.skipIf(!ENABLED)("G-07 migrations apply cleanly to a fresh database", (
     expect(tables).toEqual(EXPECTED_TABLES);
   });
 
+  it("carries the G-12 accounting columns on jobs", async () => {
+    expect(target).toBeDefined();
+    // The suite's earlier test already applied every migration to `target`;
+    // this asserts the columns the accounting feature added.
+    const rows = await target!`
+      SELECT column_name FROM information_schema.columns
+      WHERE table_name = 'jobs'
+        AND column_name IN ('prompt_tokens', 'completion_tokens', 'cost_micros')
+      ORDER BY column_name`;
+    expect(rows.map((row) => String(row.column_name))).toEqual([
+      "completion_tokens",
+      "cost_micros",
+      "prompt_tokens",
+    ]);
+  });
+
   it("applies idempotently via the drizzle journal (no duplicate-table errors on re-list)", () => {
     const files = migrationFiles();
     const journal = readdirSync(path.join(MIGRATIONS_DIR, "meta"));
