@@ -54,6 +54,12 @@ export function exportFilename(meta: BookMeta): string {
 /** G-06 (additive): AI-disclosure layer for KDP exports. */
 export * from "./disclosure";
 
+/** G-11 (additive): export adapters — narration script, DOCX and KPF. */
+export * from "./adapters";
+export * from "./docx";
+export * from "./kpf";
+export { createZip, crc32, type ZipEntry } from "./zip";
+
 /** Build the ordered content documents for a manuscript (exposed for tests). */
 export function buildContentDocuments(
   meta: BookMeta,
