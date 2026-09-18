@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-18T09:35:00Z",
+  "updatedAt": "2026-09-18T10:05:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
   "currentSha": "69dba4c",
@@ -104,7 +104,7 @@
       "title": "Token/cost accounting per job",
       "severity": "medium",
       "status": "closed",
-      "sha": "THIS_COMMIT",
+      "sha": "3c507c9",
       "test": "apps/forge/test/handlers.test.ts (PG16 accounting); packages/db/test/migrations.test.ts"
     },
     "G-13": {
