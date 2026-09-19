@@ -24,6 +24,6 @@ step("typecheck (solution build: config → db → ai → core → covers → ui
   "-b",
 ]);
 step("typecheck web (noEmit)", "npx", ["tsc", "--noEmit", "-p", "apps/web"]);
-step("build web (@cloudflare/next-on-pages)", "npm", ["run", "build", "-w", "@inkforge/web"]);
+step("build web (next build)", "npm", ["run", "build", "-w", "@inkforge/web"]);
 
 process.stdout.write("\n✔ build complete\n");

@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next-on-pages --experimental-minify",
+    "//": "G-28/V10 fix: `build` must be the plain Next build \u2014 next-on-pages internally runs `vercel build`, which invokes this script, so pointing `build` at next-on-pages recursed and failed. Pages/Workers output is an explicit, separate step.",
+    "build": "next build",
+    "build:pages": "next-on-pages --experimental-minify",
     "start": "next start",
     "lint": "eslint ."
   },

@@ -41,7 +41,7 @@ jobs:
       - run: npm run build:libs
       - run: npm run lint
       - run: npm run typecheck
-      - run: npm test -- --coverage
+      - run: npm test
       - run: npm run audit:stubs -- --strict
       - run: npm run audit:dod -- --strict
       - run: npm run build

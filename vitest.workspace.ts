@@ -15,6 +15,9 @@ export default defineWorkspace([
       name: "web",
       environment: "node",
       include: ["apps/web/test/**/*.test.ts"],
+      // The route-module graph test transforms the whole studio page tree; 5s
+      // is not enough when the full workspace suite runs in parallel.
+      testTimeout: 30_000,
     },
   },
   {

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-18T10:45:00Z",
+  "updatedAt": "2026-09-18T12:55:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
   "currentSha": "69dba4c",
@@ -72,7 +72,7 @@
       "title": "Chapter revision history",
       "severity": "high",
       "status": "closed",
-      "sha": "THIS_COMMIT",
+      "sha": "d88a780",
       "test": "apps/forge/test/revisions.test.ts (PG16); packages/db/test/migrations.test.ts (chapter_revisions)"
     },
     "G-09b": {
@@ -165,7 +165,7 @@
       "status": "open",
       "sha": null,
       "test": null,
-      "reasonIfOpen": "Trigger-gated per register §4"
+      "reasonIfOpen": "Trigger-gated per register \u00a74"
     },
     "G-22": {
       "title": "Sales/royalty ingestion + feedback loop",
@@ -210,9 +210,10 @@
     "G-28": {
       "title": "CI + e2e smoke",
       "severity": "medium",
-      "status": "closed",
-      "sha": "f2072ea",
-      "test": "e2e/smoke.spec.ts (2 passed on WEB_PORT=3100); .github/workflows/ci.yml"
+      "status": "open",
+      "sha": null,
+      "test": null,
+      "reasonIfOpen": "regression in verification step V10: e2e smoke verified green (2/2 on WEB_PORT=3100) and ci.yml landed, but `npm run build` fails \u2014 (1) web build script recursed (next-on-pages \u2192 vercel build \u2192 same script; FIXED this run: build is now `next build`, pages output is build:pages), then (2) `next build` crashes prerendering /404 with dual React copies (root react 19.3.0 vs apps/web 19.1.0 from the committed lock; useContext of null). Root cause = single React version across the tree; first priority NEG-5"
     },
     "G-29": {
       "title": "Node engines decision",
@@ -227,7 +228,7 @@
       "status": "open",
       "sha": null,
       "test": null,
-      "reasonIfOpen": "Edge plays; trigger-gated per register §4"
+      "reasonIfOpen": "Edge plays; trigger-gated per register \u00a74"
     },
     "G-17a": {
       "title": "Worker handlers: chapter.generate + book.export (G-17 slice a)",
@@ -239,17 +240,18 @@
   },
   "totals": {
     "gapsTotal": 30,
-    "gapsClosed": 16,
-    "percentByCount": 53.3,
-    "percentByWeight": 72,
+    "gapsClosed": 15,
+    "percentByCount": 50,
+    "percentByWeight": 76,
     "criticalOpen": 0,
     "highOpen": 2,
-    "mediumOpen": 11,
+    "mediumOpen": 12,
     "lowOpen": 1
   },
   "nextPriority": [
-    "G-15",
+    "G-28",
     "G-13",
+    "G-15",
     "G-16",
     "G-27",
     "G-24",
@@ -264,7 +266,16 @@
       "endedAt": "2026-09-17T08:45:00Z",
       "shaBefore": "3ee05f6",
       "shaAfter": "69dba4c",
-      "closed": ["G-29", "G-07", "G-04a", "G-04b", "G-04c", "G-14a", "G-04d", "G-06"],
+      "closed": [
+        "G-29",
+        "G-07",
+        "G-04a",
+        "G-04b",
+        "G-04c",
+        "G-14a",
+        "G-04d",
+        "G-06"
+      ],
       "stillOpen": [
         "G-17",
         "G-28",
@@ -289,7 +300,7 @@
       "verification": "partial: gates green (lint/typecheck/test/stubs/dod); full battery V1-V14 and EPUBCheck not yet run",
       "percentBefore": 0,
       "percentAfter": 54.4,
-      "notes": "Auth bridge, job API, library+manuscript routes, worker loop, outline planner, AI-disclosure layer landed. tmp-g06-inspect.ts debug file accidentally committed in 69dba4c — remove on next commit."
+      "notes": "Auth bridge, job API, library+manuscript routes, worker loop, outline planner, AI-disclosure layer landed. tmp-g06-inspect.ts debug file accidentally committed in 69dba4c \u2014 remove on next commit."
     }
   ]
 }
