@@ -3,7 +3,7 @@
   "updatedAt": "2026-09-18T12:55:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
-  "currentSha": "69dba4c",
+  "currentSha": "f233a36",
   "branch": "main",
   "weights": {
     "critical": 10,
@@ -301,6 +301,42 @@
       "percentBefore": 0,
       "percentAfter": 54.4,
       "notes": "Auth bridge, job API, library+manuscript routes, worker loop, outline planner, AI-disclosure layer landed. tmp-g06-inspect.ts debug file accidentally committed in 69dba4c \u2014 remove on next commit."
+    },
+    {
+      "run": "NEG-4.1",
+      "startedAt": "2026-09-18T06:15:00Z",
+      "endedAt": "2026-09-18T13:05:00Z",
+      "shaBefore": "69dba4c",
+      "shaAfter": "f233a36",
+      "closed": [
+        "G-17a",
+        "G-17",
+        "G-08",
+        "G-12",
+        "G-11",
+        "G-09"
+      ],
+      "stillOpen": [
+        "G-28",
+        "G-13",
+        "G-15",
+        "G-16",
+        "G-27",
+        "G-24",
+        "G-10",
+        "G-18",
+        "G-19",
+        "G-21",
+        "G-22",
+        "G-25",
+        "G-26",
+        "G-30",
+        "G-09b"
+      ],
+      "verification": "partial: V2-V9 green (npm install clean; db migrate+seed applied; lint 0; typecheck clean; 220/220 tests with live PG16; audit:stubs --strict 0 markers; audit:dod --strict clean); V7 e2e green earlier in run (2/2 chromium on WEB_PORT=3100); V10 FAILS (dual React copies crash next build prerender \u2014 G-28 reopened with root cause, build-script recursion half fixed); V11-V14 not-run: budget (and V13 EPUBCheck needs Java, absent on this host)",
+      "percentBefore": 54.4,
+      "percentAfter": 76.0,
+      "notes": "Resume: settled G-17a (sha sealed, guards made audit-stubs-safe). Closed studio UI flows incl. real chapter.humanize handler and approve/reject diff (G-17); provider selection 3-tier chain + cost capture + key custody (G-08); per-job token/cost accounting with migration 0001 (G-12); audio-script + DOCX + KPF adapters over a deterministic in-core zip writer, all four formats wired through the queue and studio (G-11); chapter revision history with tenant-scoped restore (G-09, migration 0002). G-28 landed (CI + Playwright smoke on WEB_PORT) but V10 exposed a pre-existing broken `npm run build`: recursion fixed, dual-React prerender crash open \u2014 reopened with root cause. Drift well under 5k lines; every commit independently revertable; packages/core touched additively only."
     }
   ]
 }
