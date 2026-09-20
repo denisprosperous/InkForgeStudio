@@ -20,11 +20,15 @@ import {
   type Database,
 } from "@inkforge/db";
 import { bridgeUser } from "./auth";
+import { readStoredGate } from "./market";
 
 export interface JobsRouterOptions {
   readonly db: Database;
   readonly maxConcurrentJobsPerUser: number;
 }
+
+/** G-21: job types that spend provider money on generation — pre-gen gated. */
+const PREGEN_JOB_TYPES: ReadonlySet<string> = new Set(["outline.generate", "chapter.generate"]);
 
 const createJobSchema = z.object({
   type: z.enum(JOB_TYPES),
@@ -54,9 +58,22 @@ export function createJobsRouter(options: JobsRouterOptions): Router {
     const user = bridgeUser(req);
     if (bookId !== undefined) {
       const owned = await getBook(db, user, bookId);
-      if (owned.length === 0) {
+      const book = owned[0];
+      if (!book) {
         res.status(404).json({ error: "book_not_found" });
         return;
+      }
+      // G-21 pre-gen gate: no spend on a book the market gate rejects.
+      if (PREGEN_JOB_TYPES.has(type)) {
+        const gate = readStoredGate(book.extra);
+        if (gate?.verdict === "no-go") {
+          res.status(409).json({
+            error: "market_gate_blocked",
+            verdict: gate.verdict,
+            reasons: gate.reasons ?? [],
+          });
+          return;
+        }
       }
     }
     const inFlight = await runningJobCount(db, user);

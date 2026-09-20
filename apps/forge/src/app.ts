@@ -19,6 +19,7 @@ import { requireBridgeAuth } from "./auth";
 import { createConsistencyRouter } from "./consistency";
 import { createJobsRouter, createWorkerControlRouter } from "./jobs";
 import { createLibraryRouter } from "./library";
+import { createMarketRouter } from "./market";
 import { createChapterRouter, createExportsRouter, createOutlineRouter } from "./manuscript";
 
 export interface ForgeAppOptions {
@@ -127,6 +128,7 @@ export function buildApp(options: ForgeAppOptions = {}): Express {
     app.use("/books/:bookId/chapters", bridge, createChapterRouter({ db: handle.db }));
     app.use("/books/:bookId/outline", bridge, createOutlineRouter({ db: handle.db }));
     app.use("/books/:bookId/consistency", bridge, createConsistencyRouter({ db: handle.db }));
+    app.use("/books/:bookId/market", bridge, createMarketRouter({ db: handle.db }));
     app.use("/", bridge, createExportsRouter({ db: handle.db }));
     app.use(
       "/worker",

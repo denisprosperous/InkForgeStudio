@@ -156,10 +156,9 @@
     "G-21": {
       "title": "Niche & revenue intelligence (pre-gen gate)",
       "severity": "high",
-      "status": "open",
+      "status": "closed",
       "sha": null,
-      "test": null,
-      "reasonIfOpen": "Trigger-gated per register \u00a74"
+      "test": "packages/core/test/market.test.ts (9, deterministic); apps/forge/test/market.test.ts (PG16: verdict round-trip + 409 pre-gen block + ungated exports)"
     },
     "G-22": {
       "title": "Sales/royalty ingestion + feedback loop",
@@ -238,15 +237,15 @@
   },
   "totals": {
     "gapsTotal": 31,
-    "gapsClosed": 25,
-    "percentByCount": 80.6,
-    "percentByWeight": 89.4,
+    "gapsClosed": 26,
+    "percentByCount": 83.9,
+    "percentByWeight": 93.2,
     "criticalOpen": 0,
-    "highOpen": 1,
+    "highOpen": 0,
     "mediumOpen": 4,
     "lowOpen": 1
   },
-  "nextPriority": ["G-21", "G-09b", "G-22", "G-25", "G-26", "G-30"],
+  "nextPriority": ["G-09b", "G-22", "G-25", "G-26", "G-30"],
   "sessions": [
     {
       "run": "NEG-3",

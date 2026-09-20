@@ -11,6 +11,7 @@ export * from "./aeo/index";
 export * from "./onix/index";
 export * from "./print/index";
 export * from "./accessibility/index";
+export * from "./market/index";
 export {
   validateEpub,
   locateEpubcheckJar,
