@@ -200,7 +200,7 @@
       "title": "AEO metadata optimizer",
       "severity": "medium",
       "status": "closed",
-      "sha": null,
+      "sha": "2e4a944",
       "test": "packages/core/test/aeo.test.ts (6, deterministic)"
     },
     "G-28": {
