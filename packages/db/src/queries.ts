@@ -15,6 +15,7 @@ import {
   books,
   chapterRevisions,
   chapters,
+  consistencyFacts,
   coverVersions,
   covers,
   exports,
@@ -1090,4 +1091,60 @@ export function listAssets(db: Database, userId: string, bookId: string): Querya
     .from(assets)
     .where(and(eq(assets.bookId, bookId), eq(assets.userId, userId)))
     .orderBy(desc(assets.createdAt));
+}
+
+// ── Consistency ledger (G-15) ────────────────────────────────────────
+
+export type ConsistencyFactRow = typeof consistencyFacts.$inferSelect;
+
+export interface ConsistencyFactInput {
+  readonly kind: string;
+  readonly name: string;
+  readonly aliases: readonly string[];
+  readonly summary: string;
+  readonly firstChapter: number;
+  readonly lastChapter: number;
+}
+
+export function listConsistencyFacts(
+  db: Database,
+  userId: string,
+  bookId: string,
+): Queryable<ConsistencyFactRow[]> {
+  return db
+    .select()
+    .from(consistencyFacts)
+    .where(and(eq(consistencyFacts.bookId, bookId), eq(consistencyFacts.userId, userId)))
+    .orderBy(asc(consistencyFacts.name));
+}
+
+/** Atomically swap the whole ledger for a book (tenant-scoped). */
+export async function replaceConsistencyFacts(
+  db: Database,
+  userId: string,
+  bookId: string,
+  facts: readonly ConsistencyFactInput[],
+): Promise<ConsistencyFactRow[]> {
+  return db.transaction(async (tx) => {
+    await tx
+      .delete(consistencyFacts)
+      .where(and(eq(consistencyFacts.bookId, bookId), eq(consistencyFacts.userId, userId)));
+    if (facts.length === 0) return [];
+    const inserted = await tx
+      .insert(consistencyFacts)
+      .values(
+        facts.map((fact) => ({
+          userId,
+          bookId,
+          kind: fact.kind,
+          name: fact.name,
+          aliases: [...fact.aliases],
+          summary: fact.summary,
+          firstChapter: fact.firstChapter,
+          lastChapter: fact.lastChapter,
+        })),
+      )
+      .returning();
+    return inserted;
+  });
 }

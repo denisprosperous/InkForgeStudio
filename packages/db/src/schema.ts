@@ -224,6 +224,30 @@ export const chapterRevisions = pgTable(
   ],
 );
 
+/**
+ * G-15 — per-book consistency ledger (B5). Deterministic facts about
+ * entities/timelines the post-generation validator checks against.
+ */
+export const consistencyFacts = pgTable(
+  "consistency_facts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id").notNull(),
+    bookId: uuid("book_id").notNull(),
+    /** entity | fact | timeline */
+    kind: text("kind").notNull().default("entity"),
+    name: text("name").notNull(),
+    aliases: jsonb("aliases")
+      .notNull()
+      .default(sql`'[]'::jsonb`),
+    summary: text("summary").notNull().default(""),
+    firstChapter: integer("first_chapter").notNull().default(0),
+    lastChapter: integer("last_chapter").notNull().default(0),
+    createdAt: createdAt(),
+  },
+  (table) => [index("consistency_facts_book_idx").on(table.bookId, table.userId)],
+);
+
 export const humanizeRuns = pgTable(
   "humanize_runs",
   {

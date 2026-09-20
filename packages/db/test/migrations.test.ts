@@ -23,6 +23,7 @@ const EXPECTED_TABLES = [
   "books",
   "chapter_revisions",
   "chapters",
+  "consistency_facts",
   "cover_versions",
   "covers",
   "exports",
@@ -107,6 +108,23 @@ describe.skipIf(!ENABLED)("G-07 migrations apply cleanly to a fresh database", (
     expect(rows).toHaveLength(1);
     expect(String(rows[0].data_type)).toBe("jsonb");
     expect(String(rows[0].column_default)).toContain("'{}'::jsonb");
+  });
+
+  it("carries the G-15 consistency_facts ledger table with span columns", async () => {
+    expect(target).toBeDefined();
+    const rows = await target!`
+      SELECT column_name FROM information_schema.columns
+      WHERE table_name = 'consistency_facts'
+        AND column_name IN ('kind', 'name', 'aliases', 'summary', 'first_chapter', 'last_chapter')
+      ORDER BY column_name`;
+    expect(rows.map((row) => String(row.column_name))).toEqual([
+      "aliases",
+      "first_chapter",
+      "kind",
+      "last_chapter",
+      "name",
+      "summary",
+    ]);
   });
 
   it("applies idempotently via the drizzle journal (no duplicate-table errors on re-list)", () => {

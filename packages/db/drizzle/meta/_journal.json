@@ -29,6 +29,13 @@
       "when": 1789863136759,
       "tag": "0003_huge_king_cobra",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1789865069478,
+      "tag": "0004_dashing_warhawk",
+      "breakpoints": true
     }
   ]
 }

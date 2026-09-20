@@ -122,10 +122,9 @@
     "G-15": {
       "title": "Consistency & memory engine",
       "severity": "high",
-      "status": "open",
+      "status": "closed",
       "sha": null,
-      "test": null,
-      "reasonIfOpen": "Not started"
+      "test": "packages/core/test/consistency.test.ts; packages/db/test/migrations.test.ts (consistency_facts); apps/forge/test/consistency.test.ts (PG16)"
     },
     "G-16": {
       "title": "Voiceprint (target-author matching)",
@@ -238,15 +237,15 @@
   },
   "totals": {
     "gapsTotal": 30,
-    "gapsClosed": 17,
-    "percentByCount": 56.7,
-    "percentByWeight": 76.2,
+    "gapsClosed": 18,
+    "percentByCount": 60,
+    "percentByWeight": 80,
     "criticalOpen": 0,
-    "highOpen": 2,
+    "highOpen": 1,
     "mediumOpen": 10,
     "lowOpen": 1
   },
-  "nextPriority": ["G-15", "G-16", "G-27", "G-24", "G-10", "G-18", "G-19"],
+  "nextPriority": ["G-16", "G-27", "G-24", "G-10", "G-18", "G-19"],
   "sessions": [
     {
       "run": "NEG-3",

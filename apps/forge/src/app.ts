@@ -16,6 +16,7 @@ import pino from "pino";
 import rateLimit from "express-rate-limit";
 import { createDb, type DbHandle } from "@inkforge/db";
 import { requireBridgeAuth } from "./auth";
+import { createConsistencyRouter } from "./consistency";
 import { createJobsRouter, createWorkerControlRouter } from "./jobs";
 import { createLibraryRouter } from "./library";
 import { createChapterRouter, createExportsRouter, createOutlineRouter } from "./manuscript";
@@ -125,6 +126,7 @@ export function buildApp(options: ForgeAppOptions = {}): Express {
     app.use("/", bridge, createLibraryRouter({ db: handle.db }));
     app.use("/books/:bookId/chapters", bridge, createChapterRouter({ db: handle.db }));
     app.use("/books/:bookId/outline", bridge, createOutlineRouter({ db: handle.db }));
+    app.use("/books/:bookId/consistency", bridge, createConsistencyRouter({ db: handle.db }));
     app.use("/", bridge, createExportsRouter({ db: handle.db }));
     app.use(
       "/worker",
