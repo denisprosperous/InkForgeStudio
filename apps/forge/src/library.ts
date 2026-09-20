@@ -11,12 +11,18 @@ import {
   createBook,
   deleteBook,
   getBook,
+  getCover,
+  listAssets,
   listBooks,
+  listChapters,
+  listCoverVersions,
+  latestOutline,
+  saveExport,
   updateBook,
   type Database,
   type ExportRow,
 } from "@inkforge/db";
-import { bookMetaSchema } from "@inkforge/core";
+import { bookMetaSchema, buildPortabilityBundle } from "@inkforge/core";
 import { bridgeUser } from "./auth";
 
 export interface LibraryRouterOptions {
@@ -138,6 +144,91 @@ export function createLibraryRouter(options: LibraryRouterOptions): Router {
       return;
     }
     res.status(200).json({ deleted: true });
+  });
+
+  /** G-24: bulk portability export — everything the user owns, one zip. */
+  router.get("/books/:bookId/portability", async (req: Request, res: Response) => {
+    const bookId = String(req.params.bookId);
+    if (!isBookId(bookId)) {
+      res.status(400).json({ error: "invalid_book_id" });
+      return;
+    }
+    const user = bridgeUser(req);
+    const bookRows = await getBook(db, user, bookId);
+    const book = bookRows[0];
+    if (!book) {
+      res.status(404).json({ error: "book_not_found" });
+      return;
+    }
+    const [chapters, outlineRows, assetRows, coverRow] = await Promise.all([
+      listChapters(db, user, bookId),
+      latestOutline(db, user, bookId),
+      listAssets(db, user, bookId),
+      getCover(db, user, bookId),
+    ]);
+    const cover = coverRow[0];
+    const coverVersionRows = cover ? await listCoverVersions(db, user, cover.id) : [];
+    const outline = outlineRows[0];
+
+    const bundle = buildPortabilityBundle({
+      user,
+      books: [
+        {
+          id: book.id,
+          title: book.title,
+          subtitle: book.subtitle,
+          author: book.author,
+          description: book.description,
+          genre: book.genre,
+          keywords: Array.isArray(book.keywords) ? book.keywords.map(String) : [],
+          language: book.language,
+          seriesLabel: book.seriesLabel,
+          publishTarget: book.publishTarget,
+          status: book.status,
+          extra: book.extra,
+          createdAt: book.createdAt.toISOString(),
+          updatedAt: book.updatedAt.toISOString(),
+        },
+      ],
+      chapters: chapters.map((chapter) => ({
+        id: chapter.id,
+        bookId: chapter.bookId,
+        idx: chapter.idx,
+        title: chapter.title,
+        markdown: chapter.markdown,
+        status: chapter.status,
+        wordCount: chapter.wordCount,
+      })),
+      outlines: outline ? [{ bookId, payload: outline.payload }] : [],
+      covers: coverVersionRows.map((version) => ({
+        bookId,
+        filename: `cover-v${version.version}.png`,
+        data: version.image,
+      })),
+      assets: assetRows.map((asset) => ({
+        bookId,
+        filename: asset.filename,
+        data: asset.data,
+      })),
+    });
+
+    const filename = `portability-${book.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .slice(0, 50)}.zip`;
+    await saveExport(db, user, {
+      bookId,
+      kind: "portability",
+      filename,
+      data: bundle.archive,
+      validation: { manifest: bundle.manifest },
+    });
+
+    res.status(200);
+    res.setHeader("Content-Type", "application/zip");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    res.setHeader("Content-Length", String(bundle.archive.byteLength));
+    res.send(bundle.archive);
   });
 
   return router;

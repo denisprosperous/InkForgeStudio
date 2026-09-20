@@ -58,6 +58,7 @@ export * from "./disclosure";
 export * from "./adapters";
 export * from "./docx";
 export * from "./kpf";
+export * from "./portability";
 export { createZip, crc32, type ZipEntry } from "./zip";
 
 /** Build the ordered content documents for a manuscript (exposed for tests). */

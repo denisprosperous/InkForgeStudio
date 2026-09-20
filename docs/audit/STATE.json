@@ -175,10 +175,9 @@
     "G-24": {
       "title": "Bulk portability export (zip)",
       "severity": "medium",
-      "status": "open",
+      "status": "closed",
       "sha": null,
-      "test": null,
-      "reasonIfOpen": "Not started"
+      "test": "packages/core/test/portability.test.ts; apps/forge/test/portability.test.ts (PG16)"
     },
     "G-25": {
       "title": "Reader simulation panel",
@@ -235,15 +234,15 @@
   },
   "totals": {
     "gapsTotal": 30,
-    "gapsClosed": 20,
-    "percentByCount": 66.7,
-    "percentByWeight": 84,
+    "gapsClosed": 21,
+    "percentByCount": 70,
+    "percentByWeight": 84.6,
     "criticalOpen": 0,
     "highOpen": 1,
-    "mediumOpen": 8,
+    "mediumOpen": 7,
     "lowOpen": 1
   },
-  "nextPriority": ["G-24", "G-10", "G-18", "G-19"],
+  "nextPriority": ["G-10", "G-18", "G-19"],
   "sessions": [
     {
       "run": "NEG-3",
