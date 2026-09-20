@@ -87,7 +87,7 @@
       "title": "Print PDF pipeline (trim/bleed/spine)",
       "severity": "medium",
       "status": "closed",
-      "sha": null,
+      "sha": "f2de104",
       "test": "packages/core/test/print.test.ts (11); apps/forge/test/print.test.ts (PG16, 3)"
     },
     "G-11": {
