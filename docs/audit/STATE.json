@@ -210,10 +210,9 @@
     "G-28": {
       "title": "CI + e2e smoke",
       "severity": "medium",
-      "status": "open",
+      "status": "closed",
       "sha": null,
-      "test": null,
-      "reasonIfOpen": "regression in verification step V10: e2e smoke verified green (2/2 on WEB_PORT=3100) and ci.yml landed, but `npm run build` fails \u2014 (1) web build script recursed (next-on-pages \u2192 vercel build \u2192 same script; FIXED this run: build is now `next build`, pages output is build:pages), then (2) `next build` crashes prerendering /404 with dual React copies (root react 19.3.0 vs apps/web 19.1.0 from the committed lock; useContext of null). Root cause = single React version across the tree; first priority NEG-5"
+      "test": "npm run build (V10) + e2e/smoke.spec.ts (2/2 chromium, WEB_PORT=3100) + .github/workflows/ci.yml"
     },
     "G-29": {
       "title": "Node engines decision",
@@ -240,25 +239,15 @@
   },
   "totals": {
     "gapsTotal": 30,
-    "gapsClosed": 15,
-    "percentByCount": 50,
-    "percentByWeight": 76,
+    "gapsClosed": 16,
+    "percentByCount": 53.3,
+    "percentByWeight": 74.6,
     "criticalOpen": 0,
     "highOpen": 2,
-    "mediumOpen": 12,
+    "mediumOpen": 11,
     "lowOpen": 1
   },
-  "nextPriority": [
-    "G-28",
-    "G-13",
-    "G-15",
-    "G-16",
-    "G-27",
-    "G-24",
-    "G-10",
-    "G-18",
-    "G-19"
-  ],
+  "nextPriority": ["G-13", "G-15", "G-16", "G-27", "G-24", "G-10", "G-18", "G-19"],
   "sessions": [
     {
       "run": "NEG-3",
@@ -266,16 +255,7 @@
       "endedAt": "2026-09-17T08:45:00Z",
       "shaBefore": "3ee05f6",
       "shaAfter": "69dba4c",
-      "closed": [
-        "G-29",
-        "G-07",
-        "G-04a",
-        "G-04b",
-        "G-04c",
-        "G-14a",
-        "G-04d",
-        "G-06"
-      ],
+      "closed": ["G-29", "G-07", "G-04a", "G-04b", "G-04c", "G-14a", "G-04d", "G-06"],
       "stillOpen": [
         "G-17",
         "G-28",
@@ -308,14 +288,7 @@
       "endedAt": "2026-09-18T13:05:00Z",
       "shaBefore": "69dba4c",
       "shaAfter": "f233a36",
-      "closed": [
-        "G-17a",
-        "G-17",
-        "G-08",
-        "G-12",
-        "G-11",
-        "G-09"
-      ],
+      "closed": ["G-17a", "G-17", "G-08", "G-12", "G-11", "G-09"],
       "stillOpen": [
         "G-28",
         "G-13",

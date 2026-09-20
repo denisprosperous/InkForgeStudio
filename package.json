@@ -69,5 +69,9 @@
     "tsx": "4.19.2",
     "typescript": "5.7.2",
     "vitest": "2.1.8"
+  },
+  "overrides": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
   }
 }
