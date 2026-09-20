@@ -130,7 +130,7 @@
       "title": "Voiceprint (target-author matching)",
       "severity": "medium",
       "status": "closed",
-      "sha": null,
+      "sha": "e1d7300",
       "test": "packages/core/test/voiceprint.test.ts (7, deterministic)"
     },
     "G-17": {
