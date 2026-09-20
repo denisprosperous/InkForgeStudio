@@ -86,10 +86,9 @@
     "G-10": {
       "title": "Print PDF pipeline (trim/bleed/spine)",
       "severity": "medium",
-      "status": "open",
+      "status": "closed",
       "sha": null,
-      "test": null,
-      "reasonIfOpen": "Not started"
+      "test": "packages/core/test/print.test.ts (11); apps/forge/test/print.test.ts (PG16, 3)"
     },
     "G-11": {
       "title": "Audiobook + DOCX + KPF export adapters",
@@ -233,15 +232,15 @@
   },
   "totals": {
     "gapsTotal": 30,
-    "gapsClosed": 22,
-    "percentByCount": 73.3,
-    "percentByWeight": 86.2,
+    "gapsClosed": 23,
+    "percentByCount": 76.7,
+    "percentByWeight": 87.7,
     "criticalOpen": 0,
     "highOpen": 1,
-    "mediumOpen": 6,
+    "mediumOpen": 5,
     "lowOpen": 1
   },
-  "nextPriority": ["G-10", "G-19"],
+  "nextPriority": ["G-19"],
   "sessions": [
     {
       "run": "NEG-3",

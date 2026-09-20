@@ -26,6 +26,7 @@ import {
   bookMetaSchema,
   buildOnix30,
   buildPortabilityBundle,
+  buildPrintInterior,
   distributionIdentifierSchema,
   type ProductMetadata,
 } from "@inkforge/core";
@@ -289,9 +290,74 @@ export function createLibraryRouter(options: LibraryRouterOptions): Router {
     res.send(xml);
   });
 
+  /** G-10: print-interior PDF (trim/bleed/spine) export. */
+  router.get("/books/:bookId/print", async (req: Request, res: Response) => {
+    const bookId = String(req.params.bookId);
+    if (!isBookId(bookId)) {
+      res.status(400).json({ error: "invalid_book_id" });
+      return;
+    }
+    const user = bridgeUser(req);
+    const book = (await getBook(db, user, bookId))[0];
+    if (!book) {
+      res.status(404).json({ error: "book_not_found" });
+      return;
+    }
+    const chapters = await listChapters(db, user, bookId);
+    const extra = isRecord(book.extra) ? book.extra : {};
+    const trimId = typeof extra.printTrim === "string" ? extra.printTrim : "6x9";
+    const paper = extra.printPaper === "cream" ? "cream" : "white";
+    let pdf: Buffer;
+    let pages: number;
+    try {
+      const interior = buildPrintInterior(
+        book.title,
+        book.author,
+        trimId,
+        chapters
+          .sort((a, b) => a.idx - b.idx)
+          .map((chapter) => ({ title: chapter.title, markdown: printBody(chapter.markdown) })),
+        { paper },
+      );
+      pdf = interior.pdf;
+      pages = interior.pages;
+    } catch (error) {
+      res.status(422).json({
+        error: "print_unready",
+        reason: error instanceof Error ? error.message : "unknown",
+      });
+      return;
+    }
+    const filename = `print-${book.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .slice(0, 40)}.pdf`;
+    await saveExport(db, user, {
+      bookId,
+      kind: "print-pdf",
+      filename,
+      data: pdf,
+      validation: { pages, trim: trimId, paper },
+    });
+    res.status(200);
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    res.setHeader("Content-Length", String(pdf.byteLength));
+    res.send(pdf);
+  });
+
   return router;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+/** Strip structural markdown for print body flow (headings become plain lines). */
+function printBody(markdown: string): string {
+  return markdown
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+    .replace(/\[([^\]]*)\]\(([^)]*)\)/g, "$1")
+    .replace(/[*_`>]/g, "");
 }
