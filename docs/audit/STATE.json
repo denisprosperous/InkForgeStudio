@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-18T12:55:00Z",
+  "updatedAt": "2026-09-20T22:45:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
-  "currentSha": "f233a36",
+  "currentSha": "32b97f9",
   "branch": "main",
   "weights": {
     "critical": 10,
@@ -227,19 +227,27 @@
       "status": "closed",
       "sha": "960de1f",
       "test": "apps/forge/test/handlers.test.ts; apps/forge/test/worker.test.ts (PG16: 18/18 green)"
+    },
+    "G-31": {
+      "title": "Test coverage floor 80% (discovered in NEG-4.2 verification V6)",
+      "severity": "medium",
+      "status": "open",
+      "sha": null,
+      "test": null,
+      "reasonIfOpen": "Discovered in V6: full suite 299/299 green but coverage is 74.08% lines / 80.78% branches / 75.6% functions — below the 80% floor; no vitest coverage threshold is configured, so nothing enforces it. Shortfall is concentrated in apps/web page/action modules and repo scripts; new G-13..G-19 modules are individually well covered."
     }
   },
   "totals": {
-    "gapsTotal": 30,
+    "gapsTotal": 31,
     "gapsClosed": 24,
-    "percentByCount": 80,
-    "percentByWeight": 89.2,
+    "percentByCount": 77.4,
+    "percentByWeight": 87.9,
     "criticalOpen": 0,
     "highOpen": 1,
-    "mediumOpen": 4,
+    "mediumOpen": 5,
     "lowOpen": 1
   },
-  "nextPriority": ["G-21", "G-09b", "G-22", "G-25", "G-26", "G-30"],
+  "nextPriority": ["G-31", "G-21", "G-09b", "G-22", "G-25", "G-26", "G-30"],
   "sessions": [
     {
       "run": "NEG-3",
@@ -302,6 +310,19 @@
       "percentBefore": 54.4,
       "percentAfter": 76.0,
       "notes": "Resume: settled G-17a (sha sealed, guards made audit-stubs-safe). Closed studio UI flows incl. real chapter.humanize handler and approve/reject diff (G-17); provider selection 3-tier chain + cost capture + key custody (G-08); per-job token/cost accounting with migration 0001 (G-12); audio-script + DOCX + KPF adapters over a deterministic in-core zip writer, all four formats wired through the queue and studio (G-11); chapter revision history with tenant-scoped restore (G-09, migration 0002). G-28 landed (CI + Playwright smoke on WEB_PORT) but V10 exposed a pre-existing broken `npm run build`: recursion fixed, dual-React prerender crash open \u2014 reopened with root cause. Drift well under 5k lines; every commit independently revertable; packages/core touched additively only."
+    },
+    {
+      "run": "NEG-4.2",
+      "startedAt": "2026-09-19T23:30:00Z",
+      "endedAt": "2026-09-20T22:45:00Z",
+      "shaBefore": "ff5a651",
+      "shaAfter": "32b97f9",
+      "closed": ["G-28", "G-13", "G-15", "G-16", "G-27", "G-24", "G-18", "G-10", "G-19"],
+      "stillOpen": ["G-31", "G-21", "G-09b", "G-22", "G-25", "G-26", "G-30"],
+      "verification": "partial: V1-V5 and V7-V12 + V14 green (clean checkout; install clean with PUPPETEER_SKIP_DOWNLOAD=1 after Chromium postinstall was SIGHUP-killed; db migrate+seed green after db:generate script fix 32b97f9; lint 0; typecheck 0; 299/299 tests on live PG16; e2e 2/2 chromium WEB_PORT=3100; audit:stubs --strict 0 markers; audit:dod --strict clean; build ok incl. forge+web dist; healthz ok + readyz ready on live forge; SIGTERM clean exit) — V6 PARTIAL: coverage 74.08% lines < 80% floor, filed as new open gap G-31 — V13 not-run: no Java runtime on this host (epubcheck graceful-skip suite green inside V6)",
+      "percentBefore": 76.0,
+      "percentAfter": 87.9,
+      "notes": "Resume from ff5a651 (NEG-4.1). Closed all nine nextPriority gaps: G-28 (single React tree 19.3.0 + root overrides; V10 build red->green; e2e green), G-13 (books.extra jsonb + product schema, migration 0003, repo-level jsonb merge), G-15 (consistency engine: fact/entity ledger, deterministic validator, consistency_facts table migration 0004, forge ledger+report routes), G-16 (voiceprint: 6-metric profile + distance/fit/report), G-27 (AEO pack builder), G-24 (portability zip + /books/:id/portability), G-18 (ISBN-13 checksum + BISAC + ONIX 3.0 builder + /books/:id/onix, 422 gate), G-10 (print pipeline: KDP trim/bleed/gutter/spine math + self-contained PDF 1.4 writer + /books/:id/print), G-19 (a11y audit + EPUB-A11Y-WCAG21-AA metadata + 16pt large-print edition via print writer). Verification fixes inside the run: db:generate script repaired (drizzle-kit absolute-out bug, commit 32b97f9) and Postgres container restarted on host (environmental). Metric notes: percentByWeight recomputed with the declared formula (sum closed weights / sum total weights); NEG-4.1's 76.0 was over-counted \u2014 corrected start-of-run value 73.1 -> 87.9 (denominator 130 -> 132 with new gap G-31). Wall time exceeded the 6h budget (G8): stopped after the last nextPriority gap + battery instead of opening G-21. Drift 4,541 non-test insertions (< 5,000); hand-written non-test code per commit under 300 lines (generated drizzle snapshots inflate raw stats); packages/core additive only; every commit independently revertable. Observations for NEG-5: forge dist uses extensionless ESM imports (plain node cannot run it; tsx path works, as used by start/webServer) and `npm run start` web leg cannot bind :3000 while the omnisni-vpn container owns it. Environment restore: .env recreated locally (gitignored), docker-postgres-1 restarted."
     }
   ]
 }
