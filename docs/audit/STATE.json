@@ -150,7 +150,7 @@
       "title": "Accessibility editions",
       "severity": "medium",
       "status": "closed",
-      "sha": null,
+      "sha": "733f37a",
       "test": "packages/core/test/accessibility.test.ts (8); apps/forge/test/accessibility.test.ts (PG16, 3)"
     },
     "G-21": {
