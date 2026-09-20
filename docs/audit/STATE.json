@@ -176,7 +176,7 @@
       "title": "Bulk portability export (zip)",
       "severity": "medium",
       "status": "closed",
-      "sha": null,
+      "sha": "6365967",
       "test": "packages/core/test/portability.test.ts; apps/forge/test/portability.test.ts (PG16)"
     },
     "G-25": {
