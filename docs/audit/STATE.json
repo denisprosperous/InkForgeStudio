@@ -211,7 +211,7 @@
       "title": "CI + e2e smoke",
       "severity": "medium",
       "status": "closed",
-      "sha": null,
+      "sha": "511e043",
       "test": "npm run build (V10) + e2e/smoke.spec.ts (2/2 chromium, WEB_PORT=3100) + .github/workflows/ci.yml"
     },
     "G-29": {
