@@ -109,7 +109,7 @@
       "title": "Metadata extension (extra jsonb + product schema)",
       "severity": "medium",
       "status": "closed",
-      "sha": null,
+      "sha": "297672f",
       "test": "packages/core/test/metadata.test.ts; packages/db/test/migrations.test.ts (books.extra jsonb); apps/forge/test/library.test.ts (PG16)"
     },
     "G-14": {
