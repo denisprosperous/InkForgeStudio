@@ -144,7 +144,7 @@
       "title": "ISBN/ONIX/BISAC + ONIX 3.0 export",
       "severity": "medium",
       "status": "closed",
-      "sha": null,
+      "sha": "2d0f02f",
       "test": "packages/core/test/onix.test.ts; apps/forge/test/onix.test.ts (PG16)"
     },
     "G-19": {
