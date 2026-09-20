@@ -10,6 +10,7 @@ export * from "./voiceprint/index";
 export * from "./aeo/index";
 export * from "./onix/index";
 export * from "./print/index";
+export * from "./accessibility/index";
 export {
   validateEpub,
   locateEpubcheckJar,

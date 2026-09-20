@@ -149,10 +149,9 @@
     "G-19": {
       "title": "Accessibility editions",
       "severity": "medium",
-      "status": "open",
+      "status": "closed",
       "sha": null,
-      "test": null,
-      "reasonIfOpen": "Not started"
+      "test": "packages/core/test/accessibility.test.ts (8); apps/forge/test/accessibility.test.ts (PG16, 3)"
     },
     "G-21": {
       "title": "Niche & revenue intelligence (pre-gen gate)",
@@ -232,15 +231,15 @@
   },
   "totals": {
     "gapsTotal": 30,
-    "gapsClosed": 23,
-    "percentByCount": 76.7,
-    "percentByWeight": 87.7,
+    "gapsClosed": 24,
+    "percentByCount": 80,
+    "percentByWeight": 89.2,
     "criticalOpen": 0,
     "highOpen": 1,
-    "mediumOpen": 5,
+    "mediumOpen": 4,
     "lowOpen": 1
   },
-  "nextPriority": ["G-19"],
+  "nextPriority": ["G-21", "G-09b", "G-22", "G-25", "G-26", "G-30"],
   "sessions": [
     {
       "run": "NEG-3",

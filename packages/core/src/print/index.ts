@@ -44,7 +44,17 @@ const CREAM_PER_PAGE_IN = 0.0025;
 
 export interface PrintSpecOptions {
   readonly paper?: "white" | "cream";
+  /** G-19: body type size in points (default 9.5 standard, 16 large print). */
+  readonly bodyFontPt?: number;
+  /** G-19: line height as a multiple of the body size (default 1.4). */
+  readonly leadingRatio?: number;
 }
+
+/** Default body type; large-print editions override this to 16pt (G-19). */
+export const PRINT_BODY_FONT_PT = 9.5;
+const PRINT_LEADING_RATIO = 1.4;
+/** Helvetica average advance width as a fraction of the em size. */
+const AVG_CHAR_EM = 0.526;
 
 export interface PrintLayoutSpec {
   readonly trim: KdpTrimSize;
@@ -113,12 +123,21 @@ export interface PrintChapterInput {
  * Estimate the page count before layout: words per page scale with the trim
  * area against the 6x9 baseline (~300 words/page).
  */
-export function estimatePageCount(chapters: readonly PrintChapterInput[], trimId: string): number {
+export function estimatePageCount(
+  chapters: readonly PrintChapterInput[],
+  trimId: string,
+  options: PrintSpecOptions = {},
+): number {
   const trim = trimById(trimId);
   const baselineArea = 6 * 9;
   const area = trim.widthIn * trim.heightIn;
+  const bodyFontPt = options.bodyFontPt ?? PRINT_BODY_FONT_PT;
+  const leadingRatio = options.leadingRatio ?? PRINT_LEADING_RATIO;
   const words = chapters.reduce((total, chapter) => total + countWords(chapter.markdown), 0);
-  const wordsPerPage = Math.round(300 * (area / baselineArea));
+  // Larger type and looser leading both cut words per page (area-proportional).
+  const typeFactor = (PRINT_BODY_FONT_PT / bodyFontPt) ** 2;
+  const leadingFactor = PRINT_LEADING_RATIO / leadingRatio;
+  const wordsPerPage = Math.round(300 * (area / baselineArea) * typeFactor * leadingFactor);
   const frontMatterPages = 6;
   return Math.ceil(words / Math.max(1, wordsPerPage)) + frontMatterPages;
 }
@@ -215,14 +234,17 @@ function typeset(
   author: string,
   chapters: readonly PrintChapterInput[],
   spec: PrintLayoutSpec,
+  options: PrintSpecOptions = {},
 ): PdfPage[] {
+  const bodyFontPt = options.bodyFontPt ?? PRINT_BODY_FONT_PT;
+  const leadingRatio = options.leadingRatio ?? PRINT_LEADING_RATIO;
   const pointPerIn = 72;
   const typeLeft = spec.insideGutterIn * pointPerIn + 18;
   const typeRight = spec.pageWidthIn * pointPerIn - spec.outsideMarginIn * pointPerIn - 9;
-  const typeWidthChars = Math.floor((typeRight - typeLeft) / 5.0);
+  const typeWidthChars = Math.floor((typeRight - typeLeft) / (bodyFontPt * AVG_CHAR_EM));
   const topY = spec.pageHeightIn * pointPerIn - spec.topMarginIn * pointPerIn;
   const bottomY = spec.bottomMarginIn * pointPerIn + 14;
-  const lineHeight = 13.3;
+  const lineHeight = bodyFontPt * leadingRatio;
   const maxBodyLines = Math.floor((topY - bottomY) / lineHeight) - 2;
   const pages: PdfPage[] = [];
 
@@ -261,7 +283,7 @@ function typeset(
       lines.push({
         x: typeLeft,
         y: topY - index * lineHeight,
-        size: entry.bold ? 12 : 9.5,
+        size: entry.bold ? bodyFontPt + 2.5 : bodyFontPt,
         text: entry.text,
         ...(entry.bold ? { bold: true } : {}),
       });
@@ -289,13 +311,17 @@ export function buildPrintInterior(
 ): PrintInterior {
   // Gate on the estimate first: a manuscript that cannot reach the KDP page
   // floor must fail fast instead of producing an unusable artifact.
-  const estimated = estimatePageCount(chapters, trimId);
+  const estimated = estimatePageCount(chapters, trimId, options);
   if (estimated < PRINT_MIN_PAGES) {
     throw new Error(`print interiors need >= ${PRINT_MIN_PAGES} pages, estimate was ${estimated}`);
   }
-  const pages = typeset(title, author, chapters, {
-    ...printLayoutSpec(trimId, Math.max(estimated, PRINT_MIN_PAGES), options),
-  });
+  const pages = typeset(
+    title,
+    author,
+    chapters,
+    { ...printLayoutSpec(trimId, Math.max(estimated, PRINT_MIN_PAGES), options) },
+    options,
+  );
   // Geometry comes from the ACTUAL typeset page count (spine math must match).
   const spec = printLayoutSpec(trimId, pages.length, options);
   const pdf = assemblePdf(pages, spec.pageWidthIn * 72, spec.pageHeightIn * 72);

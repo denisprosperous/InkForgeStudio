@@ -23,11 +23,14 @@ import {
   type ExportRow,
 } from "@inkforge/db";
 import {
+  auditAccessibility,
   bookMetaSchema,
   buildOnix30,
   buildPortabilityBundle,
   buildPrintInterior,
   distributionIdentifierSchema,
+  epubAccessibilityMetadata,
+  largePrintOptions,
   type ProductMetadata,
 } from "@inkforge/core";
 import { bridgeUser } from "./auth";
@@ -305,7 +308,12 @@ export function createLibraryRouter(options: LibraryRouterOptions): Router {
     }
     const chapters = await listChapters(db, user, bookId);
     const extra = isRecord(book.extra) ? book.extra : {};
-    const trimId = typeof extra.printTrim === "string" ? extra.printTrim : "6x9";
+    const largePrint = String(req.query.edition ?? "") === "large-print";
+    const trimId = largePrint
+      ? largePrintOptions(extra.printPaper === "cream" ? "cream" : "white").trimId
+      : typeof extra.printTrim === "string"
+        ? extra.printTrim
+        : "6x9";
     const paper = extra.printPaper === "cream" ? "cream" : "white";
     let pdf: Buffer;
     let pages: number;
@@ -317,7 +325,7 @@ export function createLibraryRouter(options: LibraryRouterOptions): Router {
         chapters
           .sort((a, b) => a.idx - b.idx)
           .map((chapter) => ({ title: chapter.title, markdown: printBody(chapter.markdown) })),
-        { paper },
+        largePrint ? largePrintOptions(paper) : { paper },
       );
       pdf = interior.pdf;
       pages = interior.pages;
@@ -337,13 +345,39 @@ export function createLibraryRouter(options: LibraryRouterOptions): Router {
       kind: "print-pdf",
       filename,
       data: pdf,
-      validation: { pages, trim: trimId, paper },
+      validation: { pages, trim: trimId, paper, edition: largePrint ? "large-print" : "standard" },
     });
     res.status(200);
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
     res.setHeader("Content-Length", String(pdf.byteLength));
     res.send(pdf);
+  });
+
+  /** G-19: accessibility audit + large-print edition recipe. */
+  router.get("/books/:bookId/accessibility", async (req: Request, res: Response) => {
+    const bookId = String(req.params.bookId);
+    if (!isBookId(bookId)) {
+      res.status(400).json({ error: "invalid_book_id" });
+      return;
+    }
+    const user = bridgeUser(req);
+    const book = (await getBook(db, user, bookId))[0];
+    if (!book) {
+      res.status(404).json({ error: "book_not_found" });
+      return;
+    }
+    const chapters = await listChapters(db, user, bookId);
+    const report = auditAccessibility(
+      chapters
+        .sort((a, b) => a.idx - b.idx)
+        .map((chapter) => ({ title: chapter.title, markdown: chapter.markdown })),
+    );
+    res.status(200).json({
+      report,
+      epubMetadata: epubAccessibilityMetadata({ language: book.language }),
+      largePrint: largePrintOptions(),
+    });
   });
 
   return router;
