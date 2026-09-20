@@ -108,10 +108,9 @@
     "G-13": {
       "title": "Metadata extension (extra jsonb + product schema)",
       "severity": "medium",
-      "status": "open",
+      "status": "closed",
       "sha": null,
-      "test": null,
-      "reasonIfOpen": "Not started"
+      "test": "packages/core/test/metadata.test.ts; packages/db/test/migrations.test.ts (books.extra jsonb); apps/forge/test/library.test.ts (PG16)"
     },
     "G-14": {
       "title": "Outline generator",
@@ -239,15 +238,15 @@
   },
   "totals": {
     "gapsTotal": 30,
-    "gapsClosed": 16,
-    "percentByCount": 53.3,
-    "percentByWeight": 74.6,
+    "gapsClosed": 17,
+    "percentByCount": 56.7,
+    "percentByWeight": 76.2,
     "criticalOpen": 0,
     "highOpen": 2,
-    "mediumOpen": 11,
+    "mediumOpen": 10,
     "lowOpen": 1
   },
-  "nextPriority": ["G-13", "G-15", "G-16", "G-27", "G-24", "G-10", "G-18", "G-19"],
+  "nextPriority": ["G-15", "G-16", "G-27", "G-24", "G-10", "G-18", "G-19"],
   "sessions": [
     {
       "run": "NEG-3",

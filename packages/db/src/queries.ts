@@ -41,6 +41,7 @@ export interface BookRow {
   seriesLabel: string | null;
   publishTarget: string;
   status: string;
+  extra: unknown;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -71,6 +72,8 @@ export interface CreateBookValues {
   readonly keywords?: string[];
   readonly language?: string;
   readonly seriesLabel?: string;
+  /** G-13: namespaced metadata extension (merged, not replaced). */
+  readonly extra?: Record<string, unknown>;
 }
 
 export async function createBook(
@@ -90,6 +93,7 @@ export async function createBook(
       keywords: values.keywords ?? [],
       language: values.language ?? "en",
       seriesLabel: values.seriesLabel,
+      extra: values.extra ?? {},
     })
     .returning();
   const row = inserted[0];
@@ -107,6 +111,8 @@ export interface UpdateBookValues {
   readonly language?: string;
   readonly seriesLabel?: string | null;
   readonly status?: string;
+  /** G-13: merged into the stored jsonb (never clobbers other namespaces). */
+  readonly extra?: Record<string, unknown>;
 }
 
 export async function updateBook(
@@ -115,9 +121,16 @@ export async function updateBook(
   bookId: string,
   values: UpdateBookValues,
 ): Promise<BookRow | undefined> {
+  const { extra, ...rest } = values;
   const updated = await db
     .update(books)
-    .set({ ...values, updatedAt: new Date() })
+    .set({
+      ...rest,
+      ...(extra !== undefined
+        ? { extra: sql`coalesce(${books.extra}, '{}'::jsonb) || ${JSON.stringify(extra)}::jsonb` }
+        : {}),
+      updatedAt: new Date(),
+    })
     .where(and(eq(books.id, bookId), eq(books.userId, userId)))
     .returning();
   return updated[0];
@@ -558,9 +571,10 @@ export async function saveRevision(
       userId,
       bookId: input.bookId,
       chapterId: input.chapterId,
-      revision: sql`(select coalesce(max(${chapterRevisions.revision}), 0) + 1 from ${chapterRevisions} where ${chapterRevisions.chapterId} = ${input.chapterId})`.mapWith(
-        Number,
-      ) as never,
+      revision:
+        sql`(select coalesce(max(${chapterRevisions.revision}), 0) + 1 from ${chapterRevisions} where ${chapterRevisions.chapterId} = ${input.chapterId})`.mapWith(
+          Number,
+        ) as never,
       title: input.title,
       markdown: input.markdown,
       wordCount: input.wordCount,

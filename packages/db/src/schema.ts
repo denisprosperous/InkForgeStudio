@@ -52,6 +52,10 @@ export const books = pgTable(
     language: text("language").notNull().default("en"),
     seriesLabel: text("series_label"),
     publishTarget: text("publish_target").notNull().default("kdp"),
+    /** G-13: namespaced metadata extension (product/ONIX/AEO payloads attach here). */
+    extra: jsonb("extra")
+      .notNull()
+      .default(sql`'{}'::jsonb`),
     status: text("status").notNull().default("drafting"),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
@@ -183,7 +187,8 @@ export const exports = pgTable(
 );
 
 export const userApiKeys = pgTable(
-  "user_api_keys", {
+  "user_api_keys",
+  {
     id: uuid("id").primaryKey().defaultRandom(),
     userId: text("user_id").notNull(),
     label: text("label").notNull(),

@@ -33,6 +33,8 @@ const updateBookSchema = z.object({
   language: z.string().min(2).max(12).optional(),
   seriesLabel: z.string().max(160).nullable().optional(),
   status: z.string().min(1).max(40).optional(),
+  /** G-13: namespaced metadata extension; repo merges instead of clobbering. */
+  extra: z.record(z.string().min(1).max(64), z.unknown()).optional(),
 });
 
 export const isBookId = (value: string) => z.string().uuid().safeParse(value).success;
@@ -77,6 +79,7 @@ export function createLibraryRouter(options: LibraryRouterOptions): Router {
       language: meta.language,
       ...(meta.subtitle !== undefined ? { subtitle: meta.subtitle } : {}),
       ...(meta.seriesLabel !== undefined ? { seriesLabel: meta.seriesLabel } : {}),
+      ...(Object.keys(meta.extra).length > 0 ? { extra: meta.extra } : {}),
     });
     res.status(201).json({ book });
   });

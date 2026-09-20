@@ -7,6 +7,9 @@
  */
 import { z } from "zod";
 
+export { productMetadataSchema, MATURITY_RATINGS } from "./product";
+export type { ProductMetadata, MaturityRating } from "./product";
+
 export const CHAPTER_STATUSES = ["draft", "humanized", "final"] as const;
 export type ChapterStatus = (typeof CHAPTER_STATUSES)[number];
 
@@ -20,6 +23,8 @@ export const bookMetaSchema = z.object({
   language: z.string().min(2).max(12).default("en"),
   seriesLabel: z.string().max(160).optional(),
   publishTarget: z.literal("kdp").default("kdp"),
+  /** G-13: namespaced extension payload — unknown keys must never break parse. */
+  extra: z.record(z.string().min(1).max(64), z.unknown()).default({}),
 });
 export type BookMeta = z.infer<typeof bookMetaSchema>;
 

@@ -22,6 +22,13 @@
       "when": 1789728300937,
       "tag": "0002_superb_vindicator",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1789863136759,
+      "tag": "0003_huge_king_cobra",
+      "breakpoints": true
     }
   ]
 }

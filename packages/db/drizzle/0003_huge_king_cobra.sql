@@ -1,0 +1,1 @@
+ALTER TABLE "books" ADD COLUMN "extra" jsonb DEFAULT '{}'::jsonb NOT NULL;
