@@ -143,10 +143,9 @@
     "G-18": {
       "title": "ISBN/ONIX/BISAC + ONIX 3.0 export",
       "severity": "medium",
-      "status": "open",
+      "status": "closed",
       "sha": null,
-      "test": null,
-      "reasonIfOpen": "Not started"
+      "test": "packages/core/test/onix.test.ts; apps/forge/test/onix.test.ts (PG16)"
     },
     "G-19": {
       "title": "Accessibility editions",
@@ -234,15 +233,15 @@
   },
   "totals": {
     "gapsTotal": 30,
-    "gapsClosed": 21,
-    "percentByCount": 70,
-    "percentByWeight": 84.6,
+    "gapsClosed": 22,
+    "percentByCount": 73.3,
+    "percentByWeight": 86.2,
     "criticalOpen": 0,
     "highOpen": 1,
-    "mediumOpen": 7,
+    "mediumOpen": 6,
     "lowOpen": 1
   },
-  "nextPriority": ["G-10", "G-18", "G-19"],
+  "nextPriority": ["G-10", "G-19"],
   "sessions": [
     {
       "run": "NEG-3",

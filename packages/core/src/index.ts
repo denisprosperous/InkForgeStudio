@@ -8,6 +8,7 @@ export * from "./export/index";
 export * from "./consistency/index";
 export * from "./voiceprint/index";
 export * from "./aeo/index";
+export * from "./onix/index";
 export {
   validateEpub,
   locateEpubcheckJar,

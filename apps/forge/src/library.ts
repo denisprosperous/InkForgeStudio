@@ -22,7 +22,13 @@ import {
   type Database,
   type ExportRow,
 } from "@inkforge/db";
-import { bookMetaSchema, buildPortabilityBundle } from "@inkforge/core";
+import {
+  bookMetaSchema,
+  buildOnix30,
+  buildPortabilityBundle,
+  distributionIdentifierSchema,
+  type ProductMetadata,
+} from "@inkforge/core";
 import { bridgeUser } from "./auth";
 
 export interface LibraryRouterOptions {
@@ -231,5 +237,61 @@ export function createLibraryRouter(options: LibraryRouterOptions): Router {
     res.send(bundle.archive);
   });
 
+  /** G-18: ONIX 3.0 export — wide-distribution trade metadata. */
+  router.get("/books/:bookId/onix", async (req: Request, res: Response) => {
+    const bookId = String(req.params.bookId);
+    if (!isBookId(bookId)) {
+      res.status(400).json({ error: "invalid_book_id" });
+      return;
+    }
+    const user = bridgeUser(req);
+    const book = (await getBook(db, user, bookId))[0];
+    if (!book) {
+      res.status(404).json({ error: "book_not_found" });
+      return;
+    }
+    const parsedIds = distributionIdentifierSchema.safeParse(
+      isRecord(book.extra) ? book.extra.identifiers : undefined,
+    );
+    let xml: string;
+    try {
+      xml = buildOnix30({
+        meta: {
+          title: book.title,
+          subtitle: book.subtitle ?? undefined,
+          author: book.author,
+          description: book.description,
+          genre: book.genre,
+          keywords: Array.isArray(book.keywords) ? book.keywords.map(String) : [],
+          language: book.language,
+          seriesLabel: book.seriesLabel ?? undefined,
+          publishTarget: "kdp",
+          extra: {},
+        },
+        product: isRecord(book.extra) ? (book.extra.product as ProductMetadata) : undefined,
+        ...(parsedIds.success ? { identifier: parsedIds.data } : {}),
+      });
+    } catch (error) {
+      res.status(422).json({
+        error: "onix_unready",
+        reason: error instanceof Error ? error.message : "unknown",
+      });
+      return;
+    }
+    const filename = `onix-${book.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .slice(0, 40)}.xml`;
+    await saveExport(db, user, { bookId, kind: "onix", filename, data: Buffer.from(xml, "utf8") });
+    res.status(200);
+    res.setHeader("Content-Type", "application/xml; charset=utf-8");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    res.send(xml);
+  });
+
   return router;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
