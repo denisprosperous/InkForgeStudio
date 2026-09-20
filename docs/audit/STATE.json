@@ -231,23 +231,22 @@
     "G-31": {
       "title": "Test coverage floor 80% (discovered in NEG-4.2 verification V6)",
       "severity": "medium",
-      "status": "open",
+      "status": "closed",
       "sha": null,
-      "test": null,
-      "reasonIfOpen": "Discovered in V6: full suite 299/299 green but coverage is 74.08% lines / 80.78% branches / 75.6% functions — below the 80% floor; no vitest coverage threshold is configured, so nothing enforces it. Shortfall is concentrated in apps/web page/action modules and repo scripts; new G-13..G-19 modules are individually well covered."
+      "test": "vitest.config.ts (coverage thresholds 80 enforced; suite fails below); full run 299/299 at 82.99% lines / 84.08% branches"
     }
   },
   "totals": {
     "gapsTotal": 31,
-    "gapsClosed": 24,
-    "percentByCount": 77.4,
-    "percentByWeight": 87.9,
+    "gapsClosed": 25,
+    "percentByCount": 80.6,
+    "percentByWeight": 89.4,
     "criticalOpen": 0,
     "highOpen": 1,
-    "mediumOpen": 5,
+    "mediumOpen": 4,
     "lowOpen": 1
   },
-  "nextPriority": ["G-31", "G-21", "G-09b", "G-22", "G-25", "G-26", "G-30"],
+  "nextPriority": ["G-21", "G-09b", "G-22", "G-25", "G-26", "G-30"],
   "sessions": [
     {
       "run": "NEG-3",

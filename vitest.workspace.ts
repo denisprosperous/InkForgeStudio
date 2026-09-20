@@ -3,6 +3,14 @@ import path from "node:path";
 
 const WEB_ROOT = path.resolve(__dirname, "apps/web");
 
+/**
+ * G-31 — coverage contract lives in the ROOT vitest.config.ts (coverage
+ * options are resolved from the root when a workspace file is present; the
+ * per-project blocks below are ignored by the coverage runner). The floor is
+ * 80% statements/lines; surfaces excluded there are covered by other gates
+ * (CI ops steps for scripts/seed/cli, route-graph + Playwright e2e for the
+ * web page/layout shells) — server logic stays inside coverage on purpose.
+ */
 export default defineWorkspace([
   {
     resolve: {
