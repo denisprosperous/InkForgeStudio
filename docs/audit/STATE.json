@@ -157,7 +157,7 @@
       "title": "Niche & revenue intelligence (pre-gen gate)",
       "severity": "high",
       "status": "closed",
-      "sha": null,
+      "sha": "6ca4edd",
       "test": "packages/core/test/market.test.ts (9, deterministic); apps/forge/test/market.test.ts (PG16: verdict round-trip + 409 pre-gen block + ungated exports)"
     },
     "G-22": {
