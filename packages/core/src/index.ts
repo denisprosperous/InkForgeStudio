@@ -12,6 +12,7 @@ export * from "./onix/index";
 export * from "./print/index";
 export * from "./accessibility/index";
 export * from "./market/index";
+export * from "./rights/index";
 export {
   validateEpub,
   locateEpubcheckJar,

@@ -8,6 +8,7 @@
  */
 import { relations, sql } from "drizzle-orm";
 import {
+  boolean,
   customType,
   index,
   integer,
@@ -246,6 +247,47 @@ export const consistencyFacts = pgTable(
     createdAt: createdAt(),
   },
   (table) => [index("consistency_facts_book_idx").on(table.bookId, table.userId)],
+);
+
+/**
+ * G-09b — rights & licensing records + corpus chunks (B9/B18).
+ */
+export const rightsRecords = pgTable(
+  "rights_records",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id").notNull(),
+    bookId: uuid("book_id").notNull(),
+    /** license | permission | restriction */
+    kind: text("kind").notNull().default("license"),
+    title: text("title").notNull(),
+    holder: text("holder").notNull(),
+    terms: text("terms").notNull().default(""),
+    territory: text("territory").notNull().default("world"),
+    exclusive: boolean("exclusive").notNull().default(false),
+    startsAt: timestamp("starts_at", { withTimezone: true }),
+    expiresAt: timestamp("expires_at", { withTimezone: true }),
+    status: text("status").notNull().default("active"),
+    createdAt: createdAt(),
+  },
+  (table) => [index("rights_records_book_idx").on(table.bookId, table.userId)],
+);
+
+export const corpusChunks = pgTable(
+  "corpus_chunks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id").notNull(),
+    bookId: uuid("book_id").notNull(),
+    source: text("source").notNull(),
+    idx: integer("idx").notNull().default(0),
+    text: text("text").notNull(),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    uniqueIndex("corpus_chunks_book_source_idx_unique").on(table.bookId, table.source, table.idx),
+    index("corpus_chunks_book_idx").on(table.bookId, table.userId),
+  ],
 );
 
 export const humanizeRuns = pgTable(

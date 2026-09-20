@@ -24,12 +24,14 @@ const EXPECTED_TABLES = [
   "chapter_revisions",
   "chapters",
   "consistency_facts",
+  "corpus_chunks",
   "cover_versions",
   "covers",
   "exports",
   "humanize_runs",
   "jobs",
   "outlines",
+  "rights_records",
   "user_api_keys",
   "users",
 ];
@@ -125,6 +127,28 @@ describe.skipIf(!ENABLED)("G-07 migrations apply cleanly to a fresh database", (
       "name",
       "summary",
     ]);
+  });
+
+  it("carries the G-09b rights_records and corpus_chunks tables", async () => {
+    expect(target).toBeDefined();
+    const rights = await target!`
+      SELECT column_name FROM information_schema.columns
+      WHERE table_name = 'rights_records'
+        AND column_name IN ('kind', 'title', 'holder', 'territory', 'exclusive', 'status')
+      ORDER BY column_name`;
+    expect(rights.map((row) => String(row.column_name))).toEqual([
+      "exclusive",
+      "holder",
+      "kind",
+      "status",
+      "territory",
+      "title",
+    ]);
+    const corpus = await target!`
+      SELECT column_name FROM information_schema.columns
+      WHERE table_name = 'corpus_chunks' AND column_name IN ('source', 'idx', 'text')
+      ORDER BY column_name`;
+    expect(corpus.map((row) => String(row.column_name))).toEqual(["idx", "source", "text"]);
   });
 
   it("applies idempotently via the drizzle journal (no duplicate-table errors on re-list)", () => {

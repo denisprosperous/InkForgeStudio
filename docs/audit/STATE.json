@@ -78,10 +78,9 @@
     "G-09b": {
       "title": "Rights & licensing tracker; corpus RAG",
       "severity": "medium",
-      "status": "open",
+      "status": "closed",
       "sha": null,
-      "test": null,
-      "reasonIfOpen": "Not started"
+      "test": "packages/core/test/rights.test.ts (9); packages/db/test/migrations.test.ts (0005 gates); apps/forge/test/rights.test.ts (PG16)"
     },
     "G-10": {
       "title": "Print PDF pipeline (trim/bleed/spine)",
@@ -237,15 +236,15 @@
   },
   "totals": {
     "gapsTotal": 31,
-    "gapsClosed": 26,
-    "percentByCount": 83.9,
-    "percentByWeight": 93.2,
+    "gapsClosed": 27,
+    "percentByCount": 87.1,
+    "percentByWeight": 94.7,
     "criticalOpen": 0,
     "highOpen": 0,
-    "mediumOpen": 4,
+    "mediumOpen": 3,
     "lowOpen": 1
   },
-  "nextPriority": ["G-09b", "G-22", "G-25", "G-26", "G-30"],
+  "nextPriority": ["G-22", "G-25", "G-26", "G-30"],
   "sessions": [
     {
       "run": "NEG-3",

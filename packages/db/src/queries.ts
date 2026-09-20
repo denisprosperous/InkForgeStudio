@@ -16,12 +16,14 @@ import {
   chapterRevisions,
   chapters,
   consistencyFacts,
+  corpusChunks,
   coverVersions,
   covers,
   exports,
   humanizeRuns,
   jobs,
   outlines,
+  rightsRecords,
   userApiKeys,
   type JobStatus,
   type JobType,
@@ -1091,6 +1093,122 @@ export function listAssets(db: Database, userId: string, bookId: string): Querya
     .from(assets)
     .where(and(eq(assets.bookId, bookId), eq(assets.userId, userId)))
     .orderBy(desc(assets.createdAt));
+}
+
+// ── Rights & corpus (G-09b) ──────────────────────────────────────────
+
+export type RightsRecordRow = typeof rightsRecords.$inferSelect;
+export type CorpusChunkRow = typeof corpusChunks.$inferSelect;
+
+export interface CreateRightsRecordValues {
+  readonly kind: string;
+  readonly title: string;
+  readonly holder: string;
+  readonly terms?: string;
+  readonly territory?: string;
+  readonly exclusive?: boolean;
+  readonly startsAt?: Date | null;
+  readonly expiresAt?: Date | null;
+  readonly status?: string;
+}
+
+export async function saveRightsRecord(
+  db: Database,
+  userId: string,
+  bookId: string,
+  values: CreateRightsRecordValues,
+): Promise<RightsRecordRow> {
+  const inserted = await db
+    .insert(rightsRecords)
+    .values({
+      userId,
+      bookId,
+      kind: values.kind,
+      title: values.title,
+      holder: values.holder,
+      terms: values.terms ?? "",
+      territory: values.territory ?? "world",
+      exclusive: values.exclusive ?? false,
+      startsAt: values.startsAt ?? null,
+      expiresAt: values.expiresAt ?? null,
+      status: values.status ?? "active",
+    })
+    .returning();
+  const row = inserted[0];
+  if (!row) throw new Error("Rights insert returned no rows");
+  return row;
+}
+
+export function listRightsRecords(
+  db: Database,
+  userId: string,
+  bookId: string,
+): Queryable<RightsRecordRow[]> {
+  return db
+    .select()
+    .from(rightsRecords)
+    .where(and(eq(rightsRecords.bookId, bookId), eq(rightsRecords.userId, userId)))
+    .orderBy(desc(rightsRecords.createdAt));
+}
+
+/** Revoke (or re-activate) a right — scoped, returns undefined if not owned. */
+export async function setRightsStatus(
+  db: Database,
+  userId: string,
+  bookId: string,
+  recordId: string,
+  status: string,
+): Promise<RightsRecordRow | undefined> {
+  const updated = await db
+    .update(rightsRecords)
+    .set({ status })
+    .where(
+      and(
+        eq(rightsRecords.id, recordId),
+        eq(rightsRecords.bookId, bookId),
+        eq(rightsRecords.userId, userId),
+      ),
+    )
+    .returning();
+  return updated[0];
+}
+
+/** Append chunks for a source (idempotent per source: replaces that source). */
+export async function replaceCorpusSource(
+  db: Database,
+  userId: string,
+  bookId: string,
+  source: string,
+  texts: readonly string[],
+): Promise<CorpusChunkRow[]> {
+  return db.transaction(async (tx) => {
+    await tx
+      .delete(corpusChunks)
+      .where(
+        and(
+          eq(corpusChunks.bookId, bookId),
+          eq(corpusChunks.userId, userId),
+          eq(corpusChunks.source, source),
+        ),
+      );
+    if (texts.length === 0) return [];
+    return tx
+      .insert(corpusChunks)
+      .values(texts.map((text, index) => ({ userId, bookId, source, idx: index, text })))
+      .returning();
+  });
+}
+
+export function listCorpusChunks(
+  db: Database,
+  userId: string,
+  bookId: string,
+): Queryable<CorpusChunkRow[]> {
+  return db
+    .select()
+    .from(corpusChunks)
+    .where(and(eq(corpusChunks.bookId, bookId), eq(corpusChunks.userId, userId)))
+    .orderBy(asc(corpusChunks.source), asc(corpusChunks.idx));
 }
 
 // ── Consistency ledger (G-15) ────────────────────────────────────────
