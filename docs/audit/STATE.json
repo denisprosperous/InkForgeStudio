@@ -129,10 +129,9 @@
     "G-16": {
       "title": "Voiceprint (target-author matching)",
       "severity": "medium",
-      "status": "open",
+      "status": "closed",
       "sha": null,
-      "test": null,
-      "reasonIfOpen": "Not started"
+      "test": "packages/core/test/voiceprint.test.ts (7, deterministic)"
     },
     "G-17": {
       "title": "Studio UI flows",
@@ -237,15 +236,15 @@
   },
   "totals": {
     "gapsTotal": 30,
-    "gapsClosed": 18,
-    "percentByCount": 60,
-    "percentByWeight": 80,
+    "gapsClosed": 19,
+    "percentByCount": 63.3,
+    "percentByWeight": 82,
     "criticalOpen": 0,
     "highOpen": 1,
-    "mediumOpen": 10,
+    "mediumOpen": 9,
     "lowOpen": 1
   },
-  "nextPriority": ["G-16", "G-27", "G-24", "G-10", "G-18", "G-19"],
+  "nextPriority": ["G-27", "G-24", "G-10", "G-18", "G-19"],
   "sessions": [
     {
       "run": "NEG-3",
