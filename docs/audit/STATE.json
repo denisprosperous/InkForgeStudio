@@ -199,10 +199,9 @@
     "G-27": {
       "title": "AEO metadata optimizer",
       "severity": "medium",
-      "status": "open",
+      "status": "closed",
       "sha": null,
-      "test": null,
-      "reasonIfOpen": "Not started"
+      "test": "packages/core/test/aeo.test.ts (6, deterministic)"
     },
     "G-28": {
       "title": "CI + e2e smoke",
@@ -236,15 +235,15 @@
   },
   "totals": {
     "gapsTotal": 30,
-    "gapsClosed": 19,
-    "percentByCount": 63.3,
-    "percentByWeight": 82,
+    "gapsClosed": 20,
+    "percentByCount": 66.7,
+    "percentByWeight": 84,
     "criticalOpen": 0,
     "highOpen": 1,
-    "mediumOpen": 9,
+    "mediumOpen": 8,
     "lowOpen": 1
   },
-  "nextPriority": ["G-27", "G-24", "G-10", "G-18", "G-19"],
+  "nextPriority": ["G-24", "G-10", "G-18", "G-19"],
   "sessions": [
     {
       "run": "NEG-3",
