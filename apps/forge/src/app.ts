@@ -21,6 +21,7 @@ import { createJobsRouter, createWorkerControlRouter } from "./jobs";
 import { createLibraryRouter } from "./library";
 import { createMarketRouter } from "./market";
 import { createChapterRouter, createExportsRouter, createOutlineRouter } from "./manuscript";
+import { createPanelRouter } from "./panel";
 import { createRightsRouter } from "./rights";
 import { createSalesRouter } from "./sales";
 
@@ -133,6 +134,7 @@ export function buildApp(options: ForgeAppOptions = {}): Express {
     app.use("/books/:bookId/market", bridge, createMarketRouter({ db: handle.db }));
     app.use("/books/:bookId/rights", bridge, createRightsRouter({ db: handle.db }));
     app.use("/books/:bookId/sales", bridge, createSalesRouter({ db: handle.db }));
+    app.use("/books/:bookId/simulation", bridge, createPanelRouter({ db: handle.db }));
     app.use("/", bridge, createExportsRouter({ db: handle.db }));
     app.use(
       "/worker",

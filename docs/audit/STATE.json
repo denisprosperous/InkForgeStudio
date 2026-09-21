@@ -176,10 +176,9 @@
     "G-25": {
       "title": "Reader simulation panel",
       "severity": "medium",
-      "status": "open",
+      "status": "closed",
       "sha": null,
-      "test": null,
-      "reasonIfOpen": "Not started"
+      "test": "packages/core/test/reader-panel.test.ts (9, deterministic); apps/forge/test/reader-panel.test.ts (PG16)"
     },
     "G-26": {
       "title": "Series bible / franchise architecture",
@@ -235,15 +234,15 @@
   },
   "totals": {
     "gapsTotal": 31,
-    "gapsClosed": 28,
-    "percentByCount": 90.3,
-    "percentByWeight": 96.2,
+    "gapsClosed": 29,
+    "percentByCount": 93.5,
+    "percentByWeight": 97.7,
     "criticalOpen": 0,
     "highOpen": 0,
-    "mediumOpen": 2,
+    "mediumOpen": 1,
     "lowOpen": 1
   },
-  "nextPriority": ["G-25", "G-26", "G-30"],
+  "nextPriority": ["G-26", "G-30"],
   "sessions": [
     {
       "run": "NEG-3",
