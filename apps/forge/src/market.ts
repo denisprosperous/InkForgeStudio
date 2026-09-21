@@ -72,7 +72,13 @@ export function createMarketRouter(options: LibraryRouterOptions): Router {
       res.status(404).json({ error: "book_not_found" });
       return;
     }
-    res.status(200).json({ gate: readStoredGate(book.extra) ?? null });
+    // Return the full stored verdict (snapshot, composite, reasons) — the
+    // narrow readStoredGate helper stays internal to the jobs gate.
+    const stored =
+      typeof book.extra === "object" && book.extra !== null
+        ? (book.extra as Record<string, unknown>)[MARKET_GATE_EXTRA_KEY]
+        : undefined;
+    res.status(200).json({ gate: stored ?? null });
   });
 
   return router;

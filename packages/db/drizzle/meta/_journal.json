@@ -43,6 +43,13 @@
       "when": 1789947758900,
       "tag": "0005_polite_loners",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1789948649060,
+      "tag": "0006_bitter_silver_fox",
+      "breakpoints": true
     }
   ]
 }

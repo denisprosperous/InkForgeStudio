@@ -79,7 +79,7 @@
       "title": "Rights & licensing tracker; corpus RAG",
       "severity": "medium",
       "status": "closed",
-      "sha": null,
+      "sha": "456744f",
       "test": "packages/core/test/rights.test.ts (9); packages/db/test/migrations.test.ts (0005 gates); apps/forge/test/rights.test.ts (PG16)"
     },
     "G-10": {
@@ -162,10 +162,9 @@
     "G-22": {
       "title": "Sales/royalty ingestion + feedback loop",
       "severity": "medium",
-      "status": "open",
+      "status": "closed",
       "sha": null,
-      "test": null,
-      "reasonIfOpen": "Not started"
+      "test": "packages/core/test/sales.test.ts (7); packages/db/test/migrations.test.ts (0006 gates); apps/forge/test/sales.test.ts (PG16: upsert + summary + refresh-gate)"
     },
     "G-24": {
       "title": "Bulk portability export (zip)",
@@ -236,15 +235,15 @@
   },
   "totals": {
     "gapsTotal": 31,
-    "gapsClosed": 27,
-    "percentByCount": 87.1,
-    "percentByWeight": 94.7,
+    "gapsClosed": 28,
+    "percentByCount": 90.3,
+    "percentByWeight": 96.2,
     "criticalOpen": 0,
     "highOpen": 0,
-    "mediumOpen": 3,
+    "mediumOpen": 2,
     "lowOpen": 1
   },
-  "nextPriority": ["G-22", "G-25", "G-26", "G-30"],
+  "nextPriority": ["G-25", "G-26", "G-30"],
   "sessions": [
     {
       "run": "NEG-3",

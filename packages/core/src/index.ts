@@ -13,6 +13,7 @@ export * from "./print/index";
 export * from "./accessibility/index";
 export * from "./market/index";
 export * from "./rights/index";
+export * from "./sales/index";
 export {
   validateEpub,
   locateEpubcheckJar,

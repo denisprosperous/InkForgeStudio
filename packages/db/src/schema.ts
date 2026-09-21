@@ -290,6 +290,36 @@ export const corpusChunks = pgTable(
   ],
 );
 
+/**
+ * G-22 — sales/royalty ingestion records (M9 analytics loop).
+ */
+export const salesRecords = pgTable(
+  "sales_records",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id").notNull(),
+    bookId: uuid("book_id").notNull(),
+    channel: text("channel").notNull(),
+    units: integer("units").notNull().default(0),
+    /** Gross revenue in micro-USD (1e-6 USD) — integer money, no floats. */
+    revenueMicros: integer("revenue_micros").notNull().default(0),
+    royaltyMicros: integer("royalty_micros").notNull().default(0),
+    currency: text("currency").notNull().default("USD"),
+    periodStart: timestamp("period_start", { withTimezone: true }).notNull(),
+    periodEnd: timestamp("period_end", { withTimezone: true }).notNull(),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    index("sales_records_book_idx").on(table.bookId, table.userId),
+    uniqueIndex("sales_records_period_unique").on(
+      table.bookId,
+      table.channel,
+      table.periodStart,
+      table.periodEnd,
+    ),
+  ],
+);
+
 export const humanizeRuns = pgTable(
   "humanize_runs",
   {

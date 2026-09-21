@@ -32,6 +32,7 @@ const EXPECTED_TABLES = [
   "jobs",
   "outlines",
   "rights_records",
+  "sales_records",
   "user_api_keys",
   "users",
 ];
@@ -149,6 +150,24 @@ describe.skipIf(!ENABLED)("G-07 migrations apply cleanly to a fresh database", (
       WHERE table_name = 'corpus_chunks' AND column_name IN ('source', 'idx', 'text')
       ORDER BY column_name`;
     expect(corpus.map((row) => String(row.column_name))).toEqual(["idx", "source", "text"]);
+  });
+
+  it("carries the G-22 sales_records table with integer money columns", async () => {
+    expect(target).toBeDefined();
+    const rows = await target!`
+      SELECT column_name FROM information_schema.columns
+      WHERE table_name = 'sales_records'
+        AND column_name IN ('channel', 'units', 'revenue_micros', 'royalty_micros', 'currency', 'period_start', 'period_end')
+      ORDER BY column_name`;
+    expect(rows.map((row) => String(row.column_name))).toEqual([
+      "channel",
+      "currency",
+      "period_end",
+      "period_start",
+      "revenue_micros",
+      "royalty_micros",
+      "units",
+    ]);
   });
 
   it("applies idempotently via the drizzle journal (no duplicate-table errors on re-list)", () => {

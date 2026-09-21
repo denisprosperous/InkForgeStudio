@@ -24,6 +24,7 @@ import {
   jobs,
   outlines,
   rightsRecords,
+  salesRecords,
   userApiKeys,
   type JobStatus,
   type JobType,
@@ -1209,6 +1210,60 @@ export function listCorpusChunks(
     .from(corpusChunks)
     .where(and(eq(corpusChunks.bookId, bookId), eq(corpusChunks.userId, userId)))
     .orderBy(asc(corpusChunks.source), asc(corpusChunks.idx));
+}
+
+// ── Sales (G-22) ─────────────────────────────────────────────────────
+
+export type SalesRecordRow = typeof salesRecords.$inferSelect;
+
+export interface SalesRecordInput {
+  readonly channel: string;
+  readonly units: number;
+  readonly revenueMicros: number;
+  readonly royaltyMicros: number;
+  readonly currency: string;
+  readonly periodStart: Date;
+  readonly periodEnd: Date;
+}
+
+/** Bulk-upsert sales rows for a book (unique per channel + period window). */
+export async function saveSalesRecords(
+  db: Database,
+  userId: string,
+  bookId: string,
+  records: readonly SalesRecordInput[],
+): Promise<SalesRecordRow[]> {
+  if (records.length === 0) return [];
+  return db
+    .insert(salesRecords)
+    .values(records.map((record) => ({ userId, bookId, ...record })))
+    .onConflictDoUpdate({
+      target: [
+        salesRecords.bookId,
+        salesRecords.channel,
+        salesRecords.periodStart,
+        salesRecords.periodEnd,
+      ],
+      set: {
+        units: sql`excluded.units`,
+        revenueMicros: sql`excluded.revenue_micros`,
+        royaltyMicros: sql`excluded.royalty_micros`,
+        currency: sql`excluded.currency`,
+      },
+    })
+    .returning();
+}
+
+export function listSalesRecords(
+  db: Database,
+  userId: string,
+  bookId: string,
+): Queryable<SalesRecordRow[]> {
+  return db
+    .select()
+    .from(salesRecords)
+    .where(and(eq(salesRecords.bookId, bookId), eq(salesRecords.userId, userId)))
+    .orderBy(desc(salesRecords.periodStart), asc(salesRecords.channel));
 }
 
 // ── Consistency ledger (G-15) ────────────────────────────────────────
