@@ -24,6 +24,7 @@ import { createChapterRouter, createExportsRouter, createOutlineRouter } from ".
 import { createPanelRouter } from "./panel";
 import { createRightsRouter } from "./rights";
 import { createSalesRouter } from "./sales";
+import { createSeriesRouter } from "./series";
 
 export interface ForgeAppOptions {
   /** pino level; pass "silent" in tests. */
@@ -135,6 +136,7 @@ export function buildApp(options: ForgeAppOptions = {}): Express {
     app.use("/books/:bookId/rights", bridge, createRightsRouter({ db: handle.db }));
     app.use("/books/:bookId/sales", bridge, createSalesRouter({ db: handle.db }));
     app.use("/books/:bookId/simulation", bridge, createPanelRouter({ db: handle.db }));
+    app.use("/books/:bookId/series-bible", bridge, createSeriesRouter({ db: handle.db }));
     app.use("/", bridge, createExportsRouter({ db: handle.db }));
     app.use(
       "/worker",

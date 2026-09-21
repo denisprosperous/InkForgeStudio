@@ -177,16 +177,15 @@
       "title": "Reader simulation panel",
       "severity": "medium",
       "status": "closed",
-      "sha": null,
+      "sha": "3072acd",
       "test": "packages/core/test/reader-panel.test.ts (9, deterministic); apps/forge/test/reader-panel.test.ts (PG16)"
     },
     "G-26": {
       "title": "Series bible / franchise architecture",
       "severity": "medium",
-      "status": "open",
+      "status": "closed",
       "sha": null,
-      "test": null,
-      "reasonIfOpen": "Not started"
+      "test": "packages/core/test/series.test.ts (6); apps/forge/test/series.test.ts (PG16: merge, no-label 400, tenancy)"
     },
     "G-27": {
       "title": "AEO metadata optimizer",
@@ -234,15 +233,15 @@
   },
   "totals": {
     "gapsTotal": 31,
-    "gapsClosed": 29,
-    "percentByCount": 93.5,
-    "percentByWeight": 97.7,
+    "gapsClosed": 30,
+    "percentByCount": 96.8,
+    "percentByWeight": 99.2,
     "criticalOpen": 0,
     "highOpen": 0,
-    "mediumOpen": 1,
+    "mediumOpen": 0,
     "lowOpen": 1
   },
-  "nextPriority": ["G-26", "G-30"],
+  "nextPriority": ["G-30"],
   "sessions": [
     {
       "run": "NEG-3",

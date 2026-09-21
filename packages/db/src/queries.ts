@@ -1266,6 +1266,21 @@ export function listSalesRecords(
     .orderBy(desc(salesRecords.periodStart), asc(salesRecords.channel));
 }
 
+// ── Series (G-26) ────────────────────────────────────────────────────
+
+/** Books sharing a series label for one tenant, oldest first (B-series order). */
+export function listBooksBySeries(
+  db: Database,
+  userId: string,
+  seriesLabel: string,
+): Queryable<BookRow[]> {
+  return db
+    .select()
+    .from(books)
+    .where(and(eq(books.userId, userId), eq(books.seriesLabel, seriesLabel)))
+    .orderBy(asc(books.createdAt));
+}
+
 // ── Consistency ledger (G-15) ────────────────────────────────────────
 
 export type ConsistencyFactRow = typeof consistencyFacts.$inferSelect;
