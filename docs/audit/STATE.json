@@ -163,7 +163,7 @@
       "title": "Sales/royalty ingestion + feedback loop",
       "severity": "medium",
       "status": "closed",
-      "sha": null,
+      "sha": "830ac76",
       "test": "packages/core/test/sales.test.ts (7); packages/db/test/migrations.test.ts (0006 gates); apps/forge/test/sales.test.ts (PG16: upsert + summary + refresh-gate)"
     },
     "G-24": {
