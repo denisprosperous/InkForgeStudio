@@ -17,6 +17,7 @@ export * from "./sales/index";
 export * from "./simulation/index";
 export * from "./series/index";
 export * from "./edge/cover-ab";
+export * from "./edge/backlist";
 export {
   validateEpub,
   locateEpubcheckJar,
