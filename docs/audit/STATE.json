@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-22T20:45:00Z",
+  "updatedAt": "2026-09-22T20:50:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
   "currentSha": "self",
@@ -339,11 +339,20 @@
       "test": "packages/core/test/research-e2-nonfiction.test.ts",
       "closedAt": "2026-09-22T20:45:00Z",
       "parent": "G-30"
+    },
+    "E-3": {
+      "title": "Academic citation adapter",
+      "severity": "low",
+      "status": "closed",
+      "sha": "self",
+      "test": "packages/core/test/research-e3-academic.test.ts",
+      "closedAt": "2026-09-22T20:50:00Z",
+      "parent": "G-30"
     }
   },
   "totals": {
-    "gapsTotal": 42,
-    "gapsClosed": 42,
+    "gapsTotal": 43,
+    "gapsClosed": 43,
     "percentByCount": 100,
     "percentByWeight": 100,
     "criticalOpen": 0,
@@ -645,6 +654,22 @@
       "iteration": 1,
       "session": "OMEGA-1",
       "test": "packages/core/test/research-e2-nonfiction.test.ts"
+    },
+    {
+      "id": "E-1",
+      "sha": "2783e22",
+      "closedAt": "2026-09-22T20:42:00Z",
+      "iteration": 1,
+      "session": "OMEGA-1",
+      "test": "packages/core/test/research-e1-fiction.test.ts"
+    },
+    {
+      "id": "E-3",
+      "sha": "self",
+      "closedAt": "2026-09-22T20:50:00Z",
+      "iteration": 1,
+      "session": "OMEGA-1",
+      "test": "packages/core/test/research-e3-academic.test.ts"
     }
   ],
   "coverageCells": [],
