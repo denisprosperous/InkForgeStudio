@@ -152,6 +152,14 @@ export async function validateEpub(
     return skipped("EPUBCheck jar not found — run scripts/fetch-assets.sh or set EPUBCHECK_JAR");
   }
 
+  // Battery V6 (OMEGA-1) exposed this: with Java on PATH a bogus jar path
+  // surfaced as "failed" — a config error masquerading as a validation
+  // failure. An asset that does not exist is still a missing asset:
+  // skip with the reason; "failed" stays reserved for EPUBCheck verdicts.
+  if (!existsSync(jarPath)) {
+    return skipped(`EPUBCheck jar not found: ${jarPath} — run scripts/fetch-assets.sh or set EPUBCHECK_JAR`);
+  }
+
   const workDir = mkdtempSync(path.join(tmpdir(), "inkforge-epubcheck-"));
   const epubPath = path.join(workDir, "book.epub");
   const reportPath = path.join(workDir, "report.json");

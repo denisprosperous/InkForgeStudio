@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-22T22:45:00Z",
+  "updatedAt": "2026-09-22T23:20:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
   "currentSha": "self",
@@ -420,11 +420,20 @@
       "test": "npx eslint scripts/coverage-cell.ts",
       "closedAt": "2026-09-22T22:45:00Z",
       "parent": "G-30"
+    },
+    "FIX-V6": {
+      "title": "Epubcheck skip-vs-fail fix after V6 fail",
+      "severity": "low",
+      "status": "closed",
+      "sha": "self",
+      "test": "packages/core/test/epubcheck.test.ts",
+      "closedAt": "2026-09-22T23:20:00Z",
+      "parent": "G-30"
     }
   },
   "totals": {
-    "gapsTotal": 51,
-    "gapsClosed": 51,
+    "gapsTotal": 52,
+    "gapsClosed": 52,
     "percentByCount": 100,
     "percentByWeight": 100,
     "criticalOpen": 0,
@@ -806,6 +815,14 @@
       "iteration": 1,
       "session": "OMEGA-1",
       "test": "npx eslint scripts/coverage-cell.ts"
+    },
+    {
+      "id": "FIX-V6",
+      "sha": "self",
+      "closedAt": "2026-09-22T23:20:00Z",
+      "iteration": 1,
+      "session": "OMEGA-1",
+      "test": "packages/core/test/epubcheck.test.ts"
     }
   ],
   "coverageCells": [
