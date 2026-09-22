@@ -28,12 +28,13 @@ Probe topics are the canonical per-category topics in `scripts/coverage-cell.ts`
 | Cell (category/availability) | Verdict | Adapter | Test | Refusal reason |
 |---|---|---|---|---|
 | fiction/full | PASS | E-1-fiction-structure | packages/core/test/research-coverage.test.ts | — |
+| fiction/none | PASS | E-1-fiction-structure | packages/core/test/research-coverage.test.ts | — |
 | fiction/partial | PASS | E-1-fiction-structure | packages/core/test/research-coverage.test.ts | — |
 
 ## Summary
 
-- Cells evaluated: 2 / 21
-- PASS: 2   REFUSED (legit, reason cited): 0   GAP: 0
+- Cells evaluated: 3 / 21
+- PASS: 3   REFUSED (legit, reason cited): 0   GAP: 0
 
 ## Anti-fabrication
 

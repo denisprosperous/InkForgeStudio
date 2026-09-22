@@ -753,6 +753,16 @@
     },
     {
       "category": "fiction",
+      "availability": "none",
+      "verdict": "PASS",
+      "adapter": "E-1-fiction-structure",
+      "sha": "self",
+      "test": "packages/core/test/research-coverage.test.ts",
+      "closedAt": "2026-09-22T20:46:16.177Z",
+      "refusalReason": null
+    },
+    {
+      "category": "fiction",
       "availability": "partial",
       "verdict": "PASS",
       "adapter": "E-1-fiction-structure",
