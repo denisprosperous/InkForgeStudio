@@ -27,16 +27,6 @@ const TOPICS: Record<ContentCategory, string> = {
   "low-data-emerging": "brand-new hardware shortage coverage",
 };
 
-const ADAPTERS: Record<string, string> = {
-  fiction: "E-1-fiction-structure",
-  nonfiction: "E-2-nonfiction-evidence (claim checker)",
-  childrens: "E-5-childrens-reading-level",
-  "academic-technical": "E-3-academic-citation",
-  "professional-b2b": "E-4-professional-case-study",
-  international: "E-6-international-market",
-  "low-data-emerging": "E-2-nonfiction-evidence",
-};
-
 const GENRES = [
   "fantasy",
   "science-fiction",
