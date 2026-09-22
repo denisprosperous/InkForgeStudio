@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-22T21:10:00Z",
+  "updatedAt": "2026-09-22T21:15:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
   "currentSha": "self",
@@ -375,11 +375,20 @@
       "test": "packages/core/test/research-e6-international.test.ts",
       "closedAt": "2026-09-22T21:10:00Z",
       "parent": "G-30"
+    },
+    "RS-2": {
+      "title": "Anti-fabrication coverage test suite",
+      "severity": "low",
+      "status": "closed",
+      "sha": "self",
+      "test": "packages/core/test/research-anti-fabrication.test.ts",
+      "closedAt": "2026-09-22T21:15:00Z",
+      "parent": "G-30"
     }
   },
   "totals": {
-    "gapsTotal": 46,
-    "gapsClosed": 46,
+    "gapsTotal": 47,
+    "gapsClosed": 47,
     "percentByCount": 100,
     "percentByWeight": 100,
     "criticalOpen": 0,
@@ -721,6 +730,14 @@
       "iteration": 1,
       "session": "OMEGA-1",
       "test": "packages/core/test/research-e6-international.test.ts"
+    },
+    {
+      "id": "RS-2",
+      "sha": "self",
+      "closedAt": "2026-09-22T21:15:00Z",
+      "iteration": 1,
+      "session": "OMEGA-1",
+      "test": "packages/core/test/research-anti-fabrication.test.ts"
     }
   ],
   "coverageCells": [],
