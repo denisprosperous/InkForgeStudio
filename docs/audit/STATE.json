@@ -832,6 +832,16 @@
       "refusalReason": null
     },
     {
+      "category": "international",
+      "availability": "full",
+      "verdict": "PASS",
+      "adapter": "E-6-international-market",
+      "sha": "self",
+      "test": "packages/core/test/research-coverage.test.ts",
+      "closedAt": "2026-09-22T20:47:41.364Z",
+      "refusalReason": null
+    },
+    {
       "category": "nonfiction",
       "availability": "full",
       "verdict": "PASS",
