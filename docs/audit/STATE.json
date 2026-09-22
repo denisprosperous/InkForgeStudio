@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-22T21:00:00Z",
+  "updatedAt": "2026-09-22T21:05:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
   "currentSha": "self",
@@ -357,11 +357,20 @@
       "test": "packages/core/test/research-e4-b2b.test.ts",
       "closedAt": "2026-09-22T21:00:00Z",
       "parent": "G-30"
+    },
+    "E-5": {
+      "title": "Children's reading-level adapter",
+      "severity": "low",
+      "status": "closed",
+      "sha": "self",
+      "test": "packages/core/test/research-e5-childrens.test.ts",
+      "closedAt": "2026-09-22T21:05:00Z",
+      "parent": "G-30"
     }
   },
   "totals": {
-    "gapsTotal": 44,
-    "gapsClosed": 44,
+    "gapsTotal": 45,
+    "gapsClosed": 45,
     "percentByCount": 100,
     "percentByWeight": 100,
     "criticalOpen": 0,
@@ -687,6 +696,14 @@
       "iteration": 1,
       "session": "OMEGA-1",
       "test": "packages/core/test/research-e4-b2b.test.ts"
+    },
+    {
+      "id": "E-5",
+      "sha": "self",
+      "closedAt": "2026-09-22T21:05:00Z",
+      "iteration": 1,
+      "session": "OMEGA-1",
+      "test": "packages/core/test/research-e5-childrens.test.ts"
     }
   ],
   "coverageCells": [],
