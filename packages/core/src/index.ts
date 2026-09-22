@@ -18,6 +18,12 @@ export * from "./simulation/index";
 export * from "./series/index";
 export * from "./edge/cover-ab";
 export * from "./edge/backlist";
+export * from "./edge/bundles";
+export * from "./edge/d2c";
+export * from "./edge/marketplace";
+export * from "./edge/whitelabel";
+export * from "./edge/localization";
+export * from "./edge/arbitrage";
 export {
   validateEpub,
   locateEpubcheckJar,

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-22T19:35:00Z",
+  "updatedAt": "2026-09-22T19:45:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
   "currentSha": "self",
@@ -247,12 +247,21 @@
       "test": "packages/core/test/edge-backlist.test.ts",
       "closedAt": "2026-09-22T19:35:00Z",
       "parent": "G-30"
+    },
+    "G-30c": {
+      "title": "Bundling engine",
+      "severity": "low",
+      "status": "closed",
+      "sha": "self",
+      "test": "packages/core/test/edge-bundles.test.ts",
+      "closedAt": "2026-09-22T19:45:00Z",
+      "parent": "G-30"
     }
   },
   "totals": {
-    "gapsTotal": 33,
-    "gapsClosed": 32,
-    "percentByCount": 97,
+    "gapsTotal": 34,
+    "gapsClosed": 33,
+    "percentByCount": 97.1,
     "percentByWeight": 99.3,
     "criticalOpen": 0,
     "highOpen": 0,
@@ -475,6 +484,14 @@
       "iteration": 1,
       "session": "OMEGA-1",
       "test": "packages/core/test/edge-backlist.test.ts"
+    },
+    {
+      "id": "G-30c",
+      "sha": "self",
+      "closedAt": "2026-09-22T19:45:00Z",
+      "iteration": 1,
+      "session": "OMEGA-1",
+      "test": "packages/core/test/edge-bundles.test.ts"
     }
   ],
   "coverageCells": [],
