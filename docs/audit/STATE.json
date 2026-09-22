@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-20T22:45:00Z",
+  "updatedAt": "2026-09-22T18:25:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
-  "currentSha": "32b97f9",
+  "currentSha": "970b605",
   "branch": "main",
   "weights": {
     "critical": 10,
@@ -184,7 +184,7 @@
       "title": "Series bible / franchise architecture",
       "severity": "medium",
       "status": "closed",
-      "sha": null,
+      "sha": "6d9aeb9",
       "test": "packages/core/test/series.test.ts (6); apps/forge/test/series.test.ts (PG16: merge, no-label 400, tenancy)"
     },
     "G-27": {
@@ -317,6 +317,19 @@
       "percentBefore": 76.0,
       "percentAfter": 87.9,
       "notes": "Resume from ff5a651 (NEG-4.1). Closed all nine nextPriority gaps: G-28 (single React tree 19.3.0 + root overrides; V10 build red->green; e2e green), G-13 (books.extra jsonb + product schema, migration 0003, repo-level jsonb merge), G-15 (consistency engine: fact/entity ledger, deterministic validator, consistency_facts table migration 0004, forge ledger+report routes), G-16 (voiceprint: 6-metric profile + distance/fit/report), G-27 (AEO pack builder), G-24 (portability zip + /books/:id/portability), G-18 (ISBN-13 checksum + BISAC + ONIX 3.0 builder + /books/:id/onix, 422 gate), G-10 (print pipeline: KDP trim/bleed/gutter/spine math + self-contained PDF 1.4 writer + /books/:id/print), G-19 (a11y audit + EPUB-A11Y-WCAG21-AA metadata + 16pt large-print edition via print writer). Verification fixes inside the run: db:generate script repaired (drizzle-kit absolute-out bug, commit 32b97f9) and Postgres container restarted on host (environmental). Metric notes: percentByWeight recomputed with the declared formula (sum closed weights / sum total weights); NEG-4.1's 76.0 was over-counted \u2014 corrected start-of-run value 73.1 -> 87.9 (denominator 130 -> 132 with new gap G-31). Wall time exceeded the 6h budget (G8): stopped after the last nextPriority gap + battery instead of opening G-21. Drift 4,541 non-test insertions (< 5,000); hand-written non-test code per commit under 300 lines (generated drizzle snapshots inflate raw stats); packages/core additive only; every commit independently revertable. Observations for NEG-5: forge dist uses extensionless ESM imports (plain node cannot run it; tsx path works, as used by start/webServer) and `npm run start` web leg cannot bind :3000 while the omnisni-vpn container owns it. Environment restore: .env recreated locally (gitignored), docker-postgres-1 restarted."
+    },
+    {
+      "run": "NEG-4.3",
+      "startedAt": "2026-09-20T23:00:00Z",
+      "endedAt": "2026-09-22T18:25:00Z",
+      "shaBefore": "aef9440",
+      "shaAfter": "970b605",
+      "closed": ["G-31", "G-21", "G-09b", "G-22", "G-25", "G-26"],
+      "stillOpen": ["G-30"],
+      "verification": "partial: V13 not-run (no Java runtime on host — EPUBCheck graceful-skip suite green inside V6); everything else green: V1 clean checkout, V2 npm ci (after repairing host-truncated native binaries), V3 generate/migrate/seed, V4 lint 0, V5 typecheck 0, V6 360/360 tests at 87.71% lines / 85.6% branches / 79.93% functions with 80%-lines thresholds ENFORCED (two red runs proved the gate fires), V7 e2e 2/2 chromium WEB_PORT=3100, V8 stubs strict 0 markers, V9 dod strict clean, V10 build (forge dist + web .next/BUILD_ID), V11 healthz ok, V12 readyz ready, V14 SIGTERM clean exit",
+      "percentBefore": 87.9,
+      "percentAfter": 99.2,
+      "notes": "Resume from aef9440 (NEG-4.2). Closed all six nextPriority gaps: G-31 (coverage floor enforced in root vitest.config.ts with documented exclusions for ops tooling/React shells; coverage 74.08 -> 82.99% at commit time, 87.71% at battery), G-21 (deterministic pre-gen market gate: snapshot contract, go/hold/no-go verdicts stored in extra.marketGate, jobs router blocks outline.generate/chapter.generate with 409 on no-go), G-09b (rights tracker + corpus retrieval: rights_records/corpus_chunks migration 0005, tf-idf-lite lexical scorer, revoke-by-status, idempotent corpus ingest), G-22 (sales ingestion: sales_records migration 0006 integer micro-USD, upsert per channel+period, summarizeSales + deriveDemandSignal, refresh-gate closes the M9->M1 loop), G-25 (reader simulation panel: deterministic persona engagement/drop-off scoring, preset panel, consensus weak chapters, forge /simulation/reader-panel), G-26 (series bible: cross-book ledger merge into shared entities/timeline/open threads/conflicts via books.seriesLabel, no new tables). G-30 remains OPEN (status open, not deferred): trigger-gated per register section 4 (table stakes at maturity 4 + paying customer segment); slice ideas recorded in git history of this run's notes. Verification repairs this run: (1) interrupted npm ci left truncated native binaries — restored @next/swc-linux-x64-gnu@15.5.25 by direct npm pack extraction after finding a 14.8MB-truncated copy under apps/web (SIGBUS on next build + silent next dev death), (2) root swc resolved to an unpinned 16.3.5 that next 15.5.25 rejects, (3) v8 coverage tmp race fixed (coverage.clean=false, commit in this run), (4) docker-postgres-1 kept exiting (255) on this host — restart policy unless-stopped applied. Drift 4,989 non-test insertions (< 5,000, snapshots inflate); hand-written non-test code per commit under 300 lines; packages/core additive only (contract types like ConsistencyFactLike defined additively); every commit independently revertable. Wall time exceeded the 6h budget (G8): battery completed, then ledger+push+card."
     }
   ]
 }
