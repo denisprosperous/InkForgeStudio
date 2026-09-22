@@ -742,6 +742,16 @@
   ],
   "coverageCells": [
     {
+      "category": "academic-technical",
+      "availability": "full",
+      "verdict": "PASS",
+      "adapter": "E-3-academic-citation",
+      "sha": "self",
+      "test": "packages/core/test/research-coverage.test.ts",
+      "closedAt": "2026-09-22T20:47:02.170Z",
+      "refusalReason": null
+    },
+    {
       "category": "childrens",
       "availability": "full",
       "verdict": "PASS",
