@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-22T23:20:00Z",
+  "updatedAt": "2026-09-22T23:30:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
   "currentSha": "self",
@@ -429,11 +429,20 @@
       "test": "packages/core/test/epubcheck.test.ts",
       "closedAt": "2026-09-22T23:20:00Z",
       "parent": "G-30"
+    },
+    "FIX-HOOK": {
+      "title": "G-07 hook timeout fix after V6 fail",
+      "severity": "low",
+      "status": "closed",
+      "sha": "self",
+      "test": "npx vitest run --project db",
+      "closedAt": "2026-09-22T23:30:00Z",
+      "parent": "G-30"
     }
   },
   "totals": {
-    "gapsTotal": 52,
-    "gapsClosed": 52,
+    "gapsTotal": 53,
+    "gapsClosed": 53,
     "percentByCount": 100,
     "percentByWeight": 100,
     "criticalOpen": 0,
@@ -823,6 +832,14 @@
       "iteration": 1,
       "session": "OMEGA-1",
       "test": "packages/core/test/epubcheck.test.ts"
+    },
+    {
+      "id": "FIX-HOOK",
+      "sha": "self",
+      "closedAt": "2026-09-22T23:30:00Z",
+      "iteration": 1,
+      "session": "OMEGA-1",
+      "test": "npx vitest run --project db"
     }
   ],
   "coverageCells": [

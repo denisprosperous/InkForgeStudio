@@ -53,13 +53,17 @@ describe.skipIf(!ENABLED)("G-07 migrations apply cleanly to a fresh database", (
   const admin = postgres(ADMIN_URL, { max: 1, onnotice: () => {} });
   let target: postgres.Sql | undefined;
 
+  // OMEGA-1 battery V6: under full-suite parallel load the live-DB beforeAll
+  // exceeded vitest's default 10s hook timeout once (it passes in ~4s alone
+  // and passed in the previous battery run). Provision 30s for the integration
+  // hook only; test bodies keep the default timeout.
   beforeAll(async () => {
     await admin.unsafe(`CREATE DATABASE "${dbName}"`);
     target = postgres(ADMIN_URL.replace(/\/[^/]+$/, `/${dbName}`), {
       max: 1,
       onnotice: () => {},
     });
-  });
+  }, 30_000);
 
   afterAll(async () => {
     await target?.end({ timeout: 3 });
