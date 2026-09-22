@@ -28,6 +28,7 @@ Probe topics are the canonical per-category topics in `scripts/coverage-cell.ts`
 | Cell (category/availability) | Verdict | Adapter | Test | Refusal reason |
 |---|---|---|---|---|
 | academic-technical/full | PASS | E-3-academic-citation | packages/core/test/research-coverage.test.ts | — |
+| academic-technical/partial | PASS | E-3-academic-citation | packages/core/test/research-coverage.test.ts | — |
 | childrens/full | PASS | E-5-childrens-reading-level | packages/core/test/research-coverage.test.ts | — |
 | childrens/none | PASS | E-5-childrens-reading-level | packages/core/test/research-coverage.test.ts | — |
 | childrens/partial | PASS | E-5-childrens-reading-level | packages/core/test/research-coverage.test.ts | — |
@@ -40,8 +41,8 @@ Probe topics are the canonical per-category topics in `scripts/coverage-cell.ts`
 
 ## Summary
 
-- Cells evaluated: 10 / 21
-- PASS: 9   REFUSED (legit, reason cited): 1   GAP: 0
+- Cells evaluated: 11 / 21
+- PASS: 10   REFUSED (legit, reason cited): 1   GAP: 0
 
 ## Anti-fabrication
 
