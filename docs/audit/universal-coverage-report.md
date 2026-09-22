@@ -31,11 +31,12 @@ Probe topics are the canonical per-category topics in `scripts/coverage-cell.ts`
 | fiction/none | PASS | E-1-fiction-structure | packages/core/test/research-coverage.test.ts | — |
 | fiction/partial | PASS | E-1-fiction-structure | packages/core/test/research-coverage.test.ts | — |
 | nonfiction/full | PASS | E-2-nonfiction-evidence | packages/core/test/research-coverage.test.ts | — |
+| nonfiction/partial | PASS | E-2-nonfiction-evidence | packages/core/test/research-coverage.test.ts | — |
 
 ## Summary
 
-- Cells evaluated: 4 / 21
-- PASS: 4   REFUSED (legit, reason cited): 0   GAP: 0
+- Cells evaluated: 5 / 21
+- PASS: 5   REFUSED (legit, reason cited): 0   GAP: 0
 
 ## Anti-fabrication
 
