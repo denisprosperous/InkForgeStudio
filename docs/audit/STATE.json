@@ -752,6 +752,16 @@
       "refusalReason": null
     },
     {
+      "category": "childrens",
+      "availability": "partial",
+      "verdict": "PASS",
+      "adapter": "E-5-childrens-reading-level",
+      "sha": "self",
+      "test": "packages/core/test/research-coverage.test.ts",
+      "closedAt": "2026-09-22T20:46:48.985Z",
+      "refusalReason": null
+    },
+    {
       "category": "fiction",
       "availability": "full",
       "verdict": "PASS",
