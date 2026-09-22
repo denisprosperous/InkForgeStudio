@@ -770,6 +770,16 @@
       "test": "packages/core/test/research-coverage.test.ts",
       "closedAt": "2026-09-22T20:46:09.735Z",
       "refusalReason": null
+    },
+    {
+      "category": "nonfiction",
+      "availability": "full",
+      "verdict": "PASS",
+      "adapter": "E-2-nonfiction-evidence",
+      "sha": "self",
+      "test": "packages/core/test/research-coverage.test.ts",
+      "closedAt": "2026-09-22T20:46:22.240Z",
+      "refusalReason": null
     }
   ],
   "pendingPush": false
