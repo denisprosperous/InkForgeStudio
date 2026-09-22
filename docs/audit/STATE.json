@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-22T22:15:00Z",
+  "updatedAt": "2026-09-22T22:30:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
   "currentSha": "self",
@@ -402,11 +402,20 @@
       "test": "docs/audit/epubcheck-canary.md",
       "closedAt": "2026-09-22T22:15:00Z",
       "parent": "G-30"
+    },
+    "RS-5": {
+      "title": "Deployment readiness check (G-iota)",
+      "severity": "low",
+      "status": "closed",
+      "sha": "self",
+      "test": "scripts/deployment-check.ts",
+      "closedAt": "2026-09-22T22:30:00Z",
+      "parent": "G-30"
     }
   },
   "totals": {
-    "gapsTotal": 49,
-    "gapsClosed": 49,
+    "gapsTotal": 50,
+    "gapsClosed": 50,
     "percentByCount": 100,
     "percentByWeight": 100,
     "criticalOpen": 0,
@@ -772,6 +781,14 @@
       "iteration": 1,
       "session": "OMEGA-1",
       "test": "docs/audit/epubcheck-canary.md"
+    },
+    {
+      "id": "RS-5",
+      "sha": "self",
+      "closedAt": "2026-09-22T22:30:00Z",
+      "iteration": 1,
+      "session": "OMEGA-1",
+      "test": "scripts/deployment-check.ts"
     }
   ],
   "coverageCells": [

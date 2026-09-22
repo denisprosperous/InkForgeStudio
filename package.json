@@ -41,7 +41,8 @@
     "deploy:web": "npx wrangler pages deploy .vercel/output/static --project-name=inkforge-studio",
     "preview:web": "npx @cloudflare/next-on-pages --experimental-minify && npx wrangler pages dev .vercel/output/static",
     "prepare": "husky",
-    "audit:research": "tsx scripts/research-reality-check.ts"
+    "audit:research": "tsx scripts/research-reality-check.ts",
+    "audit:deploy": "tsx scripts/deployment-check.ts"
   },
   "lint-staged": {
     "*.{ts,tsx,mjs,js}": [
