@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-22T19:55:00Z",
+  "updatedAt": "2026-09-22T20:00:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
   "currentSha": "self",
@@ -274,12 +274,21 @@
       "test": "packages/core/test/edge-marketplace.test.ts",
       "closedAt": "2026-09-22T19:55:00Z",
       "parent": "G-30"
+    },
+    "G-30f": {
+      "title": "White-label branding",
+      "severity": "low",
+      "status": "closed",
+      "sha": "self",
+      "test": "packages/core/test/edge-whitelabel.test.ts",
+      "closedAt": "2026-09-22T20:00:00Z",
+      "parent": "G-30"
     }
   },
   "totals": {
-    "gapsTotal": 36,
-    "gapsClosed": 35,
-    "percentByCount": 97.2,
+    "gapsTotal": 37,
+    "gapsClosed": 36,
+    "percentByCount": 97.3,
     "percentByWeight": 99.3,
     "criticalOpen": 0,
     "highOpen": 0,
@@ -526,6 +535,14 @@
       "iteration": 1,
       "session": "OMEGA-1",
       "test": "packages/core/test/edge-marketplace.test.ts"
+    },
+    {
+      "id": "G-30f",
+      "sha": "self",
+      "closedAt": "2026-09-22T20:00:00Z",
+      "iteration": 1,
+      "session": "OMEGA-1",
+      "test": "packages/core/test/edge-whitelabel.test.ts"
     }
   ],
   "coverageCells": [],
