@@ -40,7 +40,8 @@
     "bench:forge": "tsx scripts/bench-forge.ts",
     "deploy:web": "npx wrangler pages deploy .vercel/output/static --project-name=inkforge-studio",
     "preview:web": "npx @cloudflare/next-on-pages --experimental-minify && npx wrangler pages dev .vercel/output/static",
-    "prepare": "husky"
+    "prepare": "husky",
+    "audit:research": "tsx scripts/research-reality-check.ts"
   },
   "lint-staged": {
     "*.{ts,tsx,mjs,js}": [

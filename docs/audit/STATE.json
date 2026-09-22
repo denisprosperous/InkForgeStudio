@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-22T21:15:00Z",
+  "updatedAt": "2026-09-22T21:40:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
   "currentSha": "self",
@@ -94,7 +94,7 @@
       "severity": "high",
       "status": "closed",
       "sha": "3ea2708",
-      "test": "packages/core/test/adapters.test.ts; docx.test.ts; kpf.test.ts; apps/forge/test/handlers.test.ts (PG16 docx kind)"
+      "test": "packages/core/test/adapters.test.ts; packages/core/test/docx.test.ts; packages/core/test/kpf.test.ts; apps/forge/test/handlers.test.ts (PG16 docx kind)"
     },
     "G-12": {
       "title": "Token/cost accounting per job",
@@ -384,11 +384,20 @@
       "test": "packages/core/test/research-anti-fabrication.test.ts",
       "closedAt": "2026-09-22T21:15:00Z",
       "parent": "G-30"
+    },
+    "RS-3": {
+      "title": "Research reality check (G-eta gate)",
+      "severity": "low",
+      "status": "closed",
+      "sha": "self",
+      "test": "scripts/research-reality-check.ts",
+      "closedAt": "2026-09-22T21:40:00Z",
+      "parent": "G-30"
     }
   },
   "totals": {
-    "gapsTotal": 47,
-    "gapsClosed": 47,
+    "gapsTotal": 48,
+    "gapsClosed": 48,
     "percentByCount": 100,
     "percentByWeight": 100,
     "criticalOpen": 0,
@@ -738,6 +747,14 @@
       "iteration": 1,
       "session": "OMEGA-1",
       "test": "packages/core/test/research-anti-fabrication.test.ts"
+    },
+    {
+      "id": "RS-3",
+      "sha": "self",
+      "closedAt": "2026-09-22T21:40:00Z",
+      "iteration": 1,
+      "session": "OMEGA-1",
+      "test": "scripts/research-reality-check.ts"
     }
   ],
   "coverageCells": [
