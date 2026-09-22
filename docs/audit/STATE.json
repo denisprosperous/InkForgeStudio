@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-22T20:00:00Z",
+  "updatedAt": "2026-09-22T20:05:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
   "currentSha": "self",
@@ -283,12 +283,21 @@
       "test": "packages/core/test/edge-whitelabel.test.ts",
       "closedAt": "2026-09-22T20:00:00Z",
       "parent": "G-30"
+    },
+    "G-30g": {
+      "title": "Localization package",
+      "severity": "low",
+      "status": "closed",
+      "sha": "self",
+      "test": "packages/core/test/edge-localization.test.ts",
+      "closedAt": "2026-09-22T20:05:00Z",
+      "parent": "G-30"
     }
   },
   "totals": {
-    "gapsTotal": 37,
-    "gapsClosed": 36,
-    "percentByCount": 97.3,
+    "gapsTotal": 38,
+    "gapsClosed": 37,
+    "percentByCount": 97.4,
     "percentByWeight": 99.3,
     "criticalOpen": 0,
     "highOpen": 0,
@@ -543,6 +552,14 @@
       "iteration": 1,
       "session": "OMEGA-1",
       "test": "packages/core/test/edge-whitelabel.test.ts"
+    },
+    {
+      "id": "G-30g",
+      "sha": "self",
+      "closedAt": "2026-09-22T20:05:00Z",
+      "iteration": 1,
+      "session": "OMEGA-1",
+      "test": "packages/core/test/edge-localization.test.ts"
     }
   ],
   "coverageCells": [],
