@@ -18,6 +18,10 @@ export default defineConfig({
   test: {
     coverage: {
       provider: "v8",
+      // Workspace projects share one reports dir; per-project clean races the
+      // v8 tmp writer (ENOENT on coverage/.tmp/*.json seen in V6) — clean at
+      // the OS level between full runs instead.
+      clean: false,
       exclude: [
         "scripts/**",
         "packages/db/seed.ts",
