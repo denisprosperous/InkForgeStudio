@@ -24,6 +24,7 @@ export * from "./edge/marketplace";
 export * from "./edge/whitelabel";
 export * from "./edge/localization";
 export * from "./edge/arbitrage";
+export * from "./research/coverage";
 export {
   validateEpub,
   locateEpubcheckJar,

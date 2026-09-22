@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-22T20:25:00Z",
+  "updatedAt": "2026-09-22T20:35:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
   "currentSha": "self",
@@ -321,11 +321,20 @@
       "test": "apps/forge/test/edge.test.ts",
       "closedAt": "2026-09-22T20:20:00Z",
       "parent": "G-30"
+    },
+    "RS-1": {
+      "title": "Universal coverage engine (Section 3 base)",
+      "severity": "low",
+      "status": "closed",
+      "sha": "self",
+      "test": "packages/core/test/research-coverage.test.ts",
+      "closedAt": "2026-09-22T20:35:00Z",
+      "parent": "G-30"
     }
   },
   "totals": {
-    "gapsTotal": 40,
-    "gapsClosed": 40,
+    "gapsTotal": 41,
+    "gapsClosed": 41,
     "percentByCount": 100,
     "percentByWeight": 100,
     "criticalOpen": 0,
@@ -611,6 +620,14 @@
       "iteration": 1,
       "session": "OMEGA-1",
       "test": "sub-gaps G-30a..G-30i + umbrella evidence"
+    },
+    {
+      "id": "RS-1",
+      "sha": "self",
+      "closedAt": "2026-09-22T20:35:00Z",
+      "iteration": 1,
+      "session": "OMEGA-1",
+      "test": "packages/core/test/research-coverage.test.ts"
     }
   ],
   "coverageCells": [],
