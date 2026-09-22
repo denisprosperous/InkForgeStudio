@@ -25,6 +25,12 @@ export * from "./edge/whitelabel";
 export * from "./edge/localization";
 export * from "./edge/arbitrage";
 export * from "./research/coverage";
+export * from "./research/e1-fiction";
+export * from "./research/e2-nonfiction";
+export * from "./research/e3-academic";
+export * from "./research/e4-b2b";
+export * from "./research/e5-childrens";
+export * from "./research/e6-international";
 export {
   validateEpub,
   locateEpubcheckJar,
