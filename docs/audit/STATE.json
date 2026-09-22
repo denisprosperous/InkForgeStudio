@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-22T20:50:00Z",
+  "updatedAt": "2026-09-22T21:00:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
   "currentSha": "self",
@@ -348,11 +348,20 @@
       "test": "packages/core/test/research-e3-academic.test.ts",
       "closedAt": "2026-09-22T20:50:00Z",
       "parent": "G-30"
+    },
+    "E-4": {
+      "title": "Professional case-study adapter",
+      "severity": "low",
+      "status": "closed",
+      "sha": "self",
+      "test": "packages/core/test/research-e4-b2b.test.ts",
+      "closedAt": "2026-09-22T21:00:00Z",
+      "parent": "G-30"
     }
   },
   "totals": {
-    "gapsTotal": 43,
-    "gapsClosed": 43,
+    "gapsTotal": 44,
+    "gapsClosed": 44,
     "percentByCount": 100,
     "percentByWeight": 100,
     "criticalOpen": 0,
@@ -670,6 +679,14 @@
       "iteration": 1,
       "session": "OMEGA-1",
       "test": "packages/core/test/research-e3-academic.test.ts"
+    },
+    {
+      "id": "E-4",
+      "sha": "self",
+      "closedAt": "2026-09-22T21:00:00Z",
+      "iteration": 1,
+      "session": "OMEGA-1",
+      "test": "packages/core/test/research-e4-b2b.test.ts"
     }
   ],
   "coverageCells": [],
