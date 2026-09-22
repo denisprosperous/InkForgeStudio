@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-22T21:05:00Z",
+  "updatedAt": "2026-09-22T21:10:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
   "currentSha": "self",
@@ -366,11 +366,20 @@
       "test": "packages/core/test/research-e5-childrens.test.ts",
       "closedAt": "2026-09-22T21:05:00Z",
       "parent": "G-30"
+    },
+    "E-6": {
+      "title": "International market adapter",
+      "severity": "low",
+      "status": "closed",
+      "sha": "self",
+      "test": "packages/core/test/research-e6-international.test.ts",
+      "closedAt": "2026-09-22T21:10:00Z",
+      "parent": "G-30"
     }
   },
   "totals": {
-    "gapsTotal": 45,
-    "gapsClosed": 45,
+    "gapsTotal": 46,
+    "gapsClosed": 46,
     "percentByCount": 100,
     "percentByWeight": 100,
     "criticalOpen": 0,
@@ -704,6 +713,14 @@
       "iteration": 1,
       "session": "OMEGA-1",
       "test": "packages/core/test/research-e5-childrens.test.ts"
+    },
+    {
+      "id": "E-6",
+      "sha": "self",
+      "closedAt": "2026-09-22T21:10:00Z",
+      "iteration": 1,
+      "session": "OMEGA-1",
+      "test": "packages/core/test/research-e6-international.test.ts"
     }
   ],
   "coverageCells": [],
