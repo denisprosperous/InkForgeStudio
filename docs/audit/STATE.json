@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-22T18:25:00Z",
+  "updatedAt": "2026-09-22T19:20:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
   "currentSha": "self",
@@ -229,12 +229,21 @@
       "status": "closed",
       "sha": "62d228a",
       "test": "vitest.config.ts (coverage thresholds 80 enforced; suite fails below); full run 299/299 at 82.99% lines / 84.08% branches"
+    },
+    "G-30a": {
+      "title": "Cover A/B testing",
+      "severity": "low",
+      "status": "closed",
+      "sha": "self",
+      "test": "packages/core/test/edge-cover-ab.test.ts",
+      "closedAt": "2026-09-22T19:20:00Z",
+      "parent": "G-30"
     }
   },
   "totals": {
-    "gapsTotal": 31,
-    "gapsClosed": 30,
-    "percentByCount": 96.8,
+    "gapsTotal": 32,
+    "gapsClosed": 31,
+    "percentByCount": 96.9,
     "percentByWeight": 99.2,
     "criticalOpen": 0,
     "highOpen": 0,
@@ -441,6 +450,14 @@
       "iteration": 0,
       "session": "NEG-4.3",
       "test": "packages/core/test/series.test.ts; apps/forge/test/series.test.ts"
+    },
+    {
+      "id": "G-30a",
+      "sha": "self",
+      "closedAt": "2026-09-22T19:20:00Z",
+      "iteration": 1,
+      "session": "OMEGA-1",
+      "test": "packages/core/test/edge-cover-ab.test.ts"
     }
   ],
   "coverageCells": [],
