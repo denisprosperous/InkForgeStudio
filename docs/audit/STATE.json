@@ -753,6 +753,16 @@
     },
     {
       "category": "childrens",
+      "availability": "none",
+      "verdict": "PASS",
+      "adapter": "E-5-childrens-reading-level",
+      "sha": "self",
+      "test": "packages/core/test/research-coverage.test.ts",
+      "closedAt": "2026-09-22T20:46:55.676Z",
+      "refusalReason": null
+    },
+    {
+      "category": "childrens",
       "availability": "partial",
       "verdict": "PASS",
       "adapter": "E-5-childrens-reading-level",
