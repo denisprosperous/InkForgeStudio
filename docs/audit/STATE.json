@@ -873,6 +873,16 @@
     },
     {
       "category": "professional-b2b",
+      "availability": "none",
+      "verdict": "REFUSED",
+      "adapter": "E-4-professional-case-study",
+      "sha": "self",
+      "test": "packages/core/test/research-coverage.test.ts",
+      "closedAt": "2026-09-22T20:47:34.629Z",
+      "refusalReason": "no verifiable data — refusing rather than generating unsourced claims for this category"
+    },
+    {
+      "category": "professional-b2b",
       "availability": "partial",
       "verdict": "PASS",
       "adapter": "E-4-professional-case-study",
