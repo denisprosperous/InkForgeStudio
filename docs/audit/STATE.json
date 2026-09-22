@@ -783,6 +783,16 @@
     },
     {
       "category": "nonfiction",
+      "availability": "none",
+      "verdict": "REFUSED",
+      "adapter": "E-2-nonfiction-evidence",
+      "sha": "self",
+      "test": "packages/core/test/research-coverage.test.ts",
+      "closedAt": "2026-09-22T20:46:34.371Z",
+      "refusalReason": "no verifiable data — refusing rather than generating unsourced claims for this category"
+    },
+    {
+      "category": "nonfiction",
       "availability": "partial",
       "verdict": "PASS",
       "adapter": "E-2-nonfiction-evidence",
