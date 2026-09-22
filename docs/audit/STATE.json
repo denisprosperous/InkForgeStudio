@@ -872,6 +872,16 @@
       "refusalReason": null
     },
     {
+      "category": "low-data-emerging",
+      "availability": "partial",
+      "verdict": "PASS",
+      "adapter": "E-2-nonfiction-evidence",
+      "sha": "self",
+      "test": "packages/core/test/research-coverage.test.ts",
+      "closedAt": "2026-09-22T20:53:14.562Z",
+      "refusalReason": null
+    },
+    {
       "category": "nonfiction",
       "availability": "full",
       "verdict": "PASS",

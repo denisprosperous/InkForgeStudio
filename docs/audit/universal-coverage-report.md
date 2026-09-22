@@ -40,6 +40,7 @@ Probe topics are the canonical per-category topics in `scripts/coverage-cell.ts`
 | international/none | PASS | E-6-international-market | packages/core/test/research-coverage.test.ts | — |
 | international/partial | PASS | E-6-international-market | packages/core/test/research-coverage.test.ts | — |
 | low-data-emerging/full | PASS | E-2-nonfiction-evidence | packages/core/test/research-coverage.test.ts | — |
+| low-data-emerging/partial | PASS | E-2-nonfiction-evidence | packages/core/test/research-coverage.test.ts | — |
 | nonfiction/full | PASS | E-2-nonfiction-evidence | packages/core/test/research-coverage.test.ts | — |
 | nonfiction/none | REFUSED | E-2-nonfiction-evidence | packages/core/test/research-coverage.test.ts | no verifiable data — refusing rather than generating unsourced claims for this category |
 | nonfiction/partial | PASS | E-2-nonfiction-evidence | packages/core/test/research-coverage.test.ts | — |
@@ -49,8 +50,8 @@ Probe topics are the canonical per-category topics in `scripts/coverage-cell.ts`
 
 ## Summary
 
-- Cells evaluated: 19 / 21
-- PASS: 16   REFUSED (legit, reason cited): 3   GAP: 0
+- Cells evaluated: 20 / 21
+- PASS: 17   REFUSED (legit, reason cited): 3   GAP: 0
 
 ## Anti-fabrication
 
