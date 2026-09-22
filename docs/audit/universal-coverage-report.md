@@ -40,11 +40,12 @@ Probe topics are the canonical per-category topics in `scripts/coverage-cell.ts`
 | nonfiction/none | REFUSED | E-2-nonfiction-evidence | packages/core/test/research-coverage.test.ts | no verifiable data — refusing rather than generating unsourced claims for this category |
 | nonfiction/partial | PASS | E-2-nonfiction-evidence | packages/core/test/research-coverage.test.ts | — |
 | professional-b2b/full | PASS | E-4-professional-case-study | packages/core/test/research-coverage.test.ts | — |
+| professional-b2b/partial | PASS | E-4-professional-case-study | packages/core/test/research-coverage.test.ts | — |
 
 ## Summary
 
-- Cells evaluated: 13 / 21
-- PASS: 11   REFUSED (legit, reason cited): 2   GAP: 0
+- Cells evaluated: 14 / 21
+- PASS: 12   REFUSED (legit, reason cited): 2   GAP: 0
 
 ## Anti-fabrication
 
