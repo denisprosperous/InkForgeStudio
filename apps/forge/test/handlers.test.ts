@@ -92,7 +92,7 @@ d("worker handlers: chapter.generate + book.export", () => {
   }
 
   function workerFor(options: Parameters<typeof createForgeWorker>[0] = makeWorkerOptions()) {
-    return createForgeWorker({ ...makeWorkerOptions(), ...options });
+    return createForgeWorker(options);
   }
 
   async function jobAfter(id: string): Promise<JobRow> {
