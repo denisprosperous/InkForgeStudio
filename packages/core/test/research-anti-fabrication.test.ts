@@ -29,7 +29,11 @@ describe("anti-fabrication: refusals instead of invention", () => {
       topic: "medical dosage guidance",
     });
     expect(medical.verdict).toBe("REFUSED");
-    const harmful = planForCell({ category: "fiction", availability: "full", topic: "suicide method" });
+    const harmful = planForCell({
+      category: "fiction",
+      availability: "full",
+      topic: "suicide method",
+    });
     expect(harmful.verdict).toBe("REFUSED");
     expect(harmful.refusalReason).toContain("prohibited");
   });
@@ -89,9 +93,12 @@ describe("anti-fabrication: refusals instead of invention", () => {
   });
 
   it("refuses arbitrage signals on thin market data", () => {
-    const report = findPriceArbitrage([{ market: "US", currency: "USD", priceCents: 100, demandIndex: 50 }], {
-      minMarkets: 3,
-    });
+    const report = findPriceArbitrage(
+      [{ market: "US", currency: "USD", priceCents: 100, demandIndex: 50 }],
+      {
+        minMarkets: 3,
+      },
+    );
     expect(report.status).toBe("insufficient-data");
     expect(report.signals).toEqual([]);
   });
@@ -104,6 +111,8 @@ describe("anti-fabrication: refusals instead of invention", () => {
       pricePower: 90,
       trendScore: 90,
       sampleSize: 3,
+      source: "unit-test",
+      capturedAt: "2026-09-01T00:00:00.000Z",
     });
     expect(gate.verdict).not.toBe("go");
     expect(gate.reasons.join(" ")).toContain("sample");
