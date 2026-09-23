@@ -18,6 +18,7 @@ const meta: BookMeta = {
   language: "en",
   seriesLabel: "The Quill Logs, Book 1",
   publishTarget: "kdp",
+  extra: {},
 };
 
 function chapter(title: string, markdown: string, idx = 0): Chapter {
