@@ -53,23 +53,26 @@ describe.skipIf(!ENABLED)("G-07 migrations apply cleanly to a fresh database", (
   const admin = postgres(ADMIN_URL, { max: 1, onnotice: () => {} });
   let target: postgres.Sql | undefined;
 
-  // OMEGA-1 battery V6: under full-suite parallel load the live-DB beforeAll
-  // exceeded vitest's default 10s hook timeout once (it passes in ~4s alone
-  // and passed in the previous battery run). Provision 30s for the integration
-  // hook only; test bodies keep the default timeout.
+  // OMEGA-1 battery V6 — live-DB hooks under full-suite parallel load:
+  // run #1 exceeded vitest's default 10s hookTimeout, FIX-HOOK provisioned
+  // 30s for beforeAll but run #2 still exceeded it while swap-thrashed, and
+  // afterAll (DROP DATABASE + teardown) hit the untouched 10s default.
+  // 60s for both integration hooks matches the forge-suite precedent
+  // (apps/forge/test/handlers.test.ts:60_000); test bodies keep the
+  // workspace's 30s testTimeout.
   beforeAll(async () => {
     await admin.unsafe(`CREATE DATABASE "${dbName}"`);
     target = postgres(ADMIN_URL.replace(/\/[^/]+$/, `/${dbName}`), {
       max: 1,
       onnotice: () => {},
     });
-  }, 30_000);
+  }, 60_000);
 
   afterAll(async () => {
     await target?.end({ timeout: 3 });
     await admin.unsafe(`DROP DATABASE IF EXISTS "${dbName}"`);
     await admin.end({ timeout: 3 });
-  });
+  }, 60_000);
 
   it("ships at least one migration per journal entry", () => {
     const files = migrationFiles();

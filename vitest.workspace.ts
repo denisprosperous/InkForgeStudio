@@ -41,8 +41,12 @@ export default defineWorkspace([
       environment: "node",
       include: ["packages/db/test/**/*.test.ts"],
       // Migration integration suites create + migrate a throwaway Postgres
-      // database; 5s is not enough under parallel load.
+      // database; 5s is not enough under parallel load. The setup/teardown
+      // hooks do the same live-DB work as the test bodies, so they get a
+      // hookTimeout floor alongside testTimeout (vitest defaults hooks to
+      // just 10s, which failed the OMEGA-1 battery under load).
       testTimeout: 30_000,
+      hookTimeout: 30_000,
     },
   },
   {

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-23T00:10:00Z",
+  "updatedAt": "2026-09-23T02:05:00+01:00",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
   "currentSha": "self",
@@ -215,17 +215,7 @@
       "sha": "self",
       "test": "packages/core/test/edge-cover-ab.test.ts; edge-backlist; edge-bundles; edge-d2c; edge-marketplace; edge-whitelabel; edge-localization; edge-arbitrage; apps/forge/test/edge.test.ts (PG16)",
       "closedAt": "2026-09-22T20:25:00Z",
-      "closedVia": [
-        "G-30a",
-        "G-30b",
-        "G-30c",
-        "G-30d",
-        "G-30e",
-        "G-30f",
-        "G-30g",
-        "G-30h",
-        "G-30i"
-      ]
+      "closedVia": ["G-30a", "G-30b", "G-30c", "G-30d", "G-30e", "G-30f", "G-30g", "G-30h", "G-30i"]
     },
     "G-17a": {
       "title": "Worker handlers: chapter.generate + book.export (G-17 slice a)",
@@ -456,11 +446,20 @@
       "test": "packages/core/test/epubcheck.test.ts",
       "closedAt": "2026-09-23T00:10:00Z",
       "parent": "G-30"
+    },
+    "FIX-HOOK2": {
+      "title": "G-07 live-DB hooks timeout under battery load (beforeAll 30s exceeded, afterAll at default 10s)",
+      "severity": "low",
+      "status": "closed",
+      "sha": "self",
+      "test": "vitest --project db: 18/18; full npm test 450/450; hookTimeout floor 30s in vitest.workspace.ts db project",
+      "closedAt": "2026-09-23T02:05:00+01:00",
+      "parent": "G-30"
     }
   },
   "totals": {
-    "gapsTotal": 55,
-    "gapsClosed": 55,
+    "gapsTotal": 56,
+    "gapsClosed": 56,
     "percentByCount": 100,
     "percentByWeight": 100,
     "criticalOpen": 0,
@@ -476,16 +475,7 @@
       "endedAt": "2026-09-17T08:45:00Z",
       "shaBefore": "3ee05f6",
       "shaAfter": "69dba4c",
-      "closed": [
-        "G-29",
-        "G-07",
-        "G-04a",
-        "G-04b",
-        "G-04c",
-        "G-14a",
-        "G-04d",
-        "G-06"
-      ],
+      "closed": ["G-29", "G-07", "G-04a", "G-04b", "G-04c", "G-14a", "G-04d", "G-06"],
       "stillOpen": [
         "G-17",
         "G-28",
@@ -518,14 +508,7 @@
       "endedAt": "2026-09-18T13:05:00Z",
       "shaBefore": "69dba4c",
       "shaAfter": "f233a36",
-      "closed": [
-        "G-17a",
-        "G-17",
-        "G-08",
-        "G-12",
-        "G-11",
-        "G-09"
-      ],
+      "closed": ["G-17a", "G-17", "G-08", "G-12", "G-11", "G-09"],
       "stillOpen": [
         "G-28",
         "G-13",
@@ -554,26 +537,8 @@
       "endedAt": "2026-09-20T22:45:00Z",
       "shaBefore": "ff5a651",
       "shaAfter": "32b97f9",
-      "closed": [
-        "G-28",
-        "G-13",
-        "G-15",
-        "G-16",
-        "G-27",
-        "G-24",
-        "G-18",
-        "G-10",
-        "G-19"
-      ],
-      "stillOpen": [
-        "G-31",
-        "G-21",
-        "G-09b",
-        "G-22",
-        "G-25",
-        "G-26",
-        "G-30"
-      ],
+      "closed": ["G-28", "G-13", "G-15", "G-16", "G-27", "G-24", "G-18", "G-10", "G-19"],
+      "stillOpen": ["G-31", "G-21", "G-09b", "G-22", "G-25", "G-26", "G-30"],
       "verification": "partial: V1-V5 and V7-V12 + V14 green (clean checkout; install clean with PUPPETEER_SKIP_DOWNLOAD=1 after Chromium postinstall was SIGHUP-killed; db migrate+seed green after db:generate script fix 32b97f9; lint 0; typecheck 0; 299/299 tests on live PG16; e2e 2/2 chromium WEB_PORT=3100; audit:stubs --strict 0 markers; audit:dod --strict clean; build ok incl. forge+web dist; healthz ok + readyz ready on live forge; SIGTERM clean exit) — V6 PARTIAL: coverage 74.08% lines < 80% floor, filed as new open gap G-31 — V13 not-run: no Java runtime on this host (epubcheck graceful-skip suite green inside V6)",
       "percentBefore": 76,
       "percentAfter": 87.9,
@@ -585,17 +550,8 @@
       "endedAt": "2026-09-22T18:25:00Z",
       "shaBefore": "aef9440",
       "shaAfter": "970b605",
-      "closed": [
-        "G-31",
-        "G-21",
-        "G-09b",
-        "G-22",
-        "G-25",
-        "G-26"
-      ],
-      "stillOpen": [
-        "G-30"
-      ],
+      "closed": ["G-31", "G-21", "G-09b", "G-22", "G-25", "G-26"],
+      "stillOpen": ["G-30"],
       "verification": "partial: V13 not-run (no Java runtime on host — EPUBCheck graceful-skip suite green inside V6); everything else green: V1 clean checkout, V2 npm ci (after repairing host-truncated native binaries), V3 generate/migrate/seed, V4 lint 0, V5 typecheck 0, V6 360/360 tests at 87.71% lines / 85.6% branches / 79.93% functions with 80%-lines thresholds ENFORCED (two red runs proved the gate fires), V7 e2e 2/2 chromium WEB_PORT=3100, V8 stubs strict 0 markers, V9 dod strict clean, V10 build (forge dist + web .next/BUILD_ID), V11 healthz ok, V12 readyz ready, V14 SIGTERM clean exit",
       "percentBefore": 87.9,
       "percentAfter": 99.2,
@@ -609,9 +565,7 @@
       "shaBefore": "3407181",
       "shaAfter": null,
       "closed": [],
-      "stillOpen": [
-        "G-30"
-      ],
+      "stillOpen": ["G-30"],
       "verification": "in-progress",
       "percentBefore": 99.2,
       "percentAfter": null,
@@ -874,6 +828,14 @@
       "iteration": 1,
       "session": "OMEGA-1",
       "test": "packages/core/test/epubcheck.test.ts"
+    },
+    {
+      "id": "FIX-HOOK2",
+      "sha": "self",
+      "closedAt": "2026-09-23T02:05:00+01:00",
+      "iteration": 1,
+      "session": "OMEGA-1",
+      "test": "vitest --project db: 18/18; full npm test 450/450; hookTimeout floor 30s in vitest.workspace.ts db project"
     }
   ],
   "coverageCells": [
