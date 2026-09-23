@@ -59,7 +59,14 @@ describe("G-18 ONIX 3.0 export", () => {
   it("emits a release-3.0 message with title, contributor, language and subjects", () => {
     const xml = buildOnix30({
       meta: META,
-      product: { priceCents: 499, currency: "USD", categories: ["FIC009000"] },
+      product: {
+        priceCents: 499,
+        currency: "USD",
+        categories: ["FIC009000"],
+        territories: [],
+        preorder: false,
+        maturityRating: "general",
+      },
       identifier: { isbn13: "9780306406157" },
     });
     expect(xml).toContain('<ONIXMessage release="3.0"');
