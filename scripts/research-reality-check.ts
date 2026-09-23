@@ -42,8 +42,10 @@ const state = JSON.parse(fs.readFileSync(STATE_PATH, "utf8")) as {
 };
 
 // 1. Totals and gap statuses.
-if (state.totals.percentByWeight !== 100) violations.push(`percentByWeight is ${state.totals.percentByWeight}, expected 100`);
-if (state.totals.percentByCount !== 100) violations.push(`percentByCount is ${state.totals.percentByCount}, expected 100`);
+if (state.totals.percentByWeight !== 100)
+  violations.push(`percentByWeight is ${state.totals.percentByWeight}, expected 100`);
+if (state.totals.percentByCount !== 100)
+  violations.push(`percentByCount is ${state.totals.percentByCount}, expected 100`);
 const openGaps = Object.entries(state.gaps).filter(([, gap]) => gap.status !== "closed");
 if (openGaps.length > 0) violations.push(`open gaps: ${openGaps.map(([id]) => id).join(", ")}`);
 if (state.totals.gapsClosed !== state.totals.gapsTotal) {
@@ -61,7 +63,8 @@ for (const cell of cells) {
   if (cell.verdict === "REFUSED" && (cell.refusalReason ?? "").length === 0) {
     violations.push(`cell ${cell.category}/${cell.availability} REFUSED without a reason`);
   }
-  if (!cell.test.endsWith(".ts")) violations.push(`cell ${cell.category}/${cell.availability} lacks a test path`);
+  if (!cell.test.endsWith(".ts"))
+    violations.push(`cell ${cell.category}/${cell.availability} lacks a test path`);
 }
 
 // 3. Report artifact.
@@ -103,8 +106,12 @@ for (const [id, gap] of Object.entries(state.gaps)) {
   }
   if (gap.test.includes("/")) {
     for (const raw of gap.test.split(";")) {
-      const candidate = raw.trim().split(" (")[0].trim();
-      if (candidate.endsWith(".ts") && !candidate.includes("*") && !fs.existsSync(path.join(ROOT, candidate))) {
+      const candidate = raw.trim().split(" (")[0]!.trim();
+      if (
+        candidate.endsWith(".ts") &&
+        !candidate.includes("*") &&
+        !fs.existsSync(path.join(ROOT, candidate))
+      ) {
         violations.push(`gap ${id} cites missing file ${candidate}`);
       }
     }
