@@ -28,7 +28,11 @@ describe("studio tone mapping", () => {
 describe("studio components render server-side", () => {
   it("Panel renders title, actions and body", () => {
     const markup = html(
-      h(Panel, { title: "Chapters", actions: h("button", null, "add") }, h("p", null, "body")),
+      h(Panel, {
+        title: "Chapters",
+        actions: h("button", null, "add"),
+        children: h("p", null, "body"),
+      }),
     );
     expect(markup).toContain("Chapters");
     expect(markup).toContain("<p>body</p>");
