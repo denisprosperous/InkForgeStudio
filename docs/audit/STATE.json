@@ -571,6 +571,20 @@
       "percentBefore": 99.2,
       "percentAfter": null,
       "notes": "NEGENTROPY-Ω recursive loop invocation. Task 0: ledger schema bootstrap (tasks[], coverageCells[], pendingPush). Iteration 1 begins with G-30 decomposition."
+    },
+    {
+      "run": "NEG-Ω.FINAL",
+      "resumedFrom": "OMEGA-1",
+      "startedAt": "2026-09-23T01:45:00Z",
+      "endedAt": "2026-09-23T05:30:00Z",
+      "shaBefore": "0cd5914",
+      "shaAfter": "bc76950",
+      "closed": ["forge-test-types"],
+      "stillOpen": [],
+      "verification": "green",
+      "percentBefore": 100,
+      "percentAfter": 100,
+      "notes": "Fixed test-file type errors; full battery green."
     }
   ],
   "tasks": [
