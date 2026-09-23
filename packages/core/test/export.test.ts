@@ -58,14 +58,14 @@ describe("buildEpub", () => {
 
     const opfName = names.find((name) => name.endsWith(".opf"));
     expect(opfName).toBeDefined();
-    const opf = await zip.files[opfName as string].async("string");
+    const opf = await zip.files[opfName as string]!.async("string");
     expect(opf).toContain("The Iron Forge");
     expect(opf).toContain("Mara Quill");
 
     const chapterFiles = names.filter((name) => name.endsWith(".xhtml"));
     expect(chapterFiles.length).toBeGreaterThanOrEqual(2);
     const allHtml = (
-      await Promise.all(chapterFiles.map((name) => zip.files[name].async("string")))
+      await Promise.all(chapterFiles.map((name) => zip.files[name]!.async("string")))
     ).join("\n");
     expect(allHtml).toContain("Iron does not negotiate");
     expect(allHtml).toContain("scene-break");
