@@ -24,7 +24,7 @@ import {
   type JobRow,
 } from "@inkforge/db";
 import type { LlmClient } from "@inkforge/ai";
-import { createForgeWorker } from "../src/worker/index";
+import { createForgeWorker, type ForgeWorkerOptions } from "../src/worker/index";
 import { createFreshDb, type FreshDb } from "./helpers/fresh-db";
 
 const ENABLED = process.env.INKFORGE_PG_TEST === "1";
@@ -76,15 +76,23 @@ d("worker handlers: chapter.generate + book.export", () => {
     await handle.destroy();
   }, 30_000);
 
-  function workerFor(options: Parameters<typeof createForgeWorker>[0] = {}) {
-    return createForgeWorker({
+  /**
+   * Complete `ForgeWorkerOptions` — the one place `db` and `logger` are set.
+   * Call sites pass only what they override; nothing receives a bare partial.
+   */
+  function makeWorkerOptions(overrides: Partial<ForgeWorkerOptions> = {}): ForgeWorkerOptions {
+    return {
       db: handle.db,
       logger: { info() {}, warn() {}, error() {} },
       workerId: `test-worker-${randomUUID()}`,
       pollIntervalMs: 10,
       retryBackoffMs: 0,
-      ...options,
-    });
+      ...overrides,
+    };
+  }
+
+  function workerFor(options: Parameters<typeof createForgeWorker>[0] = {}) {
+    return createForgeWorker({ ...makeWorkerOptions(), ...options });
   }
 
   async function jobAfter(id: string): Promise<JobRow> {
