@@ -172,7 +172,7 @@ d("worker handlers: chapter.generate + book.export", () => {
     const enqueued = await enqueueJob(handle.db, user, {
       bookId,
       type: "book.export",
-      payload: { format: "epub" },
+      payload: { format: "epub", validate: false },
     });
     const tick = await workerFor().tick();
     expect(tick.succeeded).toBeGreaterThanOrEqual(1);
@@ -187,7 +187,7 @@ d("worker handlers: chapter.generate + book.export", () => {
     expect(result.exportId).toBe(artifact.id);
     expect(result.disclosure).toBe(true);
     expect(result.words).toBeGreaterThan(0);
-    expect(result.validation).toMatchObject({ status: "skipped" }); // no Java in unit env
+    expect(result.validation).toMatchObject({ status: "skipped" }); // hermetic: validation opted out (real EPUBCheck is gated by the canary + battery V13)
   });
 
   it("book.export honours the disclosure flag", async () => {
@@ -195,7 +195,7 @@ d("worker handlers: chapter.generate + book.export", () => {
     const enqueued = await enqueueJob(handle.db, user, {
       bookId,
       type: "book.export",
-      payload: {},
+      payload: { validate: false },
     });
     await worker.tick();
     const job = await jobAfter(enqueued.id);
@@ -226,7 +226,7 @@ d("worker handlers: chapter.generate + book.export", () => {
     const artifact = await enqueueJob(handle.db, user, {
       bookId,
       type: "book.export",
-      payload: {},
+      payload: { validate: false },
     });
     await worker.tick();
     for (const id of [draft.id, artifact.id]) {

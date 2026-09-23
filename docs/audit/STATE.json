@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-22T23:45:00Z",
+  "updatedAt": "2026-09-23T00:10:00Z",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
   "currentSha": "self",
@@ -447,11 +447,20 @@
       "test": "docs/audit/STATE.json",
       "closedAt": "2026-09-22T23:45:00Z",
       "parent": "G-30"
+    },
+    "FIX-WARM": {
+      "title": "V6 warm-host hermeticity fix (epubcheck+exports)",
+      "severity": "low",
+      "status": "closed",
+      "sha": "self",
+      "test": "packages/core/test/epubcheck.test.ts",
+      "closedAt": "2026-09-23T00:10:00Z",
+      "parent": "G-30"
     }
   },
   "totals": {
-    "gapsTotal": 54,
-    "gapsClosed": 54,
+    "gapsTotal": 55,
+    "gapsClosed": 55,
     "percentByCount": 100,
     "percentByWeight": 100,
     "criticalOpen": 0,
@@ -857,6 +866,14 @@
       "iteration": 1,
       "session": "OMEGA-1",
       "test": "docs/audit/STATE.json"
+    },
+    {
+      "id": "FIX-WARM",
+      "sha": "self",
+      "closedAt": "2026-09-23T00:10:00Z",
+      "iteration": 1,
+      "session": "OMEGA-1",
+      "test": "packages/core/test/epubcheck.test.ts"
     }
   ],
   "coverageCells": [

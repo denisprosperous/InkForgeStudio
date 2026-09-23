@@ -40,13 +40,16 @@ const DEFAULT_JAR_LOCATIONS: readonly string[] = [
 /**
  * Resolve the epubcheck jar: an explicit path is trusted verbatim (the caller
  * asserted it); env and well-known locations require the file to exist.
+ * `defaultLocations` is injectable so unit tests can simulate a cold host
+ * hermetically while production keeps scanning the well-known locations.
  */
 export function locateEpubcheckJar(
   explicitPath?: string,
   env: Record<string, string | undefined> = process.env,
+  defaultLocations: readonly string[] = DEFAULT_JAR_LOCATIONS,
 ): string | undefined {
   if (explicitPath !== undefined && explicitPath.trim() !== "") return explicitPath;
-  const candidates = [env.EPUBCHECK_JAR, ...DEFAULT_JAR_LOCATIONS].filter(
+  const candidates = [env.EPUBCHECK_JAR, ...defaultLocations].filter(
     (candidate): candidate is string => Boolean(candidate),
   );
   for (const candidate of candidates) {
@@ -60,10 +63,21 @@ function runJava(
   epubPath: string,
   reportPath: string,
   timeoutMs: number,
+  env: Record<string, string | undefined> | undefined,
 ): Promise<number> {
   return new Promise((resolve, reject) => {
+    // Honour the caller's env (options.env): a java-less PATH must produce
+    // "Java unavailable" deterministically, on hosts where Java IS installed.
+    const spawnEnv: Record<string, string> = { ...process.env } as Record<string, string>;
+    if (env) {
+      for (const [key, value] of Object.entries(env)) {
+        if (value === undefined) delete spawnEnv[key];
+        else spawnEnv[key] = value;
+      }
+    }
     const child = spawn("java", ["-jar", jarPath, epubPath, "--json", reportPath], {
       stdio: ["ignore", "pipe", "pipe"],
+      env: spawnEnv,
     });
     let stderr = "";
     const timer = setTimeout(() => {
@@ -135,10 +149,12 @@ export async function validateEpub(
     readonly jarPath?: string;
     readonly timeoutMs?: number;
     readonly env?: Record<string, string | undefined>;
+    /** Injectable well-known locations (unit tests simulate a cold host). */
+    readonly defaultJarLocations?: readonly string[];
   } = {},
 ): Promise<EpubCheckResult> {
   const started = Date.now();
-  const jarPath = locateEpubcheckJar(options.jarPath, options.env);
+  const jarPath = locateEpubcheckJar(options.jarPath, options.env, options.defaultJarLocations);
   const skipped = (reason: string): EpubCheckResult => ({
     status: "skipped",
     errors: 0,
@@ -171,7 +187,7 @@ export async function validateEpub(
       writeFileSync(epubPath, input);
     }
 
-    const code = await runJava(jarPath, epubPath, reportPath, options.timeoutMs ?? 120_000);
+    const code = await runJava(jarPath, epubPath, reportPath, options.timeoutMs ?? 120_000, options.env);
     const report: RawEpubcheckReport = existsSync(reportPath)
       ? (JSON.parse(readFileSync(reportPath, "utf8")) as RawEpubcheckReport)
       : {};
