@@ -10,6 +10,7 @@ export const meta: BookMeta = {
   keywords: ["lighthouse", "AI"],
   language: "en",
   publishTarget: "kdp",
+  extra: {},
 };
 
 export function chapter(idx: number, title: string, markdown: string): Chapter {
@@ -26,11 +27,7 @@ export function chapter(idx: number, title: string, markdown: string): Chapter {
 }
 
 export const chapters = [
-  chapter(
-    0,
-    "The Lamp",
-    "# The Lamp\n\nThe lamp did not answer.\n\nIt kept its light to itself.",
-  ),
+  chapter(0, "The Lamp", "# The Lamp\n\nThe lamp did not answer.\n\nIt kept its light to itself."),
   chapter(
     1,
     "The Machine",
