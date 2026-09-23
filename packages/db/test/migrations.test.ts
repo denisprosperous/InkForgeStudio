@@ -116,8 +116,8 @@ describe.skipIf(!ENABLED)("G-07 migrations apply cleanly to a fresh database", (
       SELECT column_name, data_type, column_default FROM information_schema.columns
       WHERE table_name = 'books' AND column_name = 'extra'`;
     expect(rows).toHaveLength(1);
-    expect(String(rows[0].data_type)).toBe("jsonb");
-    expect(String(rows[0].column_default)).toContain("'{}'::jsonb");
+    expect(String(rows[0]!.data_type)).toBe("jsonb");
+    expect(String(rows[0]!.column_default)).toContain("'{}'::jsonb");
   });
 
   it("carries the G-15 consistency_facts ledger table with span columns", async () => {
