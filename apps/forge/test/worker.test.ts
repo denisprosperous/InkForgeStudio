@@ -38,7 +38,6 @@ function recordingLogger(): WorkerLogger & { events: string[] } {
     };
   return {
     events,
-    debug: push("debug"),
     info: push("info"),
     warn: push("warn"),
     error: push("error"),
@@ -86,7 +85,7 @@ d("worker loop", () => {
   }
   it("runs a registered handler to success and stores the result", async () => {
     const worker = workerFor({
-      "outline.generate": ({ job }) => ({ ok: true, jobId: job.id }),
+      "outline.generate": async ({ job }) => ({ ok: true, jobId: job.id }),
     });
     const job = await enqueueJob(db, user, {
       bookId,
@@ -126,7 +125,7 @@ d("worker loop", () => {
   it("retries a retryable handler failure with attempts++ and a due time", async () => {
     let calls = 0;
     const worker = workerFor({
-      "outline.generate": () => {
+      "outline.generate": async () => {
         calls += 1;
         if (calls === 1) throw new Error("transient upstream 503");
         return { recovered: true };
@@ -175,7 +174,7 @@ d("worker loop", () => {
       })
       .where(and(eq(jobs.id, stale.id), eq(jobs.userId, user)));
 
-    const worker = workerFor({ "outline.generate": () => ({ reclaimedRun: true }) });
+    const worker = workerFor({ "outline.generate": async () => ({ reclaimedRun: true }) });
     const tick = await worker.tick();
     expect(tick.reclaimed).toBeGreaterThanOrEqual(1);
     expect(tick.succeeded).toBe(1);
