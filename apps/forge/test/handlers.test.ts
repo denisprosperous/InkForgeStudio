@@ -91,7 +91,7 @@ d("worker handlers: chapter.generate + book.export", () => {
     };
   }
 
-  function workerFor(options: Parameters<typeof createForgeWorker>[0] = {}) {
+  function workerFor(options: Parameters<typeof createForgeWorker>[0] = makeWorkerOptions()) {
     return createForgeWorker({ ...makeWorkerOptions(), ...options });
   }
 
@@ -133,7 +133,7 @@ d("worker handlers: chapter.generate + book.export", () => {
       "Second paragraph, kept verbatim so the assertion can find it later on.",
     ].join("\n");
     const llm = fakeLlm(modelText);
-    const worker = workerFor({ llm });
+    const worker = workerFor(makeWorkerOptions({ llm }));
     const enqueued = await enqueueJob(handle.db, user, {
       bookId,
       type: "chapter.generate",
@@ -149,7 +149,7 @@ d("worker handlers: chapter.generate + book.export", () => {
   });
 
   it("chapter.generate falls back to the planner when the model fails", async () => {
-    const worker = workerFor({ llm: fakeLlm(new Error("upstream 503")) });
+    const worker = workerFor(makeWorkerOptions({ llm: fakeLlm(new Error("upstream 503")) }));
     const enqueued = await enqueueJob(handle.db, user, {
       bookId,
       type: "chapter.generate",
@@ -199,7 +199,7 @@ d("worker handlers: chapter.generate + book.export", () => {
   });
 
   it("book.export honours the disclosure flag", async () => {
-    const worker = workerFor({ disclosure: false });
+    const worker = workerFor(makeWorkerOptions({ disclosure: false }));
     const enqueued = await enqueueJob(handle.db, user, {
       bookId,
       type: "book.export",
@@ -251,7 +251,7 @@ d("worker handlers: chapter.generate + book.export", () => {
       type: "chapter.generate",
       payload: { chapterId, brief: "Accounting the spend", targetWords: 300 },
     });
-    const tick = await workerFor({ llm: fakeLlm(draft) }).tick();
+    const tick = await workerFor(makeWorkerOptions({ llm: fakeLlm(draft) })).tick();
     expect(tick.succeeded).toBeGreaterThanOrEqual(1);
     const job = await jobAfter(enqueued.id);
     expect(job.status).toBe("succeeded");
