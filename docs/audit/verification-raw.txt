@@ -182,3 +182,26 @@ POST-RUN WORKING TREE
 -------------------------------------------------------------
 $ git status --short
 ?? docker/epubcheck-5.2.1/     (untracked EPUBCheck jar — V1b artifact, wiped by the next run's V1)
+
+-------------------------------------------------------------
+POST-LEDGER RE-RUN (after STATE.json gained G-TYPECHECK-SCOPE)
+-------------------------------------------------------------
+$ node -e "require('./docs/audit/STATE.json')"
+PARSE_OK gaps=57 total=57/57 pct=100/100 sessions=7 corrections=1
+
+$ npm run audit:research
+research reality check OK: 57/57 gaps, 21 coverage cells (GAP 0), 33 tasks traced, report complete
+exit 0
+
+$ npm run audit:deploy
+✔ D6 CI gates + env template: 5 CI gates + 3 env keys present
+deployment check OK: 6/6 items ready (gate G-iota)
+exit 0
+
+$ npm run audit:stubs -- --strict
+audit:stubs — clean: all workspaces have structure and no stub markers.
+exit 0
+
+$ npm run audit:dod -- --strict
+audit:dod — all workspaces meet the DoD gate.
+exit 0
