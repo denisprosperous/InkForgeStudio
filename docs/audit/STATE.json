@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-23T06:30:00+01:00",
+  "updatedAt": "2026-09-24T21:15:00+01:00",
   "status": "complete",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
@@ -456,11 +456,19 @@
       "test": "vitest --project db: 18/18; full npm test 450/450; hookTimeout floor 30s in vitest.workspace.ts db project",
       "closedAt": "2026-09-23T02:05:00+01:00",
       "parent": "G-30"
+    },
+    "G-TYPECHECK-SCOPE": {
+      "title": "Green `npm run typecheck` never type-checked test files (worker.test.ts incident, NEG-Ω.REPAIR)",
+      "severity": "high",
+      "status": "closed",
+      "sha": "cacc40a",
+      "test": "scripts/audit-typecheck-scope.ts",
+      "closedAt": "2026-09-24T20:00:00Z"
     }
   },
   "totals": {
-    "gapsTotal": 56,
-    "gapsClosed": 56,
+    "gapsTotal": 57,
+    "gapsClosed": 57,
     "percentByCount": 100,
     "percentByWeight": 100,
     "criticalOpen": 0,
@@ -585,6 +593,32 @@
       "percentBefore": 100,
       "percentAfter": 100,
       "notes": "Fixed test-file type errors; full battery green."
+    },
+    {
+      "run": "NEG-Ω.REPAIR",
+      "resumedFrom": "NEG-Ω.FINAL",
+      "startedAt": "2026-09-24T18:30:00Z",
+      "endedAt": "2026-09-24T20:15:00Z",
+      "shaBefore": "4c094c0",
+      "shaAfter": "562f5a8",
+      "trigger": "card lied — worker.test.ts syntax errors",
+      "closed": ["worker-test-syntax", "G-TYPECHECK-SCOPE"],
+      "stillOpen": [],
+      "verification": "green",
+      "rawOutputs": "docs/audit/verification-raw.txt",
+      "percentBefore": 100,
+      "percentAfter": 100,
+      "notes": "Honest-closure run. Scope diagnosis (docs/audit/typecheck-scope-diagnosis.md, ebde8c4): `npm run typecheck` executed only `tsc -b` over src-only projects plus apps/web, so apps/forge/test and packages/*/test were never type-checked — a green typecheck could not see a broken test file. The reported worker.test.ts errors (88,23 TS1005, 89,5 TS1109, 311,1+2 TS1128) were reproduced BYTE-EXACT from a transient uncommitted mid-edit state (dropped member key in the workerFor override literal after the NEG-Ω.FINAL rename); they were never in git (git log/diff 0cd5914..HEAD are clean), and the committed file parses and passes (9/9 worker tests). Repair commit df43b79 records that verification honestly. Prevention (cacc40a, the substance of this run): typecheck widened to `tsc --noEmit -p apps/web && -p tsconfig.tests-root.json && -p apps/forge/tsconfig.tests.json && -p tsconfig.scripts.json`, scripts/audit-typecheck-scope.ts sentinel guard (8 workspace test sentinels, asserts the script invokes the project AND tsc --listFilesOnly lists the sentinel) wired into `npm run typecheck`, npm script audit:typecheck, CI (.github/workflows/ci.yml) and battery gate V5b. Post-repair battery: clean checkout, all 19 gates green in one sweep (V1..V15b + BATTERY_DONE) with raw outputs in docs/audit/verification-raw.txt; 71/71 files, 450/450 tests, coverage 90.61% lines / 85.7% branches, e2e 2/2, EPUBCheck exit 0, healthz+readyz HTTP 200, SIGTERM clean in 0s, research 56/56 -> 57/57 after this ledger. Environmental incidents survived, not papered over: systemd-oomd killed the VS Code scope twice on this 7GiB host during npm ci (setsid children die with the cgroup), and /tmp scaffolding was wiped between sessions — both re-run to completion; batteries are idempotent and were never partially reported as green. No gap was re-opened: no shipped artifact was wrong, the verification method was."
+    }
+  ],
+  "corrections": [
+    {
+      "at": "2026-09-24T20:15:00Z",
+      "run": "NEG-Ω.REPAIR",
+      "event": "False-completion card: NEGENTROPY-Ω.FINAL reported `typecheck ✔` and STATUS: COMPLETE while apps/forge/test/worker.test.ts had been left in a broken mid-edit state and `npm run typecheck` did not type-check test files at all.",
+      "impact": "percentByWeight stays 100% — no released gap was re-opened and no shipped artifact was affected; the verification METHOD was unsound, not the delivered code.",
+      "remediation": "typecheck widened to the test projects (tsconfig.tests-root.json, apps/forge/tsconfig.tests.json, tsconfig.scripts.json), scripts/audit-typecheck-scope.ts sentinel guard added and wired into npm run typecheck, CI, and battery gate V5b; G-TYPECHECK-SCOPE registered closed.",
+      "sha": "cacc40a"
     }
   ],
   "tasks": [
