@@ -1,0 +1,184 @@
+INKFORGE STUDIO — NEGENTROPY-Ω.REPAIR RAW VERIFICATION OUTPUT
+=============================================================
+Battery: /tmp/battery.sh — clean checkout, single uninterrupted sweep.
+Window : 2026-09-24 20:47:04 → 21:02:50 (+01:00)
+Host   : 7.0GiB RAM (systemd-oomd active), Postgres on :5432, JRE 21, EPUBCheck 5.2.1.
+Note   : V15 numbers below are as-of-run (56/56). The ledger commit that follows this
+         file adds G-TYPECHECK-SCOPE, so a subsequent run reports 57/57 — the
+         post-ledger re-run is appended at the end of this file.
+
+-------------------------------------------------------------
+GATE SUMMARY (/tmp/battery.log)
+-------------------------------------------------------------
+V1 OK
+V1b OK
+V2 OK
+V3 OK
+V4 OK
+V5 OK
+V5b OK
+V6 OK
+V7 OK
+V8 OK
+V9 OK
+V10 OK
+V11 OK HTTP 200 {"status":"ok","uptimeSeconds":8,"version":"1.0.0"}
+V12 OK HTTP 200 {"status":"ready"}
+V13 OK exit 0
+V14 OK clean SIGTERM in 0s
+V15 OK
+V15b OK
+BATTERY_DONE
+
+-------------------------------------------------------------
+V1 — git clean -fdx -e .env
+-------------------------------------------------------------
+exit 0; 5 paths removed:
+Removing .husky/_/
+Removing apps/forge/node_modules/
+Removing apps/web/node_modules/
+Removing docker/epubcheck-5.2.1/
+Removing node_modules/
+
+-------------------------------------------------------------
+V1b — bash scripts/fetch-assets.sh
+-------------------------------------------------------------
+[curl 30.34M transfer progress elided]
+fetch-assets: installed /home/dpro/Documents/inkforge-studio/docker/epubcheck-5.2.1/epubcheck.jar (set EPUBCHECK_JAR to override)
+exit 0
+
+-------------------------------------------------------------
+V2 — npm ci --no-audit --no-fund (PUPPETEER_SKIP_DOWNLOAD=1)
+-------------------------------------------------------------
+> husky
+
+added 1589 packages in 2m
+exit 0
+
+-------------------------------------------------------------
+V3 — build:libs && db:generate && db:migrate && db:seed
+-------------------------------------------------------------
+[✓] migrations applied successfully!
+  message: 'relation "__drizzle_migrations" already exists, skipping'   (idempotent re-run)
+> inkforge-studio@1.0.0 db:seed
+> tsx packages/db/seed.ts
+Seed: demo author already present, nothing to do.
+exit 0
+
+-------------------------------------------------------------
+V4 — npm run lint (eslint .)
+-------------------------------------------------------------
+> eslint .   → 0 errors, 0 warnings (nothing printed)
+(Next plugin informational line: "Pages directory cannot be found at .../pages or .../src/pages" —
+ this is the no-html-link-for-pages notice, not a finding.)
+exit 0
+
+-------------------------------------------------------------
+V5 — npm run typecheck  (WIDENED SCOPE — the repair's proof)
+-------------------------------------------------------------
+> inkforge-studio@1.0.0 typecheck
+> tsc -b && tsc --noEmit -p apps/web && tsc --noEmit -p tsconfig.tests-root.json && tsc --noEmit -p apps/forge/tsconfig.tests.json && tsc --noEmit -p tsconfig.scripts.json
+
+(no diagnostics) → exit 0, 0 errors
+Scope proof (tsc --noEmit --listFilesOnly -p <project> | grep -c '/test/'):
+  apps/web                        : 2 test files listed
+  apps/forge/tsconfig.tests.json  : 21 test files listed
+  tsconfig.tests-root.json        : 50 test files listed
+  tsconfig.scripts.json           : 0 test files listed (scripts carry no tests)
+
+-------------------------------------------------------------
+V5b — npm run audit:typecheck (G-TYPECHECK-SCOPE sentinel guard)
+-------------------------------------------------------------
+typecheck-scope OK    apps/web -> apps/web/test/smoke.test.ts (-p apps/web)
+typecheck-scope OK    apps/forge -> apps/forge/test/worker.test.ts (-p apps/forge/tsconfig.tests.json)
+typecheck-scope OK    packages/config -> packages/config/test/config.test.ts (-p tsconfig.tests-root.json)
+typecheck-scope OK    packages/db -> packages/db/test/migrations.test.ts (-p tsconfig.tests-root.json)
+typecheck-scope OK    packages/ai -> packages/ai/test/selection.test.ts (-p tsconfig.tests-root.json)
+typecheck-scope OK    packages/core -> packages/core/test/book.test.ts (-p tsconfig.tests-root.json)
+typecheck-scope OK    packages/covers -> packages/covers/test/spec.test.ts (-p tsconfig.tests-root.json)
+typecheck-scope OK    packages/ui -> packages/ui/test/studio.test.ts (-p tsconfig.tests-root.json)
+audit:typecheck-scope — clean: 8 workspace test sentinels covered by npm run typecheck.
+exit 0
+
+-------------------------------------------------------------
+V6 — npm test  (vitest run --coverage, live PG16)
+-------------------------------------------------------------
+ Test Files  71 passed (71)
+      Tests  450 passed (450)
+All files          |   90.61 |     85.7 |   81.91 |   90.61 |
+exit 0
+
+-------------------------------------------------------------
+V7 — npx playwright test --project=chromium (WEB_PORT=3100)
+-------------------------------------------------------------
+  ✓  1 [chromium] › smoke.spec.ts:11:3 › G-28 e2e smoke › home renders the KDP pipeline and links into the studio (10.0s)
+  ✓  2 [chromium] › smoke.spec.ts:25:3 › G-28 e2e smoke › studio library responds even when the forge is unreachable (1.3s)
+
+  2 passed (54.8s)
+exit 0
+
+-------------------------------------------------------------
+V8 — npm run audit:stubs -- --strict
+-------------------------------------------------------------
+audit:stubs — clean: all workspaces have structure and no stub markers.
+exit 0   (0 markers)
+
+-------------------------------------------------------------
+V9 — npm run audit:dod -- --strict
+-------------------------------------------------------------
+✔ done       apps/web
+audit:dod — all workspaces meet the DoD gate.
+exit 0   (0 failures)
+
+-------------------------------------------------------------
+V10 — npm run build
+-------------------------------------------------------------
+✔ build web (next build)
+✔ build complete
+exit 0
+artifacts present: apps/web/.next/BUILD_ID, apps/forge/dist/index.js
+
+-------------------------------------------------------------
+V11 — GET /healthz  (forge booted from source via local tsx)
+-------------------------------------------------------------
+HTTP 200
+{"status":"ok","uptimeSeconds":8,"version":"1.0.0"}
+
+-------------------------------------------------------------
+V12 — GET /readyz
+-------------------------------------------------------------
+HTTP 200
+{"status":"ready"}
+
+-------------------------------------------------------------
+V13 — EPUBCheck end-to-end (real jar, exit code)
+-------------------------------------------------------------
+canary: quiet-machines-mara-vane.epub 5340 bytes, 2 chapters
+Validating using EPUB version 3.3 rules.
+No errors or warnings detected.
+exit 0
+
+-------------------------------------------------------------
+V14 — SIGTERM forge (graceful shutdown)
+-------------------------------------------------------------
+V14 OK clean SIGTERM in 0s
+Post-run: no forge processes remain (pgrep apps/forge/src/index → NONE); port 4000 free.
+
+-------------------------------------------------------------
+V15 — npm run audit:research (research reality check)
+-------------------------------------------------------------
+research reality check OK: 56/56 gaps, 21 coverage cells (GAP 0), 33 tasks traced, report complete
+exit 0
+
+-------------------------------------------------------------
+V15b — npm run audit:deploy
+-------------------------------------------------------------
+✔ D6 CI gates + env template: 5 CI gates + 3 env keys present
+deployment check OK: 6/6 items ready (gate G-iota)
+exit 0
+
+-------------------------------------------------------------
+POST-RUN WORKING TREE
+-------------------------------------------------------------
+$ git status --short
+?? docker/epubcheck-5.2.1/     (untracked EPUBCheck jar — V1b artifact, wiped by the next run's V1)
