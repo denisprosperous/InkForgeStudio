@@ -1,5 +1,8 @@
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { ConfigError, isPreviewAuth, loadConfig } from "../src/index";
+import { ConfigError, isPreviewAuth, loadConfig, loadDotenv } from "../src/index";
 
 const baseEnv = {
   NODE_ENV: "test" as const,
@@ -112,5 +115,48 @@ describe("isPreviewAuth", () => {
   it("refuses preview auth in production without Stack", () => {
     const config = loadConfig({ ...baseEnv, NODE_ENV: "production" });
     expect(isPreviewAuth(config)).toBe(false);
+  });
+});
+
+describe("loadDotenv", () => {
+  /** Run `loadDotenv` with a clean probe var and always restore the host env. */
+  async function withProbe(cwd: string): Promise<string | undefined> {
+    const key = "INKFORGE_DOTENV_PROBE";
+    const previous = process.env[key];
+    delete process.env[key];
+    try {
+      await loadDotenv(cwd);
+      return process.env[key];
+    } finally {
+      if (previous === undefined) delete process.env[key];
+      else process.env[key] = previous;
+    }
+  }
+
+  it("finds the workspace-root .env from a nested working directory", async () => {
+    const root = mkdtempSync(join(tmpdir(), "inkforge-env-"));
+    const nested = join(root, "apps", "forge");
+    mkdirSync(nested, { recursive: true });
+    writeFileSync(join(root, ".env"), "INKFORGE_DOTENV_PROBE=from-root\n");
+    try {
+      // `npm run dev -w @inkforge/forge` runs with cwd apps/forge; the monorepo
+      // .env is two levels up and used to be missed entirely.
+      expect(await withProbe(nested)).toBe("from-root");
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it("keeps a package-local .env ahead of the workspace root", async () => {
+    const root = mkdtempSync(join(tmpdir(), "inkforge-env-"));
+    const nested = join(root, "apps", "forge");
+    mkdirSync(nested, { recursive: true });
+    writeFileSync(join(root, ".env"), "INKFORGE_DOTENV_PROBE=from-root\n");
+    writeFileSync(join(nested, ".env"), "INKFORGE_DOTENV_PROBE=from-package\n");
+    try {
+      expect(await withProbe(nested)).toBe("from-package");
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 });

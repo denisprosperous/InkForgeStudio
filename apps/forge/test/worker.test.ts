@@ -16,6 +16,7 @@ import {
   exports as exportRows,
   getJob,
   jobs,
+  reclaimStaleJobs,
   saveExport,
   type Database,
   type JobRow,
@@ -182,6 +183,26 @@ d("worker loop", () => {
     const after = await statusOf(stale.id);
     expect(after.status).toBe("succeeded");
     expect(after.result).toEqual({ reclaimedRun: true });
+  });
+
+  it("reclaims stale leases to SQL NULL, never empty strings", async () => {
+    const stuck = await enqueueJob(db, user, { bookId, type: "outline.generate", payload: {} });
+    await db
+      .update(jobs)
+      .set({
+        status: "running",
+        lockedBy: "dead-worker",
+        lockedAt: new Date(Date.now() - 3_600_000),
+      })
+      .where(and(eq(jobs.id, stuck.id), eq(jobs.userId, user)));
+
+    const reclaimed = await reclaimStaleJobs(db, new Date(Date.now() - 300_000));
+    expect(reclaimed).toBeGreaterThanOrEqual(1);
+
+    const after = await statusOf(stuck.id);
+    expect(after.status).toBe("queued");
+    expect(after.lockedAt).toBeNull();
+    expect(after.lockedBy).toBeNull();
   });
 
   it("purges only expired export artifacts", async () => {

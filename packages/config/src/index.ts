@@ -6,6 +6,8 @@
  * The module is side-effect free: importing it never touches `process.env`;
  * call `loadDotenv()` (or rely on the app bootstraps) to hydrate first.
  */
+import { existsSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
 import { z } from "zod";
 
 /** Parse a string env var into a boolean without lying about defaults. */
@@ -246,9 +248,30 @@ export function isPreviewAuth(config: Pick<AppConfig, "stack" | "isProduction">)
   return !config.isProduction;
 }
 
+/**
+ * Nearest directory at or above `start` that holds an env file.
+ *
+ * Workspace scripts run with `cwd` set to the package directory (for example
+ * `npm run dev -w @inkforge/forge` runs with cwd `apps/forge`), while the
+ * monorepo's `.env` lives at the repo root. Loading only `${cwd}/.env` silently
+ * fell back to config placeholders — including `DATABASE_URL`'s
+ * `postgres://user:pass@…` — which then failed at the first query. Searching
+ * upward keeps every entrypoint (forge API/worker, cli, seed) on the same env.
+ */
+function findEnvDir(start: string): string {
+  let dir = resolve(start);
+  for (;;) {
+    if (existsSync(join(dir, ".env")) || existsSync(join(dir, ".env.local"))) return dir;
+    const parent = dirname(dir);
+    if (parent === dir) return resolve(start);
+    dir = parent;
+  }
+}
+
 /** Load .env / .env.local once (node runtimes only; Next loads env itself). */
 export async function loadDotenv(cwd = process.cwd()): Promise<void> {
   const dotenv = await import("dotenv");
-  dotenv.config({ path: `${cwd}/.env` });
-  dotenv.config({ path: `${cwd}/.env.local`, override: false });
+  const dir = findEnvDir(cwd);
+  dotenv.config({ path: join(dir, ".env") });
+  dotenv.config({ path: join(dir, ".env.local"), override: false });
 }
