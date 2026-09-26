@@ -27,6 +27,9 @@ e2e/.auth/
 Thumbs.db
 
 # Downloaded-at-build artifacts (fetched by scripts/fetch-assets.sh if absent)
-docker/epubcheck-5.2.1.zip
+# Downloaded-at-build artifacts (fetched by scripts/fetch-assets.sh if absent)
+docker/epubcheck-*/
+docker/epubcheck-*.zip
+docker/epubcheck-*.tar.gz
 apps/web/public/fonts/*.ttf
 apps/web/public/fonts/*.otf
