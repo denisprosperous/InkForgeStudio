@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-24T21:15:00+01:00",
+  "updatedAt": "2026-09-26T05:07:19+01:00",
   "status": "complete",
   "campaign": "NEGENTROPY",
   "baselineSha": "789bdc4",
-  "currentSha": "bc76950",
+  "currentSha": "4d00970",
   "branch": "main",
   "weights": {
     "critical": 10,
@@ -609,6 +609,17 @@
       "percentBefore": 100,
       "percentAfter": 100,
       "notes": "Honest-closure run. Scope diagnosis (docs/audit/typecheck-scope-diagnosis.md, ebde8c4): `npm run typecheck` executed only `tsc -b` over src-only projects plus apps/web, so apps/forge/test and packages/*/test were never type-checked — a green typecheck could not see a broken test file. The reported worker.test.ts errors (88,23 TS1005, 89,5 TS1109, 311,1+2 TS1128) were reproduced BYTE-EXACT from a transient uncommitted mid-edit state (dropped member key in the workerFor override literal after the NEG-Ω.FINAL rename); they were never in git (git log/diff 0cd5914..HEAD are clean), and the committed file parses and passes (9/9 worker tests). Repair commit df43b79 records that verification honestly. Prevention (cacc40a, the substance of this run): typecheck widened to `tsc --noEmit -p apps/web && -p tsconfig.tests-root.json && -p apps/forge/tsconfig.tests.json && -p tsconfig.scripts.json`, scripts/audit-typecheck-scope.ts sentinel guard (8 workspace test sentinels, asserts the script invokes the project AND tsc --listFilesOnly lists the sentinel) wired into `npm run typecheck`, npm script audit:typecheck, CI (.github/workflows/ci.yml) and battery gate V5b. Post-repair battery: clean checkout, all 19 gates green in one sweep (V1..V15b + BATTERY_DONE) with raw outputs in docs/audit/verification-raw.txt; 71/71 files, 450/450 tests, coverage 90.61% lines / 85.7% branches, e2e 2/2, EPUBCheck exit 0, healthz+readyz HTTP 200, SIGTERM clean in 0s, research 56/56 -> 57/57 after this ledger. Environmental incidents survived, not papered over: systemd-oomd killed the VS Code scope twice on this 7GiB host during npm ci (setsid children die with the cgroup), and /tmp scaffolding was wiped between sessions — both re-run to completion; batteries are idempotent and were never partially reported as green. No gap was re-opened: no shipped artifact was wrong, the verification method was."
+    },
+    {
+      "run": "NEG-Ω.POST",
+      "startedAt": "2026-09-26T04:42:32Z",
+      "endedAt": "2026-09-26T04:42:32Z",
+      "shaBefore": "54fab39",
+      "shaAfter": "4d00970",
+      "closed": [],
+      "stillOpen": [],
+      "verification": "not-run: hygiene-only commit",
+      "notes": "Binary artifact commit by repo owner; no source changes; typecheck+build verified green post-hoc. STATE.json shaAfter corrected to 4d00970."
     }
   ],
   "corrections": [
