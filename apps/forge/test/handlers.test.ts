@@ -100,6 +100,34 @@ d("worker handlers: chapter.generate + book.export", () => {
     return rows[0]!;
   }
 
+  /**
+   * Drive the worker until the job reaches a terminal status.
+   *
+   * A single `tick()` is best-effort: it claims the jobs that are due at that
+   * instant and reports an empty cycle if a transient DB error is swallowed
+   * (`loop.ts` returns EMPTY_TICK from its catch). Asserting `tick.succeeded`
+   * therefore makes the suite depend on one cycle landing perfectly — which is
+   * exactly how G-12 flaked in CI. The queue is the contract, so wait for the
+   * row instead: `queued`/`running` → keep polling, `failed`/`succeeded` → stop
+   * and let the caller assert the outcome.
+   */
+  async function tickUntilSettled(
+    worker: ReturnType<typeof workerFor>,
+    id: string,
+    maxTicks = 10,
+  ): Promise<JobRow> {
+    let job = await jobAfter(id);
+    for (
+      let tick = 0;
+      tick < maxTicks && (job.status === "queued" || job.status === "running");
+      tick += 1
+    ) {
+      await worker.tick();
+      job = await jobAfter(id);
+    }
+    return job;
+  }
+
   it("chapter.generate composes a real draft without a provider", async () => {
     const enqueued = await enqueueJob(handle.db, user, {
       bookId,
@@ -251,9 +279,8 @@ d("worker handlers: chapter.generate + book.export", () => {
       type: "chapter.generate",
       payload: { chapterId, brief: "Accounting the spend", targetWords: 300 },
     });
-    const tick = await workerFor(makeWorkerOptions({ llm: fakeLlm(draft) })).tick();
-    expect(tick.succeeded).toBeGreaterThanOrEqual(1);
-    const job = await jobAfter(enqueued.id);
+    const worker = workerFor(makeWorkerOptions({ llm: fakeLlm(draft) }));
+    const job = await tickUntilSettled(worker, enqueued.id);
     expect(job.status).toBe("succeeded");
     const result = job.result as { source?: string; usage?: unknown; costMicros?: unknown };
     expect(result.source).toBe("model");
